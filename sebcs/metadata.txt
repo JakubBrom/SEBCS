@@ -1,0 +1,67 @@
+# This file contains metadata for your plugin. Since 
+# version 2.0 of QGIS this is the proper way to supply 
+# information about a plugin. The old method of 
+# embedding metadata in __init__.py will 
+# is no longer supported since version 2.0.
+
+# This file should be included when you package your plugin.# Mandatory items:
+
+[general]
+name=SEBCS for QGIS
+qgisMinimumVersion=3.0
+description=Module for calculation of energy balance features and vegetation water stress indices
+version=1.1.2
+author=Jakub Brom, University of South Bohemia in Ceske Budejovice, Faculty of Agriculture
+email=jbrom@zf.jcu.cz
+
+about=The SEBCS for QGIS is software enabling calculation of energy balance and crop water stress features (heat fluxes, evaporative fraction, Bowen ratio, Omega factor, CWSI etc.) from Landsat satellite data (L5 TM, L7 ETM+, L8 OLI/TIRS) and also from other devices (e.g. UAV). Calculation procedure uses approach based on modified SEBAL method and gradient approach of the energy balance characteristics calculation.
+
+tracker=http://bugs
+repository=http://repo
+;End of mandatory metadata
+
+;Recommended items:
+
+;Uncomment the following line and add your changelog:
+changelog=
+	1.1.2 : (190429)
+		- Changes in z0m calculation. Method according to PySEBAL was used (see Jaafar, H.H., Ahmad, F.A., 2019. Time series trends of Landsat-based ET using automated calibration in METRIC and SEBAL: The Bekaa Valley, Lebanon. Remote Sensing of Environment S0034425718305947. https://doi.org/10.1016/j.rse.2018.12.033)
+	1.1.1 : (190409)
+		- Added albedo calculation for Landsat 8 according to Olmedo et al. (Constants from R package water) 
+	1.1.0 : (190326)
+		- UI changes
+	1.0.0 : (190305)
+		- migration to Python 3, Qt5 and finally to QGIS 3.+
+		- Minor changes in scripts
+	0.1.6 : (190121)
+		- minor changes
+	0.1.5 :(181120)
+		- minor changes
+	0.1.4 : (171211)
+		- added possibility to use layer of canopy heigth (calculated e.g. from lidar data)
+		- change UI
+	0.1.3 : (160814)
+		- change in UI - replacing output file(s) type chooser
+		- minor changes
+	0.1.2 : (160714)
+		- change name of module from SEBCS to SEBCS for QGIS
+		- Minor changes
+	0.1.1 : (160615) 
+		- Added some helps and additions to UI
+		- Minor changes
+	0.1.0 : (160419)
+		- New module based on SABCS SA software (Brom 2014, unpubl.)
+		- Help/documentation is stil not available
+		- Some minor additions needed.
+	
+	
+;Tags are comma separated with spaces allowed
+tags=raster, energy balance, evapotranspiration, CWSI, vegetation water stress, ecology, remote sensing
+
+homepage=http://homepage
+category=Plugins
+icon=icon.png
+;experimental flag
+experimental=True
+deprecated=False
+
