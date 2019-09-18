@@ -1,15 +1,16 @@
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+
 """
    /***************************************************************************
-   SEBCSlib
+   SEBCSlib.py
 
    Collection of functions for energy balance and its components calculation.
 
                                 -------------------
-          begin                : 14-03-01
-          date                 : 19-09-17
+          begin                : 1.3.14
+          date                 : 18.09.19 10:36
           git sha              : $Format:%H$
           copyright            : (C) 2019 Jakub Brom
           email                : jbrom@zf.jcu.cz
@@ -33,6 +34,7 @@
 """
 
 # Imports
+
 import numpy as np
 import math
 import os
@@ -487,7 +489,7 @@ class SolarRadBalance:
 		for i in range(0, len(bands)):
 			alfa_band = bands[i] * wb[i]
 			alfa_list.append(alfa_band)
-		del alfa_band
+			del alfa_band
 
 		albedo = np.zeros(alfa_list[0].shape)
 		i = 0
@@ -668,14 +670,15 @@ class HeatFluxes:
 
 	def gradEF(self, ts, ta):
 		"""
-		Evaporative fraction calculated from gradient method according to Suleiman and Crago (2004).
+		Evaporative fraction calculated from gradient method according 
+		to Suleiman and Crago (2004).
 		"""
 
 		try:
 			filt_ts = ndimage.median_filter(ts, 5)
 		except ArithmeticError:
 			warnings.warn("Median filter has not been used for Tmax estimation", stacklevel=3)
-			filt_ts = Ts
+			filt_ts = ts
 
 		filt_ts = filt_ts[~np.isnan(filt_ts)]
 		t_max = np.max(filt_ts)
@@ -751,7 +754,7 @@ class HeatFluxes:
 		Crop Water Stress Index calculated according to Jackson et al. (1981, 1988).
 		"""
 		try:
-			rcp = self.rcp(E_Z_sat, e_Z, rho, LE_p, ra, gamma, cp)
+			rcp = self.rcp(E_Z_sat, e_Z, rho, LEp, ra, gamma, cp)
 			g_x = self.gamma_x(rcp, ra, gamma)
 			cwsi = 1.0 - (delta + g_x) / (delta + gamma * (1.0 + rc / ra))
 		except ArithmeticError:
@@ -845,7 +848,7 @@ class MeteoFeatures:
 
 		return latent
 
-	def gamma(self, airP, latent, cp):
+	def gamma(self, airP, latent, cp = 1012):
 		"""
 		Function returns psychrometric constant (kPa.K-1).
 		"""
@@ -996,7 +999,7 @@ class WindStability(MeteoFeatures, HeatFluxes):
 		:param Uz: Wind speed at Z level (m/s)
 		:type Uz: numpy.ndarray
 		:param z0m: Surface roughness for momentum transfer (m)
-		:type z0m: numpy.ndarray
+		:type z0m: numpy.ndarray, float
 		:param Z: Blending height (mixing layer height) (m).
 				  Default 200 m.
 		:type Z: float
@@ -1255,7 +1258,6 @@ class WindStability(MeteoFeatures, HeatFluxes):
 		:param gravit: Gravitation forcing (m/s2). Default 9.81
 		:type gravit: float
 
-		Returns:
 		:return psi_m: Stability parameter for momentum transfer (-)
 		:rtype psi_m: numpy.ndarray
 		:return psi_h: Stability parameter for heat transfer (-)
@@ -1266,27 +1268,38 @@ class WindStability(MeteoFeatures, HeatFluxes):
 		:rtype L: numpy.ndarray 
 		"""
 
-		for i in range(n_iter):
-			# L outliers
-			L = np.where(Z / L < -10000000000.0, ndimage.median_filter(L, 5), L)
-			L = np.where(Z / L > 10000000000.0, ndimage.median_filter(L, 5), L)
-			L = np.where(Z / L == np.inf, ndimage.median_filter(L, 5), L)
+		# definition of returned variables
+		psi_m = None
+		psi_h = None
+		frict = None
 
-			# Calculation of X coefficient
-			X = self.coefX(Z, L)
+		# Stability parameters calculation
+		try:
+			for i in range(n_iter):
+				# L outliers
+				L = np.where(Z / L < -10000000000.0, ndimage.median_filter(L, 5), L)
+				L = np.where(Z / L > 10000000000.0, ndimage.median_filter(L, 5), L)
+				L = np.where(Z / L == np.inf, ndimage.median_filter(L, 5), L)
 
-			# Stability parameters
-			psi_m = self.psiM(L, X, Z, a, b, c, d)
-			psi_h = self.psiH(L, X, Z, a, b, c, d)
+				# Calculation of X coefficient
+				X = self.coefX(Z, L)
 
-			# Friction velocity
-			frict = self.frictVelo(Uz, z0m, Z, psi_m, kappa)
+				# Stability parameters
+				psi_m = self.psiM(L, X, Z, a, b, c, d)
+				psi_h = self.psiH(L, X, Z, a, b, c, d)
 
-			# Virtual tempetarure
-			t_virt = self.virtTemp(ta, ts, z0h, Z, psi_h, kappa)
+				# Friction velocity
+				frict = self.frictVelo(Uz, z0m, Z, psi_m, kappa)
 
-			# Monin-Obukhov length
-			L = self.lengthMO(frict, ts, t_virt=t_virt, kappa=kappa, gravit=gravit)
+				# Virtual tempetarure
+				t_virt = self.virtTemp(ta, ts, z0h, Z, psi_h, kappa)
+
+				# Monin-Obukhov length
+				L = self.lengthMO(frict, ts, t_virt=t_virt, kappa=kappa, gravit=gravit)
+
+		except ArithmeticError:
+			raise ArithmeticError("Stability parameters has not been "
+			                      "calculated.")
 
 		return psi_m, psi_h, frict, L
 
@@ -1295,7 +1308,6 @@ class WindStability(MeteoFeatures, HeatFluxes):
 		Aerodynamic resistance for heat and momentum transfer (s.m-1)
 		calculated according to Thom (1975).
 
-		Inputs:
 		:param Uz: Wind speed at level Z (m/s)
 		:type Uz: numpy.ndarray
 		:param z0m: Surface roughness for momentum transfer (m)
@@ -1314,7 +1326,6 @@ class WindStability(MeteoFeatures, HeatFluxes):
 		:param kappa: von Karman constant. Default 0.41
 		:type kappa: float
 
-		Returns:
 		:return ra: Aerodynamic resistance for heat and momentum
 					transfer (s.m-1) calculated according to Thom (1975)
 		:rtype ra: numpy.ndarray
@@ -1323,7 +1334,8 @@ class WindStability(MeteoFeatures, HeatFluxes):
 		try:
 			ra = (np.log(Z / z0m) - psi_m) * (np.log(Z / z0h) - psi_h) / (kappa ** 2 * Uz)
 		except ArithmeticError:
-			raise ArithmeticError("Aerodynamic resistance has not been calculated")
+			raise ArithmeticError("Aerodynamic resistance has not been "
+			                      "calculated")
 
 		return ra
 
@@ -1349,6 +1361,44 @@ class WindStability(MeteoFeatures, HeatFluxes):
 		t_max = (Rn - G) * ra / (rho * cp) + ta
 		return t_max
 
+	def wetT(self, ta):
+		"""
+		Surface temperature for wet surface. In this case surface temperature
+		for wet surface is equal to air temperature. This statement follows 
+		from imagine that the LE = Rn - G and thus H is close to zero. 
+		TODO: definition of surface temperature on basis of ETr calculation
+		
+		:param ta: 
+		:return: Temperature of wet surface.
+		"""
+		
+		t_wet = ta
+		
+		return t_wet
+	
+	def dryT(self, ts):
+		"""
+		Extraction of temperature for dry surface.
+		
+		:param ts: Surface temperature :math:`(\SI{}\degreeCelsius)`
+		:type ts: numpy.ndarray
+		:return: Temperature of dry surface derived from surface temperature 
+		layer.
+		:rtype: numpy.ndarray
+		"""
+		
+		try:
+			filt_ts = ndimage.median_filter(ts, 5)
+		except ArithmeticError:
+			warnings.warn("Median filter has not been used for estimation of "
+			              "dry furface temperature", stacklevel=3)
+			filt_ts = ts
+
+		filt_ts = filt_ts[~np.isnan(filt_ts)]
+		t_dry = np.max(filt_ts)
+		
+		return t_dry
+
 	def coef_b(self, t_dry, t_wet, t_max, ta):
 		"""
 		Coefficient b calculated from temperature gradient.
@@ -1363,10 +1413,13 @@ class WindStability(MeteoFeatures, HeatFluxes):
 		ca = -cb * (t_wet + 273.16)  # minimal temperature Tmin is equal to ta + 273.16 (in K)
 		return ca
 
-	def dT(self, ts, ta, t_wet, t_dry, Rn, G, ra, rho, cp=1012):
+	def dT(self, ts, ta, Rn, G, ra, rho, cp=1012):
 		"""
-		Temperature gradient calculated according to SEBAL (Bastiaanssen et al. 1998)
+		Temperature gradient calculated according to SEBAL
+		(Bastiaanssen et al. 1998)
 		"""
+		t_wet = self.wetT(ta)
+		t_dry = self.dryT(ts)
 		t_max = self.maxT(Rn, G, ra, ta, rho, cp)
 		cb = self.coef_b(t_dry, t_wet, t_max, ta)
 		ca = self.coef_a(t_wet, cb)
@@ -1374,21 +1427,54 @@ class WindStability(MeteoFeatures, HeatFluxes):
 
 		return dT
 
-	def aeroSEBAL(self, Uz, ta, ts, z0m, Rn, G, rho, t_dry, t_wet, Z=200, z2=2, z1=0.1, niter=10, cp=1012, kappa=0.41):
+	def aeroSEBAL(self, Uz, ta, ts, z0m, Rn, G, rho, Z=200, z2=2, z1=0.1, niter=10, cp=1012, kappa=0.41):
 		"""
+		Calculation of sensible heat flux and surface aerodynamic resistance
+		according to Bastiaanssen et al. (1998).
+
+		:param Uz: Wind speed at level Z (m/s)
+		:type Uz: numpy.ndarray
+		:param ta: Air temperature at blending height :math:`(\SI{
+		}\degreeCelsius)`
+		:type ta: numpy.ndarray
+		:param ts: Surface temperature :math:`(\SI{}\degreeCelsius)`
+		:type ts: numpy.ndarray
+		:param z0m: Surface roughness for momentum transfer (m)
+		:type z0m: numpy.ndarray
+		:param Rn: Total net radiation :math `(W.m^{-2})`
+		:type Rn: numpy.ndarray
+		:param G: Ground heat flux :math `(W.m^{-2})`
+		:type G: numpy.ndarray
+		:param rho: Specific air density (g/m3)
+		:type rho: numpy.ndarray
+		:param t_dry: Dry surface temperature :math:`(\SI{}\degreeCelsius)`
+		:type t_dry: numpy.ndarray
+
+
+		:param Z: Blending height (mixing layer height) (m).
+				  Default 200 m.
+		:type Z: float (Numpy array)
+		:param kappa: von Karman constant. Default 0.41
+		:type kappa: float
+
+		:return ra: Aerodynamic resistance for heat and momentum
+					transfer (s.m-1) calculated according to Thom (1975)
+		:rtype ra: numpy.ndarray
 
 		"""
 
+		# Settings and definition of returns
 		ignore_zero = np.seterr(all="ignore")
+		H = None    # assignment of H
 
 		# friction velocity for meteostation
-		z0m_init = np.array(([0.12 * 0.123]), dtype=np.float)
+		z0m_init = 0.12 * 0.123
 		frict = self.frictVelo(Uz, z0m_init, Z)
 		# ra for meteostation (neutral stab)
 		ra = self.raSEBAL(frict, z1, z2)
 
 		for i in range(niter):
-			diffT = self.dT(ts, ta, t_wet, t_dry, Rn, G, ra, rho, cp)
+			diffT = self.dT(ts, ta, Rn, G, ra, rho, cp)
 			H = self.fluxHAer(ra, rho, diffT, cp)
 			L = self.lengthMO(frict, ts, H, rho)
 			X_z = self.coefX(Z, L)
