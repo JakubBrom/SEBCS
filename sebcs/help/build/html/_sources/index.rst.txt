@@ -12,7 +12,8 @@ Contents:
    :maxdepth: 2
 
    tutorial
-   code
+   SEBCSlib
+   SEBCS_SA
 
 
 Indices and tables

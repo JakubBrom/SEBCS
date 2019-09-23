@@ -1,36 +1,34 @@
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-"""
-   /***************************************************************************
-   SEBCSlib.py
-
-   Collection of functions for energy balance and its components calculation.
-
-                                -------------------
-          begin                : 14-03-01
-          date                 : 19-09-20
-          git sha              : $Format:%H$
-          copyright            : (C) 2014-2019 Jakub Brom
-          email                : jbrom@zf.jcu.cz
-
-   ***************************************************************************/
-   /***************************************************************************
-
-   This program is free software: you can redistribute it and/or modify
-   it under the terms of the GNU General Public License  as published  by
-   the Free Software Foundation, either version 3 of the License, or
-   (at your option) any later version.
-
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-   You should have received a copy of the GNU General Public License along
-   with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-   ***************************************************************************/
-"""
+# /***************************************************************************
+# SEBCSlib.py
+#
+# Collection of functions for energy balance and its components calculation.
+#
+#                              -------------------
+#        begin                : 14-03-01
+#        date                 : 19-09-20
+#        git sha              : $Format:%H$
+#        copyright            : (C) 2014-2019 Jakub Brom
+#        email                : jbrom@zf.jcu.cz
+#
+# ***************************************************************************/
+# /***************************************************************************
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License  as published  by
+# the Free Software Foundation, either version 3 of the License, or
+# any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License along
+# with this program.  If not, see <https://www.gnu.org/licenses/>.
+#
+# ***************************************************************************/
 
 # Imports
 
@@ -62,15 +60,15 @@ class GeoIO:
 		:param rast: Path to raster file in GDAL accepted format.
 		:type rast: str
 
-		:returns: The affine transformation coefficients.
+		:return: The affine transformation coefficients.
 		:rtype: tuple
-		:returns: Projection information of the raster (dataset).
+		:return: Projection information of the raster (dataset).
 		:rtype: str
-		:returns: Pixel width (m) on X axis.
+		:return: Pixel width (m) on X axis.
 		:rtype: float
-		:returns: Pixel height (m) on Y axis.
+		:return: Pixel height (m) on Y axis.
 		:rtype: float
-		:returns: EPSG Geodetic Parameter Set code.
+		:return: EPSG Geodetic Parameter Set code.
 		:rtype: int
 		"""
 
@@ -116,8 +114,8 @@ class GeoIO:
 		
 		:param arrays: Numpy array or list of arrays for export to raster.
 		:type arrays: numpy.ndarray, list
-		:param names: Name or list of names of the exported bands (in case
-		of multiband raster) or particular rasters (in case of singleband
+		:param names: Name or list of names of the exported bands (in case\
+		of multiband raster) or particular rasters (in case of singleband\
 		rasters).
 		:type names: str, list
 		:param prj: Projection information of the exported raster (dataset).
@@ -130,13 +128,12 @@ class GeoIO:
 		:type out_folder: str
 		:param driver_name: GDAL driver. 'GTiff' is default.
 		:type driver_name: str
-		:param out_file_name: Name of exported multiband raster. Default is
-		None.
+		:param out_file_name: Name of exported multiband raster.
 		:type out_file_name: str
-		:param multiband: Option of multiband raster creation. Default is False.
+		:param multiband: Option of multiband raster creation.
 		:type multiband: bool
-		
-		:returns: Raster singleband or multiband file(s)
+
+		:return: Raster singleband or multiband file(s)
 		:rtype: raster
 		"""
 
@@ -239,9 +236,9 @@ class SolarRadBalance:
 		:param y_size: Size of pixel in y axis (m)
 		:type y_size: float
 
-		:returns: Slope of the terrain :math:`(\SI{}\degree)`
+		:return: Slope of the terrain :math:`(\SI{}\degree)`
 		:rtype: numpy.ndarray
-		:returns: Aspect of the terrain :math:`(\SI{}\degree)`
+		:return: Aspect of the terrain :math:`(\SI{}\degree)`
 		:rtype: numpy.ndarray
 		"""
 
@@ -273,8 +270,8 @@ class SolarRadBalance:
 		global radiation). Diffuse part of radiation is not separated
 		in calculation.
 		
-		:param Rs_in: Global radiation measured by pyranometer :math:`(W.m^{
-		-2})`.
+		:param Rs_in: Global radiation measured by pyranometer\
+		:math:`(W.m^{-2})`.
 		:type Rs_in: float
 		:param slope: Slope of the terrain :math:`(\SI{}\degree)`.
 		:type slope: numpy.ndarray
@@ -284,15 +281,13 @@ class SolarRadBalance:
 		:type latitude: float
 		:param longitude: Mean longitude of the data in decimal degrees
 		:type longitude: float
-		:param date_acq: Date of data acquisition in iso format
-						 ('YYYY-mm-dd')
+		:param date_acq: Date of data acquisition in iso format ('YYYY-mm-dd')
 		:type date_acq: datetime.date
-		:param time_acq: Time in GMT in datetime.time format
-						 ('HH:MM:SS.SS')
+		:param time_acq: Time in GMT in datetime.time format ('HH:MM:SS.SS')
 		:type time_acq: datetime.time
 		
-		:returns: Incident shortwave radiation :math:`(W.m^{-2})`
-				corrected on the terrain and solar geometry.
+		:returns: Incident shortwave radiation :math:`(W.m^{-2})` corrected\
+		on the terrain and solar geometry.
 		:rtype: numpy.ndarray
 		"""
 
@@ -345,15 +340,15 @@ class SolarRadBalance:
 
 	def atmEmissivity(self, e_Z, ta):
 		"""
-		Atmospheric emissivity calculated according to Idso
-		(see Brutsaert 1982).
+		Atmospheric emissivity calculated according to Idso (see
+		Brutsaert 1982).
 
 		:param e_Z: Atmospheric water vapour pressure (kPa)
 		:type e_Z: numpy.ndarray, float
 		:param ta: Air temperature :math:`(\SI{}\degreeCelsius)`
 		:type ta: numpy.ndarray, float
 
-		:returns: Air emissivity (rel.)
+		:return: Air emissivity (rel.)
 		:rtype: numpy.ndarray, float
 		"""
 
@@ -366,7 +361,7 @@ class SolarRadBalance:
 
 	def downRL(self, ta, emis_a):
 		"""
-		Funtion calculates downward flux of longwave radiation :math: `(W.m^{
+		Funtion calculates downward flux of longwave radiation :math:`(W.m^{
 		-2})`
 
 		:param ta: Air temperature :math:`(\SI{}\degreeCelsius)`
@@ -416,7 +411,7 @@ class SolarRadBalance:
 
 		:param ndvi: Normalized Difference Vegetation Index (-)
 		:type ndvi: numpy.array
-		:param msavi: Modified Soil Adjusted Vegetation Index (-) according
+		:param msavi: Modified Soil Adjusted Vegetation Index (-) according\
 		to Gao et al. 1996.
 		:param c_a: constant. Default a = 0.08611
 		:type c_a: float
@@ -481,15 +476,15 @@ class SolarRadBalance:
 		:type swir1: numpy.ndarray
 		:param swir2: SWIR2 band on ca 2.2 :math:`\mu m` (rel.)
 		:type swir2: numpy.ndarray
-		:param sat_type: Type of Landsat satellite: \n
-						tL5 - Landsat 4 TM, 5 TM or Landsat 7 ETM+\n
-						t\tL8 - Landsat 8 OLI/TIRS
+		:param sat_type: Type of Landsat satellite: \n\n
+				- L5 - Landsat 4 TM, 5 TM or Landsat 7 ETM+\n
+				- L8 - Landsat 8 OLI/TIRS
 		:type sat_type: str
 
-		:returns: Albedo (rel.)
+		:return: Albedo (rel.)
 		:rtype: numpy.ndarray
-		
-		\n\n
+
+		\n
 		**References:**\n
 		*G.F. Olmedo, S. Ortega-Farias, D. Fonseca-Luengo,
 		D. de la Fuente-Saiz, F.F. Peñailillo 2018: Water: actual
@@ -541,8 +536,8 @@ class SolarRadBalance:
 		"""
 		Amount of shortwave radiation reflected from surface :math:`(W.m^{-2})`
 
-		:param Rs_in_corr: Incomming global radiation corrected on DEM :math:
-		`(W.m^{-2})`
+		:param Rs_in_corr: Incomming global radiation corrected on DEM\
+		:math:`(W.m^{-2})`
 		:type Rs_in_corr: numpy.ndarray
 		:param albedo: Surface albedo (rel.)
 		:type albedo: numpy.ndarray
@@ -561,11 +556,11 @@ class SolarRadBalance:
 		"""
 		Total net radiation.
 
-		:param Rs_in_corr: Incomming global (shortwave) radiation :math:`(W.m^{
-		-2})`
+		:param Rs_in_corr: Incomming global (shortwave) radiation\
+		:math:`(W.m^{-2})`
 		:type Rs_in_corr: numpy.ndarray
-		:param Rs_out: Outgoing (reflected) shortwave radiation :math:`(W.m^{
-		-2})`
+		:param Rs_out: Outgoing (reflected) shortwave radiation\
+		:math:`(W.m^{-2})`
 		:type Rs_out: numpy.ndarray
 		:param RL_in: Incomming (downward) longwave radiation :math:`(W.m^{-2})`
 		:type RL_in: numpy.ndarray
@@ -648,8 +643,8 @@ class VegIndices:
 
 		:param nir: Spectral reflectance in NIR region (rel.)
 		:type nir: numpy.ndarray
-		:param swir1: Spectral reflectance in SWIR region (approx. 1.61
-		:math: `|mu m` (rel.)
+		:param swir1: Spectral reflectance in SWIR region (approx. 1.61\
+		:math:`\\mu{m}` (rel.)
 		:type nir: numpy.ndarray
 
 		:return: Normalized Vegetation Moisture Index - NDMI (unitless)
@@ -726,22 +721,38 @@ class HeatFluxes:
 	def __init__(self):
 		return
 
-	def fluxLE_p(self, Rn, G, delta, VPD, ra, gamma, ro, cp):
+	def fluxLE_p(self, Rn, G, delta, VPD, ra, gamma, rho, cp):
 		"""
-		Latent heat flux for potential evapotranspiration according to Penman (1948) :math:`(W.m^{-2})`.
+		Latent heat flux for potential evapotranspiration according to
+		Penman (1948) :math:`(W.m^{-2})`.
 
-		:param Rn:
-		:param G:
-		:param delta:
-		:param VPD:
-		:param ra:
-		:param gamma:
-		:param ro:
-		:param cp:
-		:return:
+		:param Rn: Total net radiation :math `(W.m^{-2})`
+		:type Rn: numpy.ndarray
+		:param G: Ground heat flux :math `(W.m^{-2})`
+		:type G: numpy.ndarray
+		:param delta: Delta function :math:`(kPa.K^{-1})`
+		:type delta: numpy.ndarray
+		:param VPD: Water vapour pressure in air (kPa)
+		:type VPD: numpy.ndarray
+		:param ra: Aerodynamic resistance :math:`(s.m^{-1})`
+		:type ra: numpy.ndarray
+		:param gamma: Psychrometric constant :math:`(kPa.K^{-1})`.
+		:type gamma: numpy.ndarray
+		:param rho: Specific air density :math:`(g.m^{-3})`
+		:type rho: numpy.ndarray
+		:param cp: Thermal heat capacity of dry air :math:`(K.kg^{-1}.K^{-1})`
+		:type cp: float
+
+		:return: Potential evaporation latent heat flux :math:`(W.m^{-2})`.
+		:rtype: numpy.ndarray
 		"""
 
-		LE_p = (delta * (Rn - G) + ro * cp * VPD / ra) / (delta + gamma)
+		try:
+			LE_p = (delta * (Rn - G) + rho * cp * VPD / ra) / (delta + gamma)
+		except ArithmeticError:
+			raise ArithmeticError("Latent heat flux for potential evaporation "
+			                      "according to Penman (1948) has not been "
+			                      "calculated")
 
 		return LE_p
 
@@ -749,14 +760,24 @@ class HeatFluxes:
 		"""
 		Equilibrium evaporation rate :math:`(W.m^{-2})`.
 
-		:param Rn:
-		:param G:
-		:param delta:
-		:param gamma:
-		:return:
+		:param Rn: Total net radiation :math `(W.m^{-2})`
+		:type Rn: numpy.ndarray
+		:param G: Ground heat flux :math `(W.m^{-2})`
+		:type G: numpy.ndarray
+		:param delta: Delta function :math:`(kPa.K^{-1})`
+		:type delta: numpy.ndarray
+		:param gamma: Psychrometric constant :math:`(kPa.K^{-1})`.
+		:type gamma: numpy.ndarray
+
+		:return: Equilibrium evaporation latent heat flux :math:`(W.m^{-2})`.
+		:rtype: numpy.ndarray
 		"""
 
-		LE_eq = delta / (delta + gamma) * (Rn - G)
+		try:
+			LE_eq = delta / (delta + gamma) * (Rn - G)
+		except ArithmeticError:
+			raise ArithmeticError("Latent heat flux for equilibrium "
+			                      "evaporation has not been calculated")
 
 		return LE_eq
 
@@ -764,12 +785,22 @@ class HeatFluxes:
 		"""
 		Evaporation from wet surface according to Priestley-Taylor (1972).
 
-		:param LE_eq:
-		:param alpha:
-		:return:
+		:param LE_eq: Equilibrium evaporation latent heat flux\
+		:math:`(W.m^{-2})`
+		:type LE_eq: numpy.ndarray
+		:param alpha: Priestley-Taylor alpha.
+		:type alpha: float
+
+		:return: Latent heat flux for wet surface calculated by\
+		Priestle-Taylor :math:`(W.m^{-2})`
+		:rtype: numpy.ndarray
 		"""
 
-		LE_PT = LE_eq * alpha
+		try:
+			LE_PT = LE_eq * alpha
+		except ArithmeticError:
+			raise ArithmeticError("Latent heat flux for Priestley-Taylor "
+			                      "evaporation has not been calculated")
 
 		return LE_PT
 
@@ -778,23 +809,26 @@ class HeatFluxes:
 		Sensible heat flux :math:`(W.m^{-2})` calculated using aerodynamic 
 		method.
 		
-		:param ra: Aerodynamic resistance for heat and momentum transfer 
-		:math: `(s.m^{-1})` calculated according to Thom (1975)
+		:param ra: Aerodynamic resistance for heat and momentum transfer\
+		:math:`(s.m^{-1})` calculated according to Thom (1975)
 		:type ra: numpy.ndarray
-		:param rho: Specific air density :math: `(g.m^{-3})`
+		:param rho: Specific air density :math:`(g.m^{-3})`
 		:type rho: numpy.ndarray
-		:param dT: Temperature gradient calculated according to SEBAL
-		(Bastiaanssen et al. 1998) :math: `(\SI{}\degreeCelsius)`
+		:param dT: Temperature gradient calculated according to SEBAL\
+		(Bastiaanssen et al. 1998) :math:`(\SI{}\degreeCelsius)`
 		:type dT: numpy.ndarray
-		:param cp: Thermal heat capacity of dry air :math: `(K.kg^{-1}.K^{-1})`
+		:param cp: Thermal heat capacity of dry air :math:`(K.kg^{-1}.K^{-1})`
 		:type cp: float
 
-		:return: Sensible heat flux :math: `(W.m^{-2})`
+		:return: Sensible heat flux :math:`(W.m^{-2})`
 		:rtype: numpy.ndarray
 
 		"""
 
-		H = rho * cp * dT / ra
+		try:
+			H = rho * cp * dT / ra
+		except ArithmeticError:
+			raise ArithmeticError("Sensible heat flux has not been calculated.")
 
 		return H
 
@@ -802,13 +836,21 @@ class HeatFluxes:
 		"""
 		Sensible heat flux :math:`(W.m^{-2})` calculated using gradient method.
 
-		:param LE:
-		:param Rn:
-		:param G:
-		:return:
+		:param LE: Latent heat flux :math:`(W.m^{-2})`
+		:type LE: numpy.ndarray
+		:param Rn: Total net radiation :math:`(W.m^{-2})`
+		:type Rn: numpy.ndarray
+		:param G: Ground heat flux :math:`(W.m^{-2})`
+		:type G: numpy.ndarray
+
+		:return: Sensible heat flux :math:`(W.m^{-2})`
+		:rtype: numpy.ndarray
 		"""
 
-		H = Rn - G - LE
+		try:
+			H = Rn - G - LE
+		except ArithmeticError:
+			raise ArithmeticError("Sensible heat flux has not been calculated.")
 
 		return H
 
@@ -816,13 +858,21 @@ class HeatFluxes:
 		"""
 		Latent heat flux :math:`(W.m^{-2})`
 
-		:param Rn:
-		:param G:
-		:param H:
-		:return:
+		:param Rn: Total net radiation :math:`(W.m^{-2})`
+		:type Rn: numpy.ndarray
+		:param G: Ground heat flux :math:`(W.m^{-2})`
+		:type G: numpy.ndarray
+		:param H: Sensible heat flux :math:`(W.m^{-2})`
+		:type H: numpy.ndarray
+
+		:return: Latent heat flux :math:`(W.m^{-2})`
+		:rtype: numpy.ndarray
 		"""
 
-		LE = Rn - G - H
+		try:
+			LE = Rn - G - H
+		except ArithmeticError:
+			raise ArithmeticError("Latent heat flux has not been calculated.")
 
 		return LE
 
@@ -830,13 +880,20 @@ class HeatFluxes:
 		"""
 		Latent heat flux calculated using gradient method :math:`(W.m^{-2})`.
 
-		:param EF:
-		:param Rn:
-		:param G:
-		:return:
+		:param EF: Evaporative fraction (rel.)
+		:param Rn: Total net radiation :math:`(W.m^{-2})`
+		:type Rn: numpy.ndarray
+		:param G: Ground heat flux :math:`(W.m^{-2})`
+		:type G: numpy.ndarray
+
+		:return: Latent heat flux :math:`(W.m^{-2})`
+		:rtype: numpy.ndarray
 		"""
 
-		LE = EF * (Rn - G)
+		try:
+			LE = EF * (Rn - G)
+		except ArithmeticError:
+			raise ArithmeticError("Latent heat flux has not been calculated.")
 
 		return LE
 
@@ -844,13 +901,22 @@ class HeatFluxes:
 		"""
 		Evaporative fraction calculated using aerodynamic method (rel.).
 
-		:param LE:
-		:param Rn:
-		:param G:
-		:return:
+		:param LE: Latent heat flux :math:`(W.m^{-2})`
+		:type LE: numpy.ndarray
+		:param Rn: Total net radiation :math:`(W.m^{-2})`
+		:type Rn: numpy.ndarray
+		:param G: Ground heat flux :math:`(W.m^{-2})`
+		:type G: numpy.ndarray
+
+		:return: Evaporative fraction (rel.)
+		:rtype: numpy.ndarray
 		"""
 
-		EF = LE / (Rn - G)
+		try:
+			EF = LE / (Rn - G)
+		except ArithmeticError:
+			raise ArithmeticError("Evaporative fraction has not been "
+			                      "calculated.")
 
 		return EF
 
@@ -859,9 +925,13 @@ class HeatFluxes:
 		Evaporative fraction calculated from gradient method according
 		to Suleiman and Crago (2004).
 
-		:param ts:
-		:param ta:
-		:return:
+		:param ts: Surface temperature :math:`(\SI{}\degreeCelsius)`
+		:type ts: numpy.ndarray
+		:param ta: Air temperature :math:`(\SI{}\degreeCelsius)`
+		:type ta: numpy.ndarray, float
+
+		:return: Evaporative fraction (rel.)
+		:rtype: numpy.ndarray
 		"""
 
 		try:
@@ -870,22 +940,26 @@ class HeatFluxes:
 			warnings.warn("Median filter has not been used for Tmax estimation", stacklevel=3)
 			filt_ts = ts
 
-		filt_ts = filt_ts[~np.isnan(filt_ts)]
-		t_max = np.max(filt_ts)
-		EF = (t_max - ts) / (t_max - ta)
+		try:
+			filt_ts = filt_ts[~np.isnan(filt_ts)]
+			t_max = np.max(filt_ts)
+			EF = (t_max - ts) / (t_max - ta)
+		except ArithmeticError:
+			raise ArithmeticError("Evaporative fraction has not been "
+			                      "calculated.")
 
 		return EF
 
 	def intensityE(self, LE, L):
-		"""Evaporation intensity in :math: `mmol.m^{-2}.s^{-1}`.
+		"""Evaporation intensity in :math:`mmol.m^{-2}.s^{-1}`.
 		
 		:param LE: Latent heat flux :math:`(W.m^{-2})`
 		:type LE: numpy.ndarray
-		:param L: Latent heat of water evaporation :math: `(J.g^{-1})`.
+		:param L: Latent heat of water evaporation :math:`(J.g^{-1})`.
 		:type L: numpy.ndarray
 		
-		:returns E_int: Intensity of water evaporation :math: `(mmol.m^{
-		-2}.s^{-1})`.
+		:returns E_int: Intensity of water evaporation\
+		:math:`(mmol.m^{-2}.s^{-1})`.
 		:rtype E_int: numpy.ndarray
 		"""
 
@@ -895,29 +969,53 @@ class HeatFluxes:
 
 	def omega(self, LE, LE_p):
 		"""
-		Omega factor (Decoupling coefficient) according to Jarvis and McNaughton (1985)
+		Omega factor (Decoupling coefficient) according to Jarvis and
+		McNaughton (1985)
 
-		:param LE:
-		:param LE_p:
-		:return:
+		:param LE: Latent heat flux :math:`(W.m^{-2})`
+		:type LE: numpy.ndarray
+		:param LE_p: Potential evaporation latent heat flux :math:`(W.m^{-2})`
+		:type LE_p: numpy.ndarray
+
+		:return: Omega factor (unitless)
+		:rtype: numpy.ndarray
+
+		\n
+		**References:**\n
+		*Jarvis, P., McNaughton, K., 1986. Stomatal Control of Transpiration:
+		Scaling Up from Leaf to Region, in: Advances in Ecological Research.
+		Elsevier, pp. 1–49.*
 		"""
 
-		omega = LE / LE_p
+		try:
+			omega = LE / LE_p
+		except ArithmeticError:
+			raise ArithmeticError("Omega factor has not been calculated")
 
 		return omega
 
 	def rs(self, delta, gamma, omega, ra):
 		"""
-		Surface resistance for water vapour transfer (s.m-1)
+		Surface resistance for water vapour transfer :math:`(s.m^{-1})`
 
-		:param delta:
-		:param gamma:
-		:param omega:
-		:param ra:
-		:return:
+		:param delta: Delta function :math:`(kPa.K^{-1})`
+		:type delta: numpy.ndarray
+		:param gamma: Psychrometric constant :math:`(kPa.K^{-1})`.
+		:type gamma: numpy.ndarray
+		:param omega: Decoupling coefficient (rel.)
+		:type omega: numpy.ndarray
+		:param ra: Aerodynamic resistance :math:`(s.m^{-1})`
+		:type ra: numpy.ndarray
+
+		:return: Surface resistance for water vapour transfer :math:`(s.m^{-1})`
+		:rtype: numpy.ndarray
 		"""
 
-		rs = (((delta + gamma) / omega - delta) * 1.0 / gamma - 1.0) * ra
+		try:
+			rs = (((delta + gamma) / omega - delta) * 1.0 / gamma - 1.0) * ra
+		except ArithmeticError:
+			raise ArithmeticError("Surface resistance for water vapour "
+			                      "transfer has not been calculated")
 
 		return rs
 
@@ -925,32 +1023,56 @@ class HeatFluxes:
 		"""
 		Bowen ratio according to Bowen (1926)
 
-		:param H:
-		:param LE:
-		:return:
+		:param H: Sensible heat flux :math:`(W.m^{-2})`
+		:type H: numpy.ndarray
+		:param LE: Latent heat flux :math:`(W.m^{-2})`
+		:type LE: numpy.ndarray
+
+		:return: Bowen ratio (unitless)
+		:rtype: numpy.ndarray
 		"""
 
 		ignore_zero = np.seterr(all="ignore")
-		bowen = H / LE
-		bowen = np.nan_to_num(bowen)
+
+		try:
+			bowen = H / LE
+			bowen = np.nan_to_num(bowen)
+		except ArithmeticError:
+			raise ArithmeticError("Bowen ratio has not been calculated")
 
 		return bowen
 
-	def rcp(self, E_Z_sat, e_Z, rho, LE_p, ra, gamma, cp):
+	def rcp(self, E_Z_sat, e_Z, rho, LE_p, ra, gamma, cp=1012.0):
 		"""
-		Surface resistance for water vapour transfer for potential evapotranspiration.
+		Surface resistance for water vapour transfer for potential
+		evapotranspiration :math:`(s.m^{-1})`.
 
-		:param E_Z_sat:
-		:param e_Z:
-		:param rho:
-		:param LE_p:
-		:param ra:
-		:param gamma:
-		:param cp:
-		:return:
+		:param E_Z_sat: Saturated water vapour pressure (kPa).
+		:type E_Z_sat: numpy.ndarray
+		:param e_Z: Water vapour pressure (kPa).
+		:type e_Z: numpy.ndarray
+		:param rho: Specific air density :math:`(g.m^{-3})`
+		:type rho: numpy.ndarray
+		:param LE_p: Potential evaporation latent heat flux :math:`(W.m^{-2})`
+		:type LE_p: numpy.ndarray
+		:param ra: Aerodynamic resistance :math:`(s.m^{-1})`
+		:type ra: numpy.ndarray
+		:param gamma: Psychrometric constant :math:`(kPa.K^{-1})`.
+		:type gamma: numpy.ndarray
+		:param cp: Thermal heat capacity of dry air :math:`(K.kg^{-1}.K^{-1})`
+		:type cp: float
+
+		:return: Surface resistance for water vapour transfer for potential\
+		evapotranspiration :math:`(s.m^{-1})`.
+		:rtype: numpy.ndarray
 		"""
 
-		rcp = (E_Z_sat - e_Z) * rho * cp / (gamma * LE_p) - ra
+		try:
+			rcp = (E_Z_sat - e_Z) * rho * cp / (gamma * LE_p) - ra
+		except ArithmeticError:
+			raise ArithmeticError("Surface resistance for water wapour "
+			                      "transfer for potential evaporation has not "
+			                      "been calculated")
 
 		return rcp
 
@@ -959,13 +1081,24 @@ class HeatFluxes:
 		Psychrometric constant corrected on the rcp and ra according to
 		Jackson et al. (1981, 1988).
 
-		:param rcp:
-		:param ra:
-		:param gamma:
-		:return:
+		:param rcp: Surface resistance for water vapour transfer for potential\
+		evapotranspiration :math:`(s.m^{-1})`.
+		:type rcp: numpy.ndarray
+		:param ra: Aerodynamic resistance :math:`(s.m^{-1})`
+		:type ra: numpy.ndarray
+		:param gamma: Psychrometric constant :math:`(kPa.K^{-1})`.
+		:type gamma: numpy.ndarray
+
+		:return: Psychrometric constant corrected on the rcp and ra\
+		according to Jackson et al. (1981, 1988) :math:`(kPa.K^{-1})`..
+		:rtype: numpy.ndarray
 		"""
 
-		gamma_x = gamma * (1.0 + rcp / ra)
+		try:
+			gamma_x = gamma * (1.0 + rcp / ra)
+		except ArithmeticError:
+			raise ArithmeticError("Corrected psychrometric constant has not "
+			                      "been calculated")
 
 		return gamma_x
 
@@ -974,22 +1107,34 @@ class HeatFluxes:
 		Crop Water Stress Index calculated according to Jackson et al. (
 		1981, 1988).
 
-		:param LEp:
-		:param ra:
-		:param rc:
-		:param E_Z_sat:
-		:param e_Z:
-		:param rho:
-		:param delta:
-		:param gamma:
-		:param cp:
-		:return:
+		:param LEp: Potential evaporation latent heat flux :math:`(W.m^{-2})`
+		:type LEp: numpy.ndarray
+		:param ra: Aerodynamic resistance :math:`(s.m^{-1})`
+		:type ra: numpy.ndarray
+		:param rc: Surface resistavce for water vapour transfer\
+		 :math:`(s.m^{-1})`
+		:param E_Z_sat: Saturated water vapour pressure (kPa).
+		:type E_Z_sat: numpy.ndarray
+		:param e_Z: Water vapour pressure (kPa).
+		:type e_Z: numpy.ndarray
+		:param rho: Specific air density :math:`(g.m^{-3})`
+		:type rho: numpy.ndarray
+		:param delta: Delta function :math:`(kPa.K^{-1})`
+		:type delta: numpy.ndarray
+		:param gamma: Psychrometric constant :math:`(kPa.K^{-1})`.
+		:type gamma: numpy.ndarray
+		:param cp: Thermal heat capacity of dry air :math:`(K.kg^{-1}.K^{-1})`
+		:type cp: float
+
+		:return: Crop Water Stress Index (CWSI)
+		:rtype: numpy.ndarray
 		"""
 
 		try:
 			rcp = self.rcp(E_Z_sat, e_Z, rho, LEp, ra, gamma, cp)
 			g_x = self.gamma_x(rcp, ra, gamma)
 			cwsi = 1.0 - (delta + g_x) / (delta + gamma * (1.0 + rc / ra))
+
 		except ArithmeticError:
 			if LEp is not None:
 				cwsi = np.zeros(LEp.shape)
@@ -1002,11 +1147,17 @@ class HeatFluxes:
 		"""
 		Ground heat flux according to Bastiaanssen et al. (1998)
 
-		:param ndvi:
-		:param Rn:
-		:param ts:
-		:param albedo:
-		:return:
+		:param ndvi: NDVI spectral vegetation index (unitless)
+		:type ndvi: numpy.ndarray
+		:param Rn: Total net radiation :math:`(W.m^{-2})`
+		:type Rn: numpy.ndarray
+		:param ts: Surface temperature :math:`(\SI{}\degreeCelsius)`
+		:type ts: numpy.ndarray
+		:param albedo: Albedo (rel.)
+		:type albedo: numpy.ndarray
+
+		:return: Ground heat flux :math:`(W.m^{-2})`
+		:rtype: numpy.ndarray
 		"""
 
 		G = ts / albedo * (0.0038 * albedo + 0.0074 * albedo ** 2) * (1 - 0.98 * ndvi ** 4) * Rn
@@ -1031,16 +1182,16 @@ class MeteoFeatures:
 
 		:param DMT: Digital elevation model (m)
 		:type DMT: numpy.ndarray, float
-		:param ta_st: Air temperature measured at height z_st :math:`(\SI{
-		}\degreeCelsius)`
+		:param ta_st: Air temperature measured at height z_st\
+		:math:`(\SI{}\degreeCelsius)`
 		:type ta_st: numpy.ndarray, float
 		:param z_st: Height of air temparature measurement on meteo station (m)
 		:type z_st: float
 		:param adiabatic: Adiabatic lapse rate :math:`(\SI{}\degreeCelsius)`
 		:type adiabatic: float
 
-		:return: Air temperature, recalculated on height Z (m) from data measured in
-		height Z_st (m)
+		:return: Air temperature, recalculated on height Z (m) from data\
+		measured in	height Z_st (m)
 		:rtype: numpy.ndarray, float
 		"""
 
@@ -1144,12 +1295,12 @@ class MeteoFeatures:
 
 	def airDensity(self, ta):
 		"""
-		Volumetric dry air density :math: `(kg.m^{-3})`.
+		Volumetric dry air density :math:`(kg.m^{-3})`.
 		
 		:param ta: Air temperature :math:`(\SI{}\degreeCelsius)`
 		:type ta: numpy.ndarray, float
 		
-		:return: Volumetric dry air density :math: `(kg.m^{-3})`
+		:return: Volumetric dry air density :math:`(kg.m^{-3})`
 		:rtype: numpy.ndarray, float
 		"""
 
@@ -1163,14 +1314,13 @@ class MeteoFeatures:
 
 	def latent(self, ta):
 		"""
-		Latent heat for the water vapour exchange :math: `(J.g^{-1})`.
+		Latent heat for the water vapour exchange :math:`(J.g^{-1})`.
 
 		:param ta: Air temperature :math:`(\SI{}\degreeCelsius)`
 		:type ta: numpy.ndarray, float
 
-		:return: Latent heat for the water vapour exchange :math: `(J.g^{-1})`
+		:return: Latent heat for the water vapour exchange :math:`(J.g^{-1})`
 		:rtype: numpy.ndarray, float
-
 		"""
 
 		try:
@@ -1182,15 +1332,15 @@ class MeteoFeatures:
 
 	def gamma(self, airP, latent, cp=1012.0):
 		"""
-		Psychrometric constant :math: `(kPa.K^{-1})`.
+		Psychrometric constant :math:`(kPa.K^{-1})`.
 
 		:param airP: Atmospheric pressure (kPa)
 		:type airP: numpy.ndarray, float
-		:param latent: Latent heat for water vapour exchange :math: `(J.g^{-1})`
-		:param cp: Thermal heat capacity of dry air :math: `(K.kg^{-1}.K^{-1})`
+		:param latent: Latent heat for water vapour exchange :math:`(J.g^{-1})`
+		:param cp: Thermal heat capacity of dry air :math:`(K.kg^{-1}.K^{-1})`
 		:type cp: float
 
-		:return: Psychrometric constant :math: `(kPa.K^{-1})`
+		:return: Psychrometric constant :math:`(kPa.K^{-1})`
 		:rtype: numpy.ndarray, float
 		"""
 
@@ -1205,7 +1355,7 @@ class MeteoFeatures:
 	def delta(self, ts, ta):
 		"""
 		Slope of water vapour pressure gradient to temperature gradient - delta
-		function :math: `(kPa.K^{-1})`. Calculation according to Jackson et
+		function :math:`(kPa.K^{-1})`. Calculation according to Jackson et
 		al. (1998).
 
 		:param ts: Surface temperature :math:`(\SI{}\degreeCelsius)`
@@ -1213,8 +1363,8 @@ class MeteoFeatures:
 		:param ta: Air temperature :math:`(\SI{}\degreeCelsius)`
 		:type ta: numpy.ndarray, float
 
-		:return: Slope of water vapour pressure gradient to temperature
-		gradient - delta function :math: `(kPa.K^{-1})`
+		:return: Slope of water vapour pressure gradient to temperature\
+		gradient - delta function :math:`(kPa.K^{-1})`
 		:rtype: numpy.ndarray
 		"""
 
@@ -1340,7 +1490,6 @@ class WindStability(MeteoFeatures, HeatFluxes):
 		Wind speed recalculated to height Z according to logarithmic law
 		(Gao et al. 2011).
 
-		Inputs:
 		:param U: Wind speed measured on meteostation at level Z_st (m/s).
 		:type U: float
 		:param Z: Blending height (mixing layer height) (m).
@@ -1353,9 +1502,8 @@ class WindStability(MeteoFeatures, HeatFluxes):
 					 reference cover used for meteostations.
 		:type h_st: float
 
-		Returns:
-		:return Uz: Wind speed at mixinf layer (m/s)
-		:rtype Uz: float
+		:return: Wind speed at mixinf layer (m/s)
+		:rtype: float
 		"""
 
 		ignore_zero = np.seterr(all="ignore")
@@ -1372,7 +1520,6 @@ class WindStability(MeteoFeatures, HeatFluxes):
 		Friction velocity of wind speed (m/s) corrected on atmospheric
 		stability.
 
-		Inputs:
 		:param Uz: Wind speed at Z level (m/s)
 		:type Uz: numpy.ndarray
 		:param z0m: Surface roughness for momentum transfer (m)
@@ -1385,11 +1532,9 @@ class WindStability(MeteoFeatures, HeatFluxes):
 		:type psi_m: numpy.ndarray
 		:param kappa: von Karman constant. Default 0.41
 		:type kappa: float
-		
 
-		Returns:
-		:return frict: Friction velocity (m/s)
-		:rtype frict: numpy.ndarray
+		:return: Friction velocity (m/s)
+		:rtype: numpy.ndarray
 		"""
 
 		ignore_zero = np.seterr(all="ignore")
@@ -1403,26 +1548,22 @@ class WindStability(MeteoFeatures, HeatFluxes):
 
 	def virtTemp(self, ta, ts, z0h, Z=200, psi_h=0, kappa=0.41):
 		"""
-		Virtual temperature (K) corrected on atmospheric
-		stability.
+		Virtual temperature (K) corrected on atmospheric stability.
 
-		Inputs:
 		:param ta: Air temperature at Z level (K, C degrees)
 		:type ta: numpy.ndarray
 		:param ts: Surface temperature (K, C degrees)
 		:type ts: numpy.ndarray
 		:param z0h: Surface roughness for heat transfer (m)
 		:type z0h: numpy.ndarray
-		:param Z: Blending height (mixing layer height) (m).
-				  Default 200 m.
+		:param Z: Blending height (mixing layer height) (m). Default 200 m.
 		:type Z: float
 		:param psi_h: Stability parameter for heat transfer, Default 0.
 		:type psi_h: numpy.ndarray
 		:param kappa: von Karman constant. Default 0.41
 		:type kappa: float
-		
 
-		:returns: Virtual temperature
+		:returns: Virtual temperature (K)
 		:rtype: numpy.ndarray
 		"""
 
@@ -1441,7 +1582,6 @@ class WindStability(MeteoFeatures, HeatFluxes):
 		according to Beljaars et Holstag (1991) for stable conditions
 		and Liu et al. (2007) for unstable and neutral conditions.
 
-		Inputs:
 		:param L: Monin-Obukhov length (m)
 		:type L: numpy.ndarray
 		:param X: X coefficient for stability calculation
@@ -1458,9 +1598,8 @@ class WindStability(MeteoFeatures, HeatFluxes):
 		:param d: Coefficient. Default d = 0.35
 		:type d: float
 
-		Returns:
-		:return psi_m: Stability parameter for momentum transfer (-)
-		:rtype psi_m: numpy.ndarray
+		:return: Stability parameter for momentum transfer (-)
+		:rtype: numpy.ndarray
 		"""
 
 		ignore_zero = np.seterr(all="ignore")
@@ -1490,7 +1629,6 @@ class WindStability(MeteoFeatures, HeatFluxes):
 		according to Beljaars et Holstag (1991) for stable conditions
 		and Liu et al. (2007) for unstable and neutral conditions.
 
-		Inputs:
 		:param L: Monin-Obukhov length (m)
 		:type L: numpy.ndarray
 		:param X: X coefficient for stability calculation
@@ -1507,9 +1645,8 @@ class WindStability(MeteoFeatures, HeatFluxes):
 		:param d: Coefficient. Default d = 0.35
 		:type d: float
 
-		Returns:
-		:return psi_m: Stability parameter for momentum transfer (-)
-		:rtype psi_m: numpy.ndarray
+		:return: Stability parameter for momentum transfer (-)
+		:rtype: numpy.ndarray
 		"""
 
 		ignore_zero = np.seterr(all="ignore")
@@ -1537,27 +1674,25 @@ class WindStability(MeteoFeatures, HeatFluxes):
 		"""
 		Monin-Obukhov length (m)
 
-		Inputs:
 		:param frict: Friction velocity (m/s)
 		:type frict: numpy.ndarray
 		:param ts: Surface temperature (C degree)
 		:type ts: numpy.ndarray
 		:param H: Sensible heat flux (W.m2)
 		:type H: numpy.ndarray
-		:param rho: Specific air density (g/m3)
+		:param rho: Specific air density :math:`(g.m^{-3})`
 		:type rho: numpy.ndarray
 		:param t_virt: Virtual temperature
 		:type t_virt: numpy.ndarray
-		:param cp: Thermal heat capacity of dry air :math: `(K.kg^{-1}.K^{-1})`
+		:param cp: Thermal heat capacity of dry air :math:`(K.kg^{-1}.K^{-1})`
 		:type cp: float
 		:param kappa: von Karman constant. Default 0.41
 		:type kappa: float
 		:param gravit: Gravitation forcing (m/s2). Default 9.81
 		:type gravit: float
 
-		Returns:
-		:return L: Monin-Obukhov length (m)
-		:rtype L: numpy.ndarray 
+		:return: Monin-Obukhov length (m)
+		:rtype: numpy.ndarray
 		"""
 
 		ignore_zero = np.seterr(all="ignore")
@@ -1576,16 +1711,14 @@ class WindStability(MeteoFeatures, HeatFluxes):
 		"""
 		X coefficient for atmospheric stability calculation.
 
-		Inputs:
 		:param Z: Blending height (mixing layer height) (m).
 				  Default 200 m.
 		:type Z: float
 		:param L: Monin-Obukhov length (m)
 		:type L: numpy.ndarray
 
-		Returns:
-		:return X: X coefficient for atmospheric stability calculation
-		:rtype X: numpy.ndarray
+		:return: X coefficient for atmospheric stability calculation
+		:rtype: numpy.ndarray
 		"""
 
 		ignore_zero = np.seterr(all="ignore")
@@ -1604,7 +1737,6 @@ class WindStability(MeteoFeatures, HeatFluxes):
 		Stability parameters calculation using iterative procedure
 		described by Itier (1980).
 
-		Inputs:
 		:param Uz: Wind speed at level Z (m/s)
 		:type Uz: numpy.ndarray
 		:param ta: Air temperature at Z level (K, C degrees)
@@ -1636,14 +1768,14 @@ class WindStability(MeteoFeatures, HeatFluxes):
 		:param gravit: Gravitation forcing (m/s2). Default 9.81
 		:type gravit: float
 
-		:return psi_m: Stability parameter for momentum transfer (-)
-		:rtype psi_m: numpy.ndarray
-		:return psi_h: Stability parameter for heat transfer (-)
-		:rtype psi_h: numpy.ndarray
-		:return frict: Friction velocity (m/s).
-		:rtype frict: numpy.ndarray
-		:return L: Monin-Obukhov length (m)
-		:rtype L: numpy.ndarray 
+		:return: Stability parameter for momentum transfer (-)
+		:rtype: numpy.ndarray
+		:return: Stability parameter for heat transfer (-)
+		:rtype: numpy.ndarray
+		:return: Friction velocity (m/s).
+		:rtype: numpy.ndarray
+		:return: Monin-Obukhov length (m)
+		:rtype: numpy.ndarray
 		"""
 
 		# definition of returned variables
@@ -1723,12 +1855,12 @@ class WindStability(MeteoFeatures, HeatFluxes):
 		Calculation of surface aerodynamic resistance for heat transfer based on
 		SEBAL approach (Bastiaanssen, 1998).
 
-		:param frict: Friction velocity :math: `(m.s^{-1})`
+		:param frict: Friction velocity :math:`(m.s^{-1})`
 		:type frict: numpy.ndarray
-		:param psiH_z1: Stability parameter for momentum transfer (-) at
+		:param psiH_z1: Stability parameter for momentum transfer (-) at\
 		level z1
 		:type psiH_z1: numpy.ndarray
-		:param psiH_z2: Stability parameter for momentum transfer (-) at
+		:param psiH_z2: Stability parameter for momentum transfer (-) at\
 		level z2
 		:type psiH_z2: numpy.ndarray
 		:param z1: First height above zero plane displacement (m)
@@ -1738,7 +1870,7 @@ class WindStability(MeteoFeatures, HeatFluxes):
 		:param kappa: von Karman constant. Default 0.41
 		:type kappa: float
 
-		:return: Aerodynamic resistance for heat transfer based on
+		:return: Aerodynamic resistance for heat transfer based on\
 		SEBAL approach (Bastiaanssen, 1998).
 		:rtype: numpy.ndarray
 		"""
@@ -1752,32 +1884,51 @@ class WindStability(MeteoFeatures, HeatFluxes):
 
 		return ra
 
-	def raGrad(self, H, ro, ts, ta, cp=1012):
+	def raGrad(self, H, rho, ts, ta, cp=1012):
 		"""
-		Aerodynamic resistance for heat and momentum transfer (s.m-1) calculated
-		from conversion of sensible heat flux equation.
+		Aerodynamic resistance for heat and momentum transfer `(s.m^{-1})`
+		calculated from conversion of sensible heat flux equation.
+
+		:param H: Sensible heat flux :math `(W.m^{-2})`
+		:type H: numpy.ndarray
+		:param rho: Specific air density :math:`(g.m^{-3})`
+		:type rho: numpy.ndarray
+		:param ts: Surface temperature :math:`(\SI{}\degreeCelsius)`
+		:type ta: numpy.ndarray
+		:param ta: Air temperature at level Z :math:`(\SI{}\degreeCelsius)`
+		:type ta: numpy.ndarray
+		:param cp: Thermal heat capacity of dry air :math:`(K.kg^{-1}.K^{-1})`
+		:type cp: float
+
+		:return: Aerodynamic resistance for gradient model :math:`(s.m^{-1})`
+		:rtype: numpy.ndarray
 		"""
 
-		ra = ro * cp * (ts - ta) / H
+		try:
+			ra = rho * cp * (ts - ta) / H
+		except ArithmeticError:
+			raise ArithmeticError("Aerodynamic resistance for gradient model "
+			                      "has not been calculated")
+
 		return ra
 
 	def maxT(self, Rn, G, ra, ta, rho, cp=1012.0):
 		"""
 		Maximal surface temperature calculated on physical basis (K).
 		
-		:param Rn: Total net radiation :math `(W.m^{-2})`
+		:param Rn: Total net radiation :math:`(W.m^{-2})`
 		:type Rn: numpy.ndarray
-		:param G: Ground heat flux :math `(W.m^{-2})`
+		:param G: Ground heat flux :math:`(W.m^{-2})`
 		:type G: numpy.ndarray
-		:param ra: Aerodynamic resistance for heat transfer :math: `(s.m^{-1})`
+		:param ra: Aerodynamic resistance for heat transfer :math:`(s.m^{-1})`
 		:type ra: numpy.ndarray
 		:param ta: Air temperature at level Z :math:`(\SI{}\degreeCelsius)`
 		:type ta: numpy.ndarray
-		:param rho: Specific air density :math: `(g.m^{-3})`
+		:param rho: Specific air density :math:`(g.m^{-3})`
 		:type rho: numpy.ndarray
-		:param cp: Thermal heat capacity of dry air :math: `(K.kg^{-1}.K^{-1})`
+		:param cp: Thermal heat capacity of dry air :math:`(K.kg^{-1}.K^{-1})`
 		:type cp: float
-		:return: Maximal surface temperature calculated from energy balance
+		:return: Maximal surface temperature calculated from energy balance\
 		equation :math:`(\SI{}\degreeCelsius)`
 		:rtype: numpy.ndarray
 		"""
@@ -1790,7 +1941,7 @@ class WindStability(MeteoFeatures, HeatFluxes):
 		"""
 		Surface temperature for wet surface. In this case surface temperature
 		for wet surface is equal to air temperature. This statement follows 
-		from imagine that the LE = Rn - G and thus H is close to zero. 
+		from imagine that the LE = Rn - G and thus H is close to zero. \n
 		TODO: definition of surface temperature on basis of ETr calculation
 		
 		:param ta: Air temperature at level Z :math:`(\SI{}\degreeCelsius)`
@@ -1811,7 +1962,7 @@ class WindStability(MeteoFeatures, HeatFluxes):
 		:param ts: Surface temperature :math:`(\SI{}\degreeCelsius)`
 		:type ts: numpy.ndarray
 		
-		:return: Temperature of dry surface derived from surface temperature 
+		:return: Temperature of dry surface derived from surface temperature \
 		layer.
 		:rtype: numpy.ndarray
 		"""
@@ -1832,13 +1983,13 @@ class WindStability(MeteoFeatures, HeatFluxes):
 		"""
 		Coefficient b calculated from temperature gradient.
 
-		:param t_dry: Temperature for dry surface derived from the surface
+		:param t_dry: Temperature for dry surface derived from the surface\
 		temperature layer :math:`(\SI{}\degreeCelsius)`
 		:type t_dry: float, numpy.ndarray
-		:param t_wet: Temperature for wet surface derived from the surface
+		:param t_wet: Temperature for wet surface derived from the surface\
 		temperature layer :math:`(\SI{}\degreeCelsius)`
 		:type t_wet: float, numpy.ndarray
-		:param t_max: Maximal surface temperature calculated from energy
+		:param t_max: Maximal surface temperature calculated from energy\
 		balance :math:`(\SI{}\degreeCelsius)`
 		:type t_max: numpy.ndarray
 		:param ta: Air temperature at level Z :math:`(\SI{}\degreeCelsius)`
@@ -1886,17 +2037,17 @@ class WindStability(MeteoFeatures, HeatFluxes):
 		:type ts: numpy.ndarray
 		:param ta: Air temperature at level Z :math:`(\SI{}\degreeCelsius)`
 		:type ta: numpy.ndarray
-		:param Rn: Total net radiation :math `(W.m^{-2})`
+		:param Rn: Total net radiation :math:`(W.m^{-2})`
 		:type Rn: numpy.ndarray
-		:param G: Ground heat flux :math `(W.m^{-2})`
+		:param G: Ground heat flux :math:`(W.m^{-2})`
 		:type G: numpy.ndarray
-		:param ra: Aerodynamic resistance :math: `(s.m^{-1})` 
+		:param ra: Aerodynamic resistance :math:`(s.m^{-1})` 
 		:type ra: numpy.ndarray
-		:param rho: Specific air density :math: `(g.m^{-3})`
+		:param rho: Specific air density :math:`(g.m^{-3})`
 		:type rho: numpy.ndarray
-		:param cp: Thermal heat capacity of dry air :math: `(K.kg^{-1}.K^{-1})`
+		:param cp: Thermal heat capacity of dry air :math:`(K.kg^{-1}.K^{-1})`
 		:type cp: float
-		:return: Temperature difference dT calculated according to 
+		:return: Temperature difference dT calculated according to\
 		Bastiaanssen (1998)
 		:rtype: numpy.ndarray
 		"""
@@ -1918,38 +2069,38 @@ class WindStability(MeteoFeatures, HeatFluxes):
 
 		:param Uz: Wind speed at level Z (m/s)
 		:type Uz: numpy.ndarray
-		:param ta: Air temperature at blending height :math:`(\SI{
-		}\degreeCelsius)`
+		:param ta: Air temperature at blending height\
+		:math:`(\SI{}\degreeCelsius)`
 		:type ta: numpy.ndarray
 		:param ts: Surface temperature :math:`(\SI{}\degreeCelsius)`
 		:type ts: numpy.ndarray
 		:param z0m: Surface roughness for momentum transfer (m)
 		:type z0m: numpy.ndarray
-		:param Rn: Total net radiation :math `(W.m^{-2})`
+		:param Rn: Total net radiation :math:`(W.m^{-2})`
 		:type Rn: numpy.ndarray
-		:param G: Ground heat flux :math `(W.m^{-2})`
+		:param G: Ground heat flux :math:`(W.m^{-2})`
 		:type G: numpy.ndarray
-		:param rho: Specific air density :math: `(g.m^{-3})`
+		:param rho: Specific air density :math:`(g.m^{-3})`
 		:type rho: numpy.ndarray
 		:param niter: Number of iteration
 		:type niter: int
-		:param Z: Blending height (mixing layer height) (m).
-				  Default 200 m.
+		:param Z: Blending height (mixing layer height) (m). Default 200 m.
 		:type Z: float (Numpy array)
 		:param z1: First height above zero plane displacement (m)
 		:type z1: float
 		:param z2: Second height above zero plane displacement (m)
 		:type z2: float
-		:param cp: Thermal heat capacity of dry air :math: `(
-		K.kg^{-1}.K^{-1})`
+		:param cp: Thermal heat capacity of dry air :math:`(K.kg^{-1}.K^{-1})`
 		:type cp: float
 		:param kappa: von Karman constant. Default 0.41
 		:type kappa: float
 
-		:return ra: Aerodynamic resistance for heat transfer :math: `(s.m^{-1})` 
-		calculated according to SEBAL (Bastiaanssen 1998)
-		:rtype ra: numpy.ndarray
-
+		:return: Aerodynamic resistance for heat transfer :math:`(s.m^{-1})`\
+		calculated according to SEBAL (Bastiaanssen et al. 1998)
+		:rtype: numpy.ndarray
+		:return: Sensible heat flux :math:`(W.m^{-2})` calculated according\
+		to SEBAL (Bastiaanssen et al. 1998)
+		:rtype: numpy.ndarray
 		"""
 
 		# Settings and definition of returns

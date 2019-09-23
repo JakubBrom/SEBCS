@@ -10,7 +10,7 @@
 name=SEBCS for QGIS
 qgisMinimumVersion=3.0
 description=Module for calculation of energy balance features and vegetation water stress indices
-version=1.1.2
+version=1.1.3
 author=Jakub Brom, University of South Bohemia in Ceske Budejovice, Faculty of Agriculture
 email=jbrom@zf.jcu.cz
 
@@ -24,6 +24,13 @@ repository=http://repo
 
 ;Uncomment the following line and add your changelog:
 changelog=
+    1.1.3 : (190923)
+        - Redefinition of sensible heat flux calculation. Temperature difference
+         deffinition is newly defined according to SEBAL. SEBAL procedure was
+         added to SEBCS library (not used for heat fluxes calculation).
+        - Minor changes in scripts, bug fixes
+        - Improving comments in SEBCS lib
+
 	1.1.2 : (190429)
 		- Changes in z0m calculation. Method according to PySEBAL was used (see Jaafar, H.H., Ahmad, F.A., 2019. Time series trends of Landsat-based ET using automated calibration in METRIC and SEBAL: The Bekaa Valley, Lebanon. Remote Sensing of Environment S0034425718305947. https://doi.org/10.1016/j.rse.2018.12.033)
 	1.1.1 : (190409)
