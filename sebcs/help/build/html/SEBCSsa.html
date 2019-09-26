@@ -1,0 +1,468 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Documentation of SEBCS_SA &#8212; SEBCS beta documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Documentation of SEBCS methods library" href="SEBCSlib.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="SEBCSlib.html" title="Documentation of SEBCS methods library"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">SEBCS beta documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="SEBCSlib.html"
+                        title="previous chapter">Documentation of SEBCS methods library</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/SEBCSsa.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="documentation-of-sebcs-sa">
+<h1>Documentation of SEBCS_SA<a class="headerlink" href="#documentation-of-sebcs-sa" title="Permalink to this headline">¶</a></h1>
+<p>SEBCS_SA includes some usable functions:-)</p>
+<span class="target" id="module-scripts.SEBCS_SA"></span><dl class="class">
+<dt id="scripts.SEBCS_SA.SEBCS_SA">
+<em class="property">class </em><code class="descclassname">scripts.SEBCS_SA.</code><code class="descname">SEBCS_SA</code><span class="sig-paren">(</span><em>band_red</em>, <em>band_nir</em>, <em>band_tir</em>, <em>DMT</em>, <em>ta</em>, <em>Rs_in=None</em>, <em>Rh=None</em>, <em>latitude=None</em>, <em>longitude=None</em>, <em>date_acq=None</em>, <em>timeGMT=None</em>, <em>output_list=None</em>, <em>output_folder='/home'</em>, <em>out_file_name=None</em>, <em>method='aero'</em>, <em>sat_type='L5'</em>, <em>emis_rule='No'</em>, <em>output_driver='GTiff'</em>, <em>multiband=False</em>, <em>band_blue=None</em>, <em>band_green=None</em>, <em>band_sw1=None</em>, <em>band_sw2=None</em>, <em>U=None</em>, <em>h_min=None</em>, <em>h_max=None</em>, <em>mask=None</em>, <em>albedo=None</em>, <em>canopy=None</em>, <em>Z_st=10.0</em>, <em>Z=200</em>, <em>cp=1012</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_SA.html#SEBCS_SA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_SA.SEBCS_SA" title="Permalink to this definition">¶</a></dt>
+<dd><p>SEBCS_SA is class for calculation surface energy balance
+and crop water stress features.</p>
+<p><strong>Required parameters: Layers</strong></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>band_red</strong> (<em>str</em>) – Path to raster file in red region of spectra. 
+Spectral reflectance (rel.; 0-1).</li>
+<li><strong>band_nir</strong> (<em>str</em>) – Path to raster file in NIR region of spectra.
+Spectral reflectance (rel.; 0-1).</li>
+<li><strong>band_tir</strong> (<em>str</em>) – Path to surface temperature layer (raster file).
+Temperature (grades of Celsius).</li>
+<li><strong>DMT</strong> (<em>str</em>) – Path to DMT layer (raster file). Metres.</li>
+<li><strong>ta</strong> (<em>str</em>) – Path to air temperature layer (raster file). Temperature
+(grades of Celsius).</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Required parameters: Constants</strong></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>Rs_in</strong> (<em>float</em>) – Value of actual incomming global radiation flux 
+(W.m-2) measured by pyranometer.</li>
+<li><strong>Rh</strong> (<em>float</em>) – Value of actual air relative humidity (%).</li>
+<li><strong>latitude</strong> (<em>float</em>) – Value of mean (center) latitude of area used
+for calculation (dec. grades, e.g.: 49.47575471).</li>
+<li><strong>longitude</strong> (<em>float</em>) – Value of mean (center) longitude of area used
+for calculation (dec. grades, e.g.: 15.30221431).</li>
+<li><strong>date_acq</strong> (<em>datetime.date</em>) – Date of data acquisition (ISO format,
+e.g.: ‘2016-05-09’).</li>
+<li><strong>timeGMT</strong> (<em>datetime.time</em>) – Time of data acquisition in GMT (ISO
+format, e.g.: ‘14:46:00.0000’).</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Required parameters: Outputs</strong></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>output_list</strong> (<em>list</em>) – <p>List of output layers file names. Following
+names for the output layers should be used:</p>
+<blockquote>
+<div>Rs_in   - Incoming shortwave radiation (W.m-2)
+Rs_out  - Reflected shortwave radiation (W.m-2)
+albedo  - Albedo (rel.)
+RL_in   - Incoming longwave radiation (W.m-2)
+RL_emit - Reflected longwave radiation (W.m-2)
+Rn      - Total net radiation (W.m-2)
+Ts      - Surface temperature (Degree C)
+emis    - Surface emissivity (rel.)
+LE      - Latent heat flux (W.m-2)
+LEp     - Latent heat flux - Penman pot. (W.m-2)
+LE_PT   - Latent heat flux - Priestley-Taylor (W.m-2)
+H       - Sensible heat flux (W.m-2)
+G       - Ground heat flux (W.m-2)
+E_int   - Evapotranspiration intensity (mmol.m-2.s-1)
+EF      - Evaporative fraction (rel.)
+Bowen   - Bowen ratio (-)
+omega   - Decoupling coefficient (rel.)
+CWSI    - CWSI (-)
+frict_U - Friction velocity (m.s-1)
+ra      - Aerodynamic surface resistance (s.m-1)
+rc      - Resistance for water vapour transfer (s.m-1)
+NDVI    - NDVI (-)
+MSAVI   - MSAVI (-)
+NDMI    - NDMI (-)
+slope   - Slope (Degree)
+aspect  - Aspect (Degree)</div></blockquote>
+</li>
+<li><strong>output_folder</strong> (<em>str</em>) – Path to output folder where the outputs
+will be created.</li>
+<li><strong>out_file_name</strong> (<em>str</em>) – Name of exported multiband raster.
+Default is None.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Default: Setting</strong></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>method</strong> (<em>int</em>) – <p>Setting of calculation method. There are two
+calculation methods:
+- ‘aero’: aerodynamic method of calcultaion based</p>
+<blockquote>
+<div>on SEBAL method is used (default)</div></blockquote>
+<ul>
+<li><dl class="first docutils">
+<dt>’grad’: Method grad is used for calculation based</dt>
+<dd>on gradient approach.</dd>
+</dl>
+</li>
+</ul>
+<p>See Manual for more details.</p>
+</li>
+<li><strong>sat_type</strong> (<em>int</em>) – Setting of satellite type which was used for
+calculation. There are three different satellite type:
+- ‘L5’: data from Landsat 5 TM (default);
+- ‘L7’: data from Landsta 7 ETM+;
+- ‘other’ - data from other satellite or aerial system.
+Satellite type setting is important for albedo calculation.</li>
+<li><strong>emis_rule</strong> (<em>str</em>) – <p>Setting of emissivity calcultaion for correction
+of surface temperature layer. There are two variants:
+- ‘No’: No correction on emissivity (default)
+- ‘Yes’: Correction of the surface temperature layer</p>
+<blockquote>
+<div>on emissivity. In case the source data have
+emissivity equal to 1.</div></blockquote>
+</li>
+<li><strong>output_driver</strong> (<em>str</em>) – GDAL driver for output files format. Different
+formats should be used. GTiff is default.</li>
+<li><strong>multiband</strong> (<em>bool</em>) – Option of multiband raster creation. Default is False.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Optional: Spectral layers</strong></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>band_blue</strong> (<em>str</em>) – Path to raster file in blue region of spectra.
+Spectral reflectance (rel.; 0-1).</li>
+<li><strong>band_green</strong> (<em>str</em>) – Path to raster file in green region of spectra.
+Spectral reflectance (rel.; 0-1).</li>
+<li><strong>band_sw1</strong> (<em>str</em>) – Path to raster file in SWIR region of spectra
+(ca 1.61 micro meters). Spectral reflectance (rel.; 0-1).</li>
+<li><strong>band_sw2</strong> (<em>str</em>) – Path to raster file in SWIR region of spectra
+(ca 2.2 micro meters). Spectral reflectance (rel.; 0-1).</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Optional: Additional layers</strong></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>U</strong> (<em>str</em>) – Path to wind speed layer (raster file). Velocity (m.s-1).
+This layer should be set if method aero is used.</li>
+<li><strong>h_min</strong> (<em>str</em>) – Path to minimal vegetation heigth layer (raster file).
+Heigth (m). This layer should be set if method aero is used.</li>
+<li><strong>h_max</strong> (<em>str</em>) – Path to maximal vegetation heigth layer (raster file).
+Heigth (m). This layer should be set if method aero is used.</li>
+<li><strong>mask</strong> (<em>str</em>) – Path to mask (raster layer) for the output. Mask should be
+real data type. Output layers are multiplied by mask where 0 are nodata 
+and 1 are data. Mask is used for data export only. Default is None.</li>
+<li><strong>albedo</strong> (<em>str</em>) – Path to albedo layer (raster file). This option
+is used prior to calculation of albedo by SEBCS SA.
+Deafult is None.</li>
+<li><strong>canopy</strong> – Path to canopy heigth layer. This option is used prior
+to calculation of canopy heigth from the min and max heigth values.
+Default is None.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>type canopy: str</p>
+<p><strong>Optional: Constants</strong></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>Z_st</strong> (<em>float</em>) – Heigth of wind speed heigth measurement (m).
+Default is 10 m.</li>
+<li><strong>Z</strong> (<em>float</em>) – Heigth of mixed layer (m). Default is 200 m</li>
+<li><strong>cp</strong> (<em>float</em>) – Specific heat capacity of dry air (J.kg-1.K-1).
+Default cp = 1012 J.kg-1.K-1</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns</strong></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Raster file or files for calculated variables. Number
+of outputs and also type of outputs are set by output_list
+variable (list of names). Output file(s) is saved into
+output_folder.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="scripts.SEBCS_SA.SEBCS_SA.albedoCalc">
+<code class="descname">albedoCalc</code><span class="sig-paren">(</span><em>sat_type</em>, <em>band_red</em>, <em>band_nir</em>, <em>band_blue=None</em>, <em>band_green=None</em>, <em>band_sw1=None</em>, <em>band_sw2=None</em>, <em>ndvi=None</em>, <em>msavi=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_SA.html#SEBCS_SA.albedoCalc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_SA.SEBCS_SA.albedoCalc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculation of Albedo.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="scripts.SEBCS_SA.SEBCS_SA.dataExport">
+<code class="descname">dataExport</code><span class="sig-paren">(</span><em>output_list_names</em>, <em>out_folder</em>, <em>driver</em>, <em>gtransf</em>, <em>prj</em>, <em>EPSG</em>, <em>out_file_name</em>, <em>multiband</em>, <em>mask</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_SA.html#SEBCS_SA.dataExport"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_SA.SEBCS_SA.dataExport" title="Permalink to this definition">¶</a></dt>
+<dd><p>Export output layers.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="scripts.SEBCS_SA.SEBCS_SA.heatFluxes">
+<code class="descname">heatFluxes</code><span class="sig-paren">(</span><em>ta_Z</em>, <em>ts_C</em>, <em>ts_K</em>, <em>Rn_G</em>, <em>albedo</em>, <em>ndvi</em>, <em>method='aero'</em>, <em>U=None</em>, <em>canopy=None</em>, <em>h_min=None</em>, <em>h_max=None</em>, <em>msavi=None</em>, <em>ro=None</em>, <em>Z=200.0</em>, <em>Z_st=10.0</em>, <em>cp=1012.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_SA.html#SEBCS_SA.heatFluxes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_SA.SEBCS_SA.heatFluxes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculation of heat fluxes using aerodynamic or gradient
+method.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="scripts.SEBCS_SA.SEBCS_SA.longWaveRad">
+<code class="descname">longWaveRad</code><span class="sig-paren">(</span><em>e_Z</em>, <em>ta</em>, <em>ts</em>, <em>emissivity</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_SA.html#SEBCS_SA.longWaveRad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_SA.SEBCS_SA.longWaveRad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculation of long wave radiation downward and upward
+fluxes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>e_Z</strong> (<em>numpy.ndarray</em>) – Saturated water vapour pressure (kPa) at Z level
+(default at 200 m above surface).</li>
+<li><strong>ta_K</strong> (<em>numpy.ndarray</em>) – Air temperature at level Z (default at 200 m).
+in K.</li>
+<li><strong>ts_K</strong> (<em>numpy.ndarray</em>) – Surface temperature in K.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return RL_in:</th><td class="field-body"><p class="first">Incomming longwave radiation (W.m-2).</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Rtype RL_in:</th><td class="field-body"><p class="first">numpy.ndarray</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return RL_out:</th><td class="field-body"><p class="first">Emitted longwave radiation (W.m-2).</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Rtype RL_out:</th><td class="field-body"><p class="first last">numpy.ndarray</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="scripts.SEBCS_SA.SEBCS_SA.lyrsExtent">
+<code class="descname">lyrsExtent</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_SA.html#SEBCS_SA.lyrsExtent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_SA.SEBCS_SA.lyrsExtent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check differences between size of the input layers.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="scripts.SEBCS_SA.SEBCS_SA.rasterToArray">
+<code class="descname">rasterToArray</code><span class="sig-paren">(</span><em>layer</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_SA.html#SEBCS_SA.rasterToArray"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_SA.SEBCS_SA.rasterToArray" title="Permalink to this definition">¶</a></dt>
+<dd><p>Conversion of raster layer to numpy array.
+:param layer: Path to raster layer.
+:type layer: str</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Return in_layer:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">raster file converted to numpy array</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="scripts.SEBCS_SA.SEBCS_SA.surfaceTemperature">
+<code class="descname">surfaceTemperature</code><span class="sig-paren">(</span><em>tir_band</em>, <em>emissivity=None</em>, <em>emis_rule='No'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_SA.html#SEBCS_SA.surfaceTemperature"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_SA.SEBCS_SA.surfaceTemperature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Correction of surface temperature on emissivity.
+:param tir_band: Layer of surface temperature (grades of C).
+:type tir_band: numpy.ndarray
+:param emissivity: Layer of emissivity (rel.).
+:type emissivity: numpy.ndarray
+:param emis_rule: Setting if the correction will be done or not.</p>
+<blockquote>
+<div>No is default.</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return ts_C:</th><td class="field-body">Layer of corrected surface temperature (grades C).</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Rtype ts_C:</th><td class="field-body">numpy.ndarray</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return ts_K:</th><td class="field-body">Layer of corrected surface temperature (grades K).</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Rtype ts_K:</th><td class="field-body">numpy.ndarray</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="scripts.SEBCS_SA.SEBCS_SA.vegIndices">
+<code class="descname">vegIndices</code><span class="sig-paren">(</span><em>bandRed</em>, <em>bandNIR</em>, <em>bandSWIR1=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_SA.html#SEBCS_SA.vegIndices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_SA.SEBCS_SA.vegIndices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Vegetation indices calculation.
+:param bandRed: Reflectance in red spectral region.
+:type bandRed: numpy.ndarray
+:param bandNIR: Reflectance in NIR spectral region.
+:type bandNIR: numpy.ndarray
+:param bandSWIR1: Reflectance in SWIR1 spectral region</p>
+<blockquote>
+<div>(ca 1.6 micro meters).</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return ndvi:</th><td class="field-body">NDVI according to Tucker (1979).</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Rtype ndvi:</th><td class="field-body">numpy.ndarray</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return msavi:</th><td class="field-body">MSAVI2 according to Qi et al. (1994)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Rtype msavi:</th><td class="field-body">numpy.ndarray</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return ndmi:</th><td class="field-body">NDMI</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Rtype ndmi:</th><td class="field-body">numpy.ndarray</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return Fc:</th><td class="field-body">Fractional vegetation cover.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Rtype Fc:</th><td class="field-body">numpy.ndarray</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="scripts.SEBCS_SA.smaz">
+<code class="descclassname">scripts.SEBCS_SA.</code><code class="descname">smaz</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_SA.html#smaz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_SA.smaz" title="Permalink to this definition">¶</a></dt>
+<dd><p>tuhle funkci smaz</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> – Parametr x</li>
+<li><strong>y</strong> – Parametr y</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A tohle je parametr z</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="SEBCSlib.html" title="Documentation of SEBCS methods library"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">SEBCS beta documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2013-2019, Jakub Brom, University of South Bohemia in Ceske Budejovice, Faculty of Agriculture.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

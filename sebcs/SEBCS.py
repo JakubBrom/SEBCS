@@ -46,7 +46,7 @@ from .resources import *
 from .SEBCS_dialog import SEBCSDialog
 
 # Import SEBCS core
-from sebcs.scripts import SEBCS_SA as scs 
+from sebcs.scripts import SEBCS_SA as scs
 
 class SEBCS:
 	"""QGIS Plugin Implementation."""

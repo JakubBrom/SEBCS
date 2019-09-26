@@ -726,9 +726,9 @@ class HeatFluxes:
 		Latent heat flux for potential evapotranspiration according to
 		Penman (1948) :math:`(W.m^{-2})`.
 
-		:param Rn: Total net radiation :math `(W.m^{-2})`
+		:param Rn: Total net radiation :math:`(W.m^{-2})`
 		:type Rn: numpy.ndarray
-		:param G: Ground heat flux :math `(W.m^{-2})`
+		:param G: Ground heat flux :math:`(W.m^{-2})`
 		:type G: numpy.ndarray
 		:param delta: Delta function :math:`(kPa.K^{-1})`
 		:type delta: numpy.ndarray
@@ -760,9 +760,9 @@ class HeatFluxes:
 		"""
 		Equilibrium evaporation rate :math:`(W.m^{-2})`.
 
-		:param Rn: Total net radiation :math `(W.m^{-2})`
+		:param Rn: Total net radiation :math:`(W.m^{-2})`
 		:type Rn: numpy.ndarray
-		:param G: Ground heat flux :math `(W.m^{-2})`
+		:param G: Ground heat flux :math:`(W.m^{-2})`
 		:type G: numpy.ndarray
 		:param delta: Delta function :math:`(kPa.K^{-1})`
 		:type delta: numpy.ndarray
@@ -1412,7 +1412,7 @@ class MeteoFeatures:
 
 
 # noinspection PyMethodMayBeStatic,PyUnusedLocal
-class WindStability(MeteoFeatures, HeatFluxes):
+class WindStability(MeteoFeatures, HeatFluxes, VegIndices):
 	"""
 	Atmospheric stability calculation. Class includes methods for calculation
 	of boundary layer stability, friction velocity and aerodynamic
@@ -1458,32 +1458,60 @@ class WindStability(MeteoFeatures, HeatFluxes):
 
 		return z0m
 
-	def z0m(self, h_eff=None, savi=None, ca=0.003, cb=5.26):
+	def z0m(self, method=1, h_eff=None, band3=None, band4=None, ca=0.003,
+	        cb=5.26, cm=1.096, cn=-3.037, L=0.5):
 		"""
-		Aerodynamic roughness of the surface for momentum transfer (m). 
-		Calculated according to Thom (1975).
+		Aerodynamic roughness of the surface for momentum transfer (m).
+		z0m can be calculated according to three different approaches:\n
+			- Thom (1975)\
+			- Allen et al. ()\
+			- METRIC (Tasumi et al. XXX)
+
+		:param method:
+		:param h_eff:
+		:param band3:
+		:param band4:
+		:param ca:
+		:param cb:
+		:param cm:
+		:param cn:
+		:param L:
+		:return:
+
+		TODO doplnit citace.
 		"""
 
-		if savi is None:
-			z0m = h_eff * 0.123
-		else:
-			z0m = ca * np.exp(cb * savi)
+		try:
+			if method is 1:                                 # Thom
+				z0m = h_eff * 0.123
+
+			elif method is 2:                               # Allen
+				savi = self.viSAVI(band3, band4, L)
+				z0m = ca * np.exp(cb * savi)
+
+			else:                                           # METRIC
+				ndvi = self.viNDVI(band3, band4)
+				z0m = np.exp(cm * ndvi / albedo + cn)
+				z0m = np.where(z0m < 0.001, 0.001, z0m)
+		except ArithmeticError:
+			raise ArithmeticError("Aerodynamic roughness of the surface for "
+			                      "momentum transfer has not been calculated")
 
 		return z0m
 
 	def z0h(self, z0m):
 		"""
-		Aerodynamic roughness of the surface for heat transfer (m)
+		Aerodynamic roughness of the surface for heat transfer (m).
+
+		:param z0m: Aerodynamic roughness of the surface for momentum\
+		transfer (m)
+		:type z0m: numpy.ndarray, float
+
+		:return: Aerodynamic roughness of the surface for heat transfer (m)
+		:rtype: numpy.ndarray, float
 		"""
 		z0h = 0.1 * z0m
 		return z0h
-
-	def z_d(self, Z, disp):
-		"""
-		Z - d difference. Z is height of meteorological measurement (m) - Z = 200 m is used.
-		"""
-		Z_d = Z - disp
-		return Z_d
 
 	def windSpeedZ(self, U, Z=200.0, Z_st=2.0, h_st=0.12):
 		"""
@@ -1889,7 +1917,7 @@ class WindStability(MeteoFeatures, HeatFluxes):
 		Aerodynamic resistance for heat and momentum transfer `(s.m^{-1})`
 		calculated from conversion of sensible heat flux equation.
 
-		:param H: Sensible heat flux :math `(W.m^{-2})`
+		:param H: Sensible heat flux :math:`(W.m^{-2})`
 		:type H: numpy.ndarray
 		:param rho: Specific air density :math:`(g.m^{-3})`
 		:type rho: numpy.ndarray

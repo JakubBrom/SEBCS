@@ -1,15 +1,35 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-################################################################################
-# Name: SEBCS_SA                                                               #
-# Modul: SEBCS_SA.py                                                               #
-# Author: Dr. Jakub Brom, University of South Bohemia, Faculty of Agriculture  #
-# e-mail: jbrom@zf.jcu.cz                                                      #
-# Date: 2019-03-14                                                             #
-# License: (c) 2016 - 2019 Jakub Brom, University of South Bohemia,             #
-#			Faculty of Agriculture                                             #
-################################################################################
+#  /***************************************************************************
+#  SEBCS_SA.py
+#
+#  TODO: popis
+#
+#                                -------------------
+#          begin                :
+#          date                 :
+#          git sha              : $Format:%H$
+#          copyright            : (C) 2014-2019 Jakub Brom
+#          email                : jbrom@zf.jcu.cz
+#
+#  ***************************************************************************/
+#  /***************************************************************************
+#
+#  This program is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License  as published  by
+#  the Free Software Foundation, either version 3 of the License, or
+#  any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#  You should have received a copy of the GNU General Public License along
+#  with this program.  If not, see <https://www.gnu.org/licenses/>.
+#
+#   ***************************************************************************/
+
 
 # Data import
 
@@ -25,7 +45,8 @@ import numpy as np
 from osgeo import gdal
 
 # Import SEBCSlib methods
-from SEBCSlib import GeoIO, HeatFluxes, MeteoFeatures, SolarRadBalance, VegIndices, WindStability
+from scripts.SEBCSlib import GeoIO, HeatFluxes, MeteoFeatures, \
+	SolarRadBalance, VegIndices, WindStability
 
 gio = GeoIO()
 ht = HeatFluxes()
@@ -34,6 +55,18 @@ sr = SolarRadBalance()
 vi = VegIndices()
 ws = WindStability()
 
+def smaz(x, y):
+	"""
+	tuhle funkci smaz
+
+	:param x: Parametr x
+	:param y: Parametr y
+
+	:return: A tohle je parametr z
+	"""
+
+	z = x + y
+	return z
 
 class SEBCS_SA:
 	""" SEBCS_SA is class for calculation surface energy balance

@@ -1,0 +1,817 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>scripts.SEBCS_SA &#8212; SEBCS beta documentation</title>
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SEBCS beta documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for scripts.SEBCS_SA</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="c1">################################################################################</span>
+<span class="c1"># Name: SEBCS_SA                                                               #</span>
+<span class="c1"># Modul: SEBCS_SA.py                                                               #</span>
+<span class="c1"># Author: Dr. Jakub Brom, University of South Bohemia, Faculty of Agriculture  #</span>
+<span class="c1"># e-mail: jbrom@zf.jcu.cz                                                      #</span>
+<span class="c1"># Date: 2019-03-14                                                             #</span>
+<span class="c1"># License: (c) 2016 - 2019 Jakub Brom, University of South Bohemia,             #</span>
+<span class="c1">#			Faculty of Agriculture                                             #</span>
+<span class="c1">################################################################################</span>
+
+<span class="c1"># Data import</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">string</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">osgeo</span> <span class="k">import</span> <span class="n">gdal</span>
+
+<span class="c1"># Import SEBCSlib methods</span>
+<span class="kn">from</span> <span class="nn">scripts.SEBCSlib</span> <span class="k">import</span> <span class="n">GeoIO</span><span class="p">,</span> <span class="n">HeatFluxes</span><span class="p">,</span> <span class="n">MeteoFeatures</span><span class="p">,</span> \
+	<span class="n">SolarRadBalance</span><span class="p">,</span> <span class="n">VegIndices</span><span class="p">,</span> <span class="n">WindStability</span>
+
+<span class="n">gio</span> <span class="o">=</span> <span class="n">GeoIO</span><span class="p">()</span>
+<span class="n">ht</span> <span class="o">=</span> <span class="n">HeatFluxes</span><span class="p">()</span>
+<span class="n">mf</span> <span class="o">=</span> <span class="n">MeteoFeatures</span><span class="p">()</span>
+<span class="n">sr</span> <span class="o">=</span> <span class="n">SolarRadBalance</span><span class="p">()</span>
+<span class="n">vi</span> <span class="o">=</span> <span class="n">VegIndices</span><span class="p">()</span>
+<span class="n">ws</span> <span class="o">=</span> <span class="n">WindStability</span><span class="p">()</span>
+
+<div class="viewcode-block" id="smaz"><a class="viewcode-back" href="../../SEBCSsa.html#scripts.SEBCS_SA.smaz">[docs]</a><span class="k">def</span> <span class="nf">smaz</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	tuhle funkci smaz</span>
+
+<span class="sd">	:param x: Parametr x</span>
+<span class="sd">	:param y: Parametr y</span>
+
+<span class="sd">	:return: A tohle je parametr z</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">z</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+	<span class="k">return</span> <span class="n">z</span></div>
+
+<div class="viewcode-block" id="SEBCS_SA"><a class="viewcode-back" href="../../SEBCSsa.html#scripts.SEBCS_SA.SEBCS_SA">[docs]</a><span class="k">class</span> <span class="nc">SEBCS_SA</span><span class="p">:</span>
+	<span class="sd">&quot;&quot;&quot; SEBCS_SA is class for calculation surface energy balance</span>
+<span class="sd">	and crop water stress features.</span>
+
+
+<span class="sd">	**Required parameters: Layers**</span>
+
+<span class="sd">	:param band_red: Path to raster file in red region of spectra. </span>
+<span class="sd">		Spectral reflectance (rel.; 0-1).</span>
+<span class="sd">	:type band_red: str</span>
+<span class="sd">	:param band_nir: Path to raster file in NIR region of spectra.</span>
+<span class="sd">		Spectral reflectance (rel.; 0-1).</span>
+<span class="sd">	:type band_nir: str</span>
+<span class="sd">	:param band_tir: Path to surface temperature layer (raster file).</span>
+<span class="sd">		Temperature (grades of Celsius).</span>
+<span class="sd">	:type band_tir: str</span>
+<span class="sd">	:param DMT: Path to DMT layer (raster file). Metres.</span>
+<span class="sd">	:type DMT: str</span>
+<span class="sd">	:param ta: Path to air temperature layer (raster file). Temperature</span>
+<span class="sd">		(grades of Celsius).</span>
+<span class="sd">	:type ta: str</span>
+
+
+<span class="sd">	**Required parameters: Constants**</span>
+
+<span class="sd">	:param Rs_in: Value of actual incomming global radiation flux </span>
+<span class="sd">		(W.m-2) measured by pyranometer.</span>
+<span class="sd">	:type Rs_in: float</span>
+<span class="sd">	:param Rh: Value of actual air relative humidity (%).</span>
+<span class="sd">	:type Rh: float</span>
+<span class="sd">	:param latitude: Value of mean (center) latitude of area used</span>
+<span class="sd">		for calculation	(dec. grades, e.g.: 49.47575471).</span>
+<span class="sd">	:type latitude: float</span>
+<span class="sd">	:param longitude: Value of mean (center) longitude of area used</span>
+<span class="sd">		for calculation	(dec. grades, e.g.: 15.30221431).</span>
+<span class="sd">	:type longitude: float</span>
+<span class="sd">	:param date_acq: Date of data acquisition (ISO format,</span>
+<span class="sd">		e.g.: &#39;2016-05-09&#39;).</span>
+<span class="sd">	:type date_acq: datetime.date</span>
+<span class="sd">	:param timeGMT: Time of data acquisition in GMT (ISO</span>
+<span class="sd">		format, e.g.: &#39;14:46:00.0000&#39;).</span>
+<span class="sd">	:type timeGMT: datetime.time</span>
+
+
+<span class="sd">	**Required parameters: Outputs**</span>
+
+<span class="sd">	:param output_list: List of output layers file names. Following</span>
+<span class="sd">		names for the output layers should be used:</span>
+<span class="sd">			Rs_in	- Incoming shortwave radiation (W.m-2)</span>
+<span class="sd">			Rs_out	- Reflected shortwave radiation (W.m-2)</span>
+<span class="sd">			albedo	- Albedo (rel.)</span>
+<span class="sd">			RL_in	- Incoming longwave radiation (W.m-2)</span>
+<span class="sd">			RL_emit - Reflected longwave radiation (W.m-2)</span>
+<span class="sd">			Rn	- Total net radiation (W.m-2)</span>
+<span class="sd">			Ts	- Surface temperature (Degree C)</span>
+<span class="sd">			emis	- Surface emissivity (rel.)</span>
+<span class="sd">			LE	- Latent heat flux (W.m-2)</span>
+<span class="sd">			LEp	- Latent heat flux - Penman pot. (W.m-2)</span>
+<span class="sd">			LE_PT	- Latent heat flux - Priestley-Taylor (W.m-2)</span>
+<span class="sd">			H	- Sensible heat flux (W.m-2)</span>
+<span class="sd">			G	- Ground heat flux (W.m-2)</span>
+<span class="sd">			E_int	- Evapotranspiration intensity (mmol.m-2.s-1)</span>
+<span class="sd">			EF	- Evaporative fraction (rel.)</span>
+<span class="sd">			Bowen	- Bowen ratio (-)</span>
+<span class="sd">			omega	- Decoupling coefficient (rel.)</span>
+<span class="sd">			CWSI	- CWSI (-)</span>
+<span class="sd">			frict_U	- Friction velocity (m.s-1)</span>
+<span class="sd">			ra	- Aerodynamic surface resistance (s.m-1)</span>
+<span class="sd">			rc	- Resistance for water vapour transfer (s.m-1)</span>
+<span class="sd">			NDVI	- NDVI (-)</span>
+<span class="sd">			MSAVI	- MSAVI (-)</span>
+<span class="sd">			NDMI	- NDMI (-)</span>
+<span class="sd">			slope	- Slope (Degree)</span>
+<span class="sd">			aspect	- Aspect (Degree)</span>
+<span class="sd">	:type output_list: list</span>
+<span class="sd">	:param output_folder: Path to output folder where the outputs</span>
+<span class="sd">		will be created.</span>
+<span class="sd">	:type output_folder: str</span>
+<span class="sd">	:param out_file_name: Name of exported multiband raster.</span>
+<span class="sd">		Default is None.</span>
+<span class="sd">	:type out_file_name: str</span>
+
+
+<span class="sd">	**Default: Setting**</span>
+
+<span class="sd">	:param method: Setting of calculation method. There are two</span>
+<span class="sd">		calculation methods:</span>
+<span class="sd">		- &#39;aero&#39;: aerodynamic method of calcultaion based</span>
+<span class="sd">				on SEBAL method is used (default)</span>
+<span class="sd">		- &#39;grad&#39;: Method grad is used for calculation based</span>
+<span class="sd">				on gradient approach.</span>
+<span class="sd">		See Manual for more details.</span>
+<span class="sd">	:type method: int</span>
+<span class="sd">	:param sat_type: Setting of satellite type which was used for</span>
+<span class="sd">		calculation. There are three different satellite type:</span>
+<span class="sd">		- &#39;L5&#39;: data from Landsat 5 TM (default);</span>
+<span class="sd">		- &#39;L7&#39;: data from Landsta 7 ETM+;</span>
+<span class="sd">		- &#39;other&#39; - data from other satellite or aerial system.</span>
+<span class="sd">		Satellite type setting is important for albedo calculation.</span>
+<span class="sd">	:type sat_type: int</span>
+<span class="sd">	:param emis_rule: Setting of emissivity calcultaion for correction</span>
+<span class="sd">		of surface temperature layer. There are two variants:</span>
+<span class="sd">		- &#39;No&#39;: No correction on emissivity (default)</span>
+<span class="sd">		- &#39;Yes&#39;: Correction of the surface temperature layer</span>
+<span class="sd">				on emissivity. In case the source data have</span>
+<span class="sd">				emissivity equal to 1.</span>
+<span class="sd">	:type emis_rule: str</span>
+<span class="sd">	:param output_driver: GDAL driver for output files format. Different</span>
+<span class="sd">		formats should be used. GTiff is default.</span>
+<span class="sd">	:type output_driver: str</span>
+<span class="sd">	:param multiband: Option of multiband raster creation. Default is False.</span>
+<span class="sd">	:type multiband: bool</span>
+
+
+<span class="sd">	**Optional: Spectral layers**</span>
+
+<span class="sd">	:param band_blue: Path to raster file in blue region of spectra.</span>
+<span class="sd">		Spectral reflectance (rel.; 0-1).</span>
+<span class="sd">	:type band_blue: str</span>
+<span class="sd">	:param band_green: Path to raster file in green region of spectra.</span>
+<span class="sd">		Spectral reflectance (rel.; 0-1).</span>
+<span class="sd">	:type band_green: str</span>
+<span class="sd">	:param band_sw1: Path to raster file in SWIR region of spectra</span>
+<span class="sd">		(ca 1.61 micro meters). Spectral reflectance (rel.; 0-1).</span>
+<span class="sd">	:type band_sw1: str</span>
+<span class="sd">	:param band_sw2: Path to raster file in SWIR region of spectra</span>
+<span class="sd">		(ca 2.2 micro meters). Spectral reflectance (rel.; 0-1).</span>
+<span class="sd">	:type band_sw2: str</span>
+
+
+<span class="sd">	**Optional: Additional layers**</span>
+
+<span class="sd">	:param U: Path to wind speed layer (raster file). Velocity (m.s-1).</span>
+<span class="sd">		This layer should be set if method aero is used.</span>
+<span class="sd">	:type U: str</span>
+<span class="sd">	:param h_min: Path to minimal vegetation heigth layer (raster file).</span>
+<span class="sd">		Heigth (m). This layer should be set if method aero is used.</span>
+<span class="sd">	:type h_min: str</span>
+<span class="sd">	:param h_max: Path to maximal vegetation heigth layer (raster file).</span>
+<span class="sd">		Heigth (m). This layer should be set if method aero is used.</span>
+<span class="sd">	:type h_max: str</span>
+<span class="sd">	:param mask: Path to mask (raster layer) for the output. Mask should be</span>
+<span class="sd">		real data type. Output layers are multiplied by mask where 0 are nodata </span>
+<span class="sd">		and 1 are data. Mask is used for data export only. Default is None.</span>
+<span class="sd">	:type mask: str</span>
+<span class="sd">	:param albedo: Path to albedo layer (raster file). This option</span>
+<span class="sd">		is used prior to calculation of albedo by SEBCS SA.</span>
+<span class="sd">		Deafult is None.</span>
+<span class="sd">	:type albedo: str</span>
+<span class="sd">	:param canopy: Path to canopy heigth layer. This option is used prior</span>
+<span class="sd">		to calculation of canopy heigth from the min and max heigth values.</span>
+<span class="sd">		Default is None.</span>
+<span class="sd">	type canopy: str</span>
+
+
+<span class="sd">	**Optional: Constants**</span>
+
+<span class="sd">	:param Z_st: Heigth of wind speed heigth measurement (m).</span>
+<span class="sd">		Default is 10 m.</span>
+<span class="sd">	:type Z_st: float</span>
+<span class="sd">	:param Z: Heigth of mixed layer (m). Default is 200 m</span>
+<span class="sd">	:type Z: float</span>
+<span class="sd">	:param cp: Specific heat capacity of dry air (J.kg-1.K-1).</span>
+<span class="sd">		Default cp = 1012 J.kg-1.K-1 </span>
+<span class="sd">	:type cp: float	</span>
+
+
+<span class="sd">	**Returns**</span>
+
+<span class="sd">	:returns: Raster file or files for calculated variables. Number</span>
+<span class="sd">		of outputs and also type of outputs are set by output_list</span>
+<span class="sd">		variable (list of names). Output file(s) is saved into</span>
+<span class="sd">		output_folder.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+				<span class="n">band_red</span><span class="p">,</span> <span class="n">band_nir</span><span class="p">,</span> <span class="n">band_tir</span><span class="p">,</span> <span class="n">DMT</span><span class="p">,</span> <span class="n">ta</span><span class="p">,</span>
+				<span class="n">Rs_in</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Rh</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">latitude</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">longitude</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">date_acq</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">timeGMT</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+				<span class="n">output_list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">output_folder</span> <span class="o">=</span> <span class="s2">&quot;/home&quot;</span><span class="p">,</span> <span class="n">out_file_name</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+				<span class="n">method</span> <span class="o">=</span> <span class="s2">&quot;aero&quot;</span><span class="p">,</span> <span class="n">sat_type</span> <span class="o">=</span> <span class="s2">&quot;L5&quot;</span><span class="p">,</span> <span class="n">emis_rule</span> <span class="o">=</span> <span class="s2">&quot;No&quot;</span><span class="p">,</span> <span class="n">output_driver</span> <span class="o">=</span> <span class="s2">&quot;GTiff&quot;</span><span class="p">,</span> <span class="n">multiband</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+				<span class="n">band_blue</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">band_green</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">band_sw1</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">band_sw2</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+				<span class="n">U</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">h_min</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">h_max</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mask</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">albedo</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">canopy</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+				<span class="n">Z_st</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">Z</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span> <span class="n">cp</span> <span class="o">=</span> <span class="mi">1012</span><span class="p">):</span>
+		
+		<span class="c1"># Variables declaration and import raster files:</span>
+		<span class="c1">## Required layers	</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">band_red</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rasterToArray</span><span class="p">(</span><span class="n">band_red</span><span class="p">)</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">band_red</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Could not open red band&quot;</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">band_nir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rasterToArray</span><span class="p">(</span><span class="n">band_nir</span><span class="p">)</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">band_nir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Could not open NIR band&quot;</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">band_tir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rasterToArray</span><span class="p">(</span><span class="n">band_tir</span><span class="p">)</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">band_tir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Could not open thermal band&quot;</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">DMT</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rasterToArray</span><span class="p">(</span><span class="n">DMT</span><span class="p">)</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">DMT</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Could not open DMT&quot;</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">ta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rasterToArray</span><span class="p">(</span><span class="n">ta</span><span class="p">)</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ta</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Could not open air temperature layer&quot;</span><span class="p">)</span>
+		
+		<span class="c1">## Required constants</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">Rs_in</span> <span class="o">=</span> <span class="n">Rs_in</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Rs_in</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Value of incomming shortwave radiation has not been set&quot;</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">Rh</span> <span class="o">=</span> <span class="n">Rh</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Rh</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Value of air relative humidity has not been set&quot;</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">latitude</span> <span class="o">=</span> <span class="n">latitude</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">latitude</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Latitude has not been set&quot;</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">longitude</span> <span class="o">=</span> <span class="n">longitude</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">longitude</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Longitude has not been set&quot;</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">date_acq</span> <span class="o">=</span> <span class="n">date_acq</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_acq</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Date of data acquisition has not been set&quot;</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">timeGMT</span> <span class="o">=</span> <span class="n">timeGMT</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">timeGMT</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Time of data acquisition has not been set&quot;</span><span class="p">)</span>
+		
+		<span class="c1">## Required paths</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">output_list</span> <span class="o">=</span> <span class="n">output_list</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_list</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;List of output layers has not been set&quot;</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">output_folder</span> <span class="o">=</span> <span class="n">output_folder</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">out_file_name</span> <span class="o">=</span> <span class="n">out_file_name</span>
+		
+		<span class="c1"># Default and otional setting</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">method</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">sat_type</span> <span class="o">=</span> <span class="n">sat_type</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">emis_rule</span> <span class="o">=</span> <span class="n">emis_rule</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">output_driver</span> <span class="o">=</span> <span class="n">output_driver</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">multiband</span> <span class="o">=</span> <span class="n">multiband</span>
+		
+		<span class="c1"># Default and otional layers</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">band_blue</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rasterToArray</span><span class="p">(</span><span class="n">band_blue</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">band_green</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rasterToArray</span><span class="p">(</span><span class="n">band_green</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">band_sw1</span> <span class="o">=</span>	<span class="bp">self</span><span class="o">.</span><span class="n">rasterToArray</span><span class="p">(</span><span class="n">band_sw1</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">band_sw2</span> <span class="o">=</span>	<span class="bp">self</span><span class="o">.</span><span class="n">rasterToArray</span><span class="p">(</span><span class="n">band_sw2</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">U</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rasterToArray</span><span class="p">(</span><span class="n">U</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">h_min</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rasterToArray</span><span class="p">(</span><span class="n">h_min</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">h_max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rasterToArray</span><span class="p">(</span><span class="n">h_max</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">canopy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rasterToArray</span><span class="p">(</span><span class="n">canopy</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rasterToArray</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">albedo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rasterToArray</span><span class="p">(</span><span class="n">albedo</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">Z_st</span> <span class="o">=</span> <span class="n">Z_st</span>
+		
+		<span class="c1"># Constants</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">Z</span> <span class="o">=</span> <span class="n">Z</span>						<span class="c1"># Heigth of mixed layer</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">cp</span> <span class="o">=</span> <span class="n">cp</span>					<span class="c1"># Thermal capacity of dry air</span>
+		
+		<span class="c1"># Check for layers extension</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">in_lyrs_list</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">band_red</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">band_nir</span><span class="p">,</span>
+							<span class="bp">self</span><span class="o">.</span><span class="n">band_tir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">DMT</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ta</span><span class="p">,</span>
+							<span class="bp">self</span><span class="o">.</span><span class="n">band_blue</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">band_green</span><span class="p">,</span>
+							<span class="bp">self</span><span class="o">.</span><span class="n">band_sw1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">band_sw2</span><span class="p">,</span>
+							<span class="bp">self</span><span class="o">.</span><span class="n">h_min</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">h_max</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">canopy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">U</span><span class="p">,</span>
+							<span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">albedo</span><span class="p">]</span>
+
+		
+		<span class="c1"># Input srs and geotransform</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">gtransf</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">srs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">xSize</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ySize</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">EPSG</span> <span class="o">=</span> <span class="n">gio</span><span class="o">.</span><span class="n">readGeo</span><span class="p">(</span><span class="n">band_red</span><span class="p">)</span>		<span class="c1"># Reading geotransformation, SRS and pixel size</span>
+
+		<span class="c1"># Vegetation indices</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">ndvi</span> <span class="o">=</span> <span class="n">vi</span><span class="o">.</span><span class="n">vi_NDVI</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">band_red</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">band_nir</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">msavi</span> <span class="o">=</span> <span class="n">vi</span><span class="o">.</span><span class="n">vi_MSAVI</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">band_red</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">band_nir</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">ndmi</span> <span class="o">=</span> <span class="n">vi</span><span class="o">.</span><span class="n">vi_NDMI</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">band_nir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">band_sw1</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">Fc</span> <span class="o">=</span> <span class="n">vi</span><span class="o">.</span><span class="n">fractVegCover</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ndvi</span><span class="p">)</span>
+		
+		<span class="c1"># Slope and Aspect</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">slope</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">aspect</span> <span class="o">=</span> <span class="n">sr</span><span class="o">.</span><span class="n">slopeAspect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DMT</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">xSize</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ySize</span><span class="p">)</span>
+		<span class="k">except</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">slope</span> <span class="o">=</span> <span class="kc">None</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">aspect</span> <span class="o">=</span> <span class="kc">None</span>
+			
+		<span class="c1"># Surface emissivity</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">emis</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">emissivity</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Fc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">band_red</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ndvi</span><span class="p">)</span>
+		<span class="k">except</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">emis</span> <span class="o">=</span> <span class="kc">None</span>
+			
+		<span class="c1"># Surface temperature</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">ts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">surfaceTemperature</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">band_tir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">emis</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">emis_rule</span><span class="p">)</span>
+			
+		<span class="c1"># Auxiliary variables</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">ta_Z</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">airTemp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Z_st</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ta</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">P_Z</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">airPress</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">DMT</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">P_Zst</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">airPress</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Z_st</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">DMT</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">E_Z_sat</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">satVapourPress</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ta_Z</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">E_Zst_sat</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">satVapourPress</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ta</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">e_Z</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">vapourPress</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">E_Z_sat</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Rh</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">e_Zst</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">vapourPress</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">E_Zst_sat</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Rh</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">VPD</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">vpd</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">E_Z_sat</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">e_Z</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">rho</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">airDensity</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ta_Z</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">latent</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">latent</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ta_Z</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">gamma</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">P_Z</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">latent</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cp</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">delta</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">delta</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ta_Z</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">Es_sat</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">satVapourPress</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ts</span><span class="p">)</span>
+		
+		<span class="c1"># Radiation balance</span>
+		<span class="c1">## Incomming shortwave radiation</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">in_Rs</span> <span class="o">=</span> <span class="n">sr</span><span class="o">.</span><span class="n">solarInTopo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Rs_in</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">slope</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">aspect</span><span class="p">,</span>
+									<span class="bp">self</span><span class="o">.</span><span class="n">latitude</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">longitude</span><span class="p">,</span>
+									<span class="bp">self</span><span class="o">.</span><span class="n">date_acq</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">timeGMT</span><span class="p">)</span>
+		
+		<span class="c1">## Albedo</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">albedo</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">albedo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">albedoCalc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sat_type</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">band_red</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">band_nir</span><span class="p">,</span> 
+									<span class="bp">self</span><span class="o">.</span><span class="n">band_blue</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">band_green</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">band_sw1</span><span class="p">,</span>
+									<span class="bp">self</span><span class="o">.</span><span class="n">band_sw2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ndvi</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">msavi</span><span class="p">)</span>
+		
+		<span class="c1">## Reflected radiation</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">out_Rs</span> <span class="o">=</span> <span class="n">seb</span><span class="o">.</span><span class="n">reflectRs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">in_Rs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">albedo</span><span class="p">)</span>
+		
+		<span class="c1">## Longwave radiation balance</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">RL_in</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">RL_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">longWaveRad</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">e_Z</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ta_Z_K</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ts_K</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">emis</span><span class="p">)</span>
+		
+		<span class="c1">## Net radiation</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">Rn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_Rs</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_Rs</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">RL_in</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">RL_out</span>
+		
+		<span class="c1"># Heat fluxes</span>
+		<span class="c1">## Ground heat flux</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">G</span> <span class="o">=</span> <span class="n">seb</span><span class="o">.</span><span class="n">groundFlux</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ndvi</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Rn</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ts_C</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">albedo</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">Rn_G</span> <span class="o">=</span> <span class="n">seb</span><span class="o">.</span><span class="n">difRn_G</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Rn</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">G</span><span class="p">)</span>
+		
+		<span class="c1">## H, LE, ra, friction velocity</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">H</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">LE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">EF</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ra</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">frict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">heatFluxes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ta_Z</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ts_C</span><span class="p">,</span>
+										<span class="bp">self</span><span class="o">.</span><span class="n">ts_K</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Rn_G</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">albedo</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ndvi</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span><span class="p">,</span>
+										<span class="bp">self</span><span class="o">.</span><span class="n">U</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">canopy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">h_min</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">h_max</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">msavi</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ro</span><span class="p">,</span>
+										<span class="bp">self</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Z_st</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cp</span><span class="p">)</span>
+		<span class="k">except</span><span class="p">:</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Fluxes no&quot;</span><span class="p">)</span>
+		
+		
+		<span class="c1">## Evapotranspiration intensity</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">E_int</span> <span class="o">=</span> <span class="n">seb</span><span class="o">.</span><span class="n">intensityE</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">LE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">latent</span><span class="p">)</span>
+		
+		<span class="c1">## Potential LE</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">LEp</span> <span class="o">=</span> <span class="n">seb</span><span class="o">.</span><span class="n">fluxLE_p</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Rn_G</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">VPD</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ra</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="p">,</span> 
+								<span class="bp">self</span><span class="o">.</span><span class="n">ro</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cp</span><span class="p">)</span>
+								
+		<span class="c1">## Equilibrium LE</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">LE_EQ</span> <span class="o">=</span> <span class="n">seb</span><span class="o">.</span><span class="n">fluxLE_EQ</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Rn_G</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="p">)</span>
+		
+		<span class="c1">## Priestley-Taylor LE (evaporation from wet surface)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">LE_PT</span> <span class="o">=</span> <span class="n">seb</span><span class="o">.</span><span class="n">fluxLE_PT</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">LE_EQ</span><span class="p">)</span>
+		
+		<span class="c1"># Heat flux indices</span>
+		<span class="c1">## Bowen ratio</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">bowen</span> <span class="o">=</span> <span class="n">seb</span><span class="o">.</span><span class="n">bowen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">H</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">LE</span><span class="p">)</span>
+		
+		<span class="c1">## Omega factor (Decoupling coefficient)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="n">seb</span><span class="o">.</span><span class="n">omega</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">LE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">LEp</span><span class="p">)</span>
+		
+		<span class="c1">## rc - surface resistance for water vapour transfer</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">rc</span> <span class="o">=</span> <span class="n">seb</span><span class="o">.</span><span class="n">rs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delta</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">omega</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ra</span><span class="p">)</span>
+		
+		<span class="c1">## CWSI</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">CWSI</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cropWaterStressIndex</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">LEp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ra</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span><span class="p">,</span>
+									<span class="bp">self</span><span class="o">.</span><span class="n">E_Z_sat</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">e_Z</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ro</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta</span><span class="p">,</span>
+									<span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cp</span><span class="p">)</span>
+		
+		<span class="c1"># Data export to raster</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">dataExport</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_list</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_folder</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_driver</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtransf</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">srs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">EPSG</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_file_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">multiband</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">)</span>
+
+	
+<div class="viewcode-block" id="SEBCS_SA.rasterToArray"><a class="viewcode-back" href="../../SEBCSsa.html#scripts.SEBCS_SA.SEBCS_SA.rasterToArray">[docs]</a>	<span class="k">def</span> <span class="nf">rasterToArray</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layer</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Conversion of raster layer to numpy array.</span>
+<span class="sd">		:param layer: Path to raster layer.</span>
+<span class="sd">		:type layer: str</span>
+<span class="sd">		</span>
+<span class="sd">		:return in_layer: raster file converted to numpy array</span>
+<span class="sd">		:type in_layer: numpy.ndarray</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">layer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="n">in_layer</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">ReadAsArray</span><span class="p">(</span><span class="n">gdal</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="n">layer</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+				<span class="n">in_layer</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">in_layer</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">in_layer</span> <span class="o">=</span> <span class="kc">None</span>
+			<span class="k">return</span> <span class="n">in_layer</span>
+		<span class="k">except</span><span class="p">:</span>
+			<span class="n">in_layer</span> <span class="o">=</span> <span class="kc">None</span>
+			<span class="k">return</span> <span class="n">in_layer</span></div>
+
+
+<div class="viewcode-block" id="SEBCS_SA.lyrsExtent"><a class="viewcode-back" href="../../SEBCSsa.html#scripts.SEBCS_SA.SEBCS_SA.lyrsExtent">[docs]</a>	<span class="k">def</span> <span class="nf">lyrsExtent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Check differences between size of the input layers.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		
+		<span class="n">in_lyrs_list_true</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_lyrs_list</span> <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">]</span>	<span class="c1"># List of input layers without empty (None)</span>
+		
+		<span class="n">len_list</span> <span class="o">=</span> <span class="p">[]</span>
+		 
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">in_lyrs_list_true</span><span class="p">:</span>
+			<span class="n">len_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+			
+		<span class="k">if</span> <span class="nb">max</span><span class="p">(</span><span class="n">len_list</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">min</span><span class="p">(</span><span class="n">len_list</span><span class="p">):</span>
+			<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Selected layers differ in spatial extent (number of columns or rows).&quot;</span><span class="p">)</span></div>
+
+	
+<div class="viewcode-block" id="SEBCS_SA.vegIndices"><a class="viewcode-back" href="../../SEBCSsa.html#scripts.SEBCS_SA.SEBCS_SA.vegIndices">[docs]</a>	<span class="k">def</span> <span class="nf">vegIndices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bandRed</span><span class="p">,</span> <span class="n">bandNIR</span><span class="p">,</span> <span class="n">bandSWIR1</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span> 
+		<span class="sd">&quot;&quot;&quot;Vegetation indices calculation.</span>
+<span class="sd">		:param bandRed: Reflectance in red spectral region.</span>
+<span class="sd">		:type bandRed: numpy.ndarray</span>
+<span class="sd">		:param bandNIR: Reflectance in NIR spectral region.</span>
+<span class="sd">		:type bandNIR: numpy.ndarray</span>
+<span class="sd">		:param bandSWIR1: Reflectance in SWIR1 spectral region</span>
+<span class="sd">			(ca 1.6 micro meters).</span>
+<span class="sd">		:type bandSWIR1: numpy.ndarray</span>
+<span class="sd">		</span>
+<span class="sd">		:return ndvi: NDVI according to Tucker (1979).</span>
+<span class="sd">		:rtype ndvi: numpy.ndarray</span>
+<span class="sd">		:return msavi: MSAVI2 according to Qi et al. (1994)</span>
+<span class="sd">		:rtype msavi: numpy.ndarray</span>
+<span class="sd">		:return ndmi: NDMI</span>
+<span class="sd">		:rtype ndmi: numpy.ndarray</span>
+<span class="sd">		:return Fc: Fractional vegetation cover.</span>
+<span class="sd">		:rtype Fc: numpy.ndarray</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		
+		<span class="c1"># NDVI, MSAVI</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">bandRed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">bandNIR</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="n">ndvi</span> <span class="o">=</span> <span class="n">seb</span><span class="o">.</span><span class="n">vi_NDVI</span><span class="p">(</span><span class="n">bandRed</span><span class="p">,</span> <span class="n">bandNIR</span><span class="p">)</span>
+				<span class="n">msavi</span> <span class="o">=</span> <span class="n">seb</span><span class="o">.</span><span class="n">vi_MSAVI</span><span class="p">(</span><span class="n">bandRed</span><span class="p">,</span> <span class="n">bandNIR</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">bandRed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+					<span class="n">ndvi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">bandRED</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+					<span class="n">msavi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">bandRED</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>								
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">ndvi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">bandNIR</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+					<span class="n">msavi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">bandNIR</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+		<span class="k">except</span><span class="p">:</span>
+			<span class="n">ndvi</span> <span class="o">=</span> <span class="kc">None</span>
+			<span class="n">msavi</span> <span class="o">=</span> <span class="kc">None</span>
+					
+		<span class="c1"># NDMI</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">bandNIR</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">bandSWIR1</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="n">ndmi</span> <span class="o">=</span> <span class="n">seb</span><span class="o">.</span><span class="n">vi_NDMI</span><span class="p">(</span><span class="n">bandNIR</span><span class="p">,</span> <span class="n">bandSWIR1</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">bandNIR</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+					<span class="n">ndmi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">bandNIR</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">ndmi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">bandSWIR1</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+		<span class="k">except</span><span class="p">:</span>
+			<span class="n">ndmi</span> <span class="o">=</span> <span class="kc">None</span>
+		
+		<span class="c1"># Fractional vegetation cover</span>
+		<span class="k">if</span> <span class="n">ndvi</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="n">Fc</span> <span class="o">=</span> <span class="n">seb</span><span class="o">.</span><span class="n">fractVegCover</span><span class="p">(</span><span class="n">ndvi</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">Fc</span> <span class="o">=</span> <span class="kc">None</span>
+			
+		<span class="k">return</span> <span class="n">ndvi</span><span class="p">,</span> <span class="n">msavi</span><span class="p">,</span> <span class="n">ndmi</span><span class="p">,</span> <span class="n">Fc</span></div>
+	
+				
+<div class="viewcode-block" id="SEBCS_SA.surfaceTemperature"><a class="viewcode-back" href="../../SEBCSsa.html#scripts.SEBCS_SA.SEBCS_SA.surfaceTemperature">[docs]</a>	<span class="k">def</span> <span class="nf">surfaceTemperature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tir_band</span><span class="p">,</span> <span class="n">emissivity</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">emis_rule</span> <span class="o">=</span> <span class="s2">&quot;No&quot;</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Correction of surface temperature on emissivity.</span>
+<span class="sd">		:param tir_band: Layer of surface temperature (grades of C).</span>
+<span class="sd">		:type tir_band: numpy.ndarray</span>
+<span class="sd">		:param emissivity: Layer of emissivity (rel.).</span>
+<span class="sd">		:type emissivity: numpy.ndarray</span>
+<span class="sd">		:param emis_rule: Setting if the correction will be done or not.</span>
+<span class="sd">			No is default.</span>
+<span class="sd">		:type emis_rule: str</span>
+<span class="sd">		</span>
+<span class="sd">		:return ts_C: Layer of corrected surface temperature (grades C).</span>
+<span class="sd">		:rtype ts_C: numpy.ndarray</span>
+<span class="sd">		:return ts_K: Layer of corrected surface temperature (grades K).</span>
+<span class="sd">		:rtype ts_K: numpy.ndarray</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">tir_band</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">emissivity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">emis_rule</span> <span class="o">!=</span> <span class="s2">&quot;No&quot;</span><span class="p">:</span>
+					<span class="n">ts</span> <span class="o">=</span> <span class="p">((</span><span class="n">tir_band</span> <span class="o">+</span> <span class="mf">273.16</span><span class="p">)</span><span class="o">/</span><span class="n">emissivity</span><span class="o">**</span><span class="mf">0.25</span><span class="p">)</span> <span class="o">-</span> <span class="mf">273.16</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">ts</span> <span class="o">=</span> <span class="n">tir_band</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">tir_band</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+					<span class="n">ts</span> <span class="o">=</span> <span class="n">tir_band</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">ts</span> <span class="o">=</span> <span class="kc">None</span>
+		<span class="k">except</span><span class="p">:</span>
+			<span class="n">ts</span> <span class="o">=</span> <span class="kc">None</span>
+		
+		<span class="k">if</span> <span class="n">ts</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Surface temperature has not been calculated.&quot;</span><span class="p">)</span>
+		
+		<span class="k">return</span> <span class="n">ts</span></div>
+				
+			
+<div class="viewcode-block" id="SEBCS_SA.albedoCalc"><a class="viewcode-back" href="../../SEBCSsa.html#scripts.SEBCS_SA.SEBCS_SA.albedoCalc">[docs]</a>	<span class="k">def</span> <span class="nf">albedoCalc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sat_type</span><span class="p">,</span> <span class="n">band_red</span><span class="p">,</span> <span class="n">band_nir</span><span class="p">,</span> 
+			<span class="n">band_blue</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">band_green</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">band_sw1</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">band_sw2</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+			<span class="n">ndvi</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">msavi</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+				
+		<span class="sd">&quot;&quot;&quot;Calculation of Albedo.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+				
+		<span class="k">try</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">sat_type</span> <span class="o">==</span> <span class="s2">&quot;other&quot;</span> <span class="ow">or</span> <span class="n">band_blue</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">band_green</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">band_sw1</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">band_sw2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">ndvi</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">msavi</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> 
+					<span class="n">albedo</span> <span class="o">=</span> <span class="n">sr</span><span class="o">.</span><span class="n">albedoBrom</span><span class="p">(</span><span class="n">ndvi</span><span class="p">,</span> <span class="n">msavi</span><span class="p">)</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Albedo has not been calculated.&quot;</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">albedo</span> <span class="o">=</span> <span class="n">sr</span><span class="o">.</span><span class="n">albedoLandsat</span><span class="p">(</span><span class="n">band_blue</span><span class="p">,</span> <span class="n">band_green</span><span class="p">,</span> <span class="n">band_red</span><span class="p">,</span> <span class="n">band_nir</span><span class="p">,</span> <span class="n">band_sw1</span><span class="p">,</span> <span class="n">band_sw2</span><span class="p">,</span> <span class="n">sat_type</span><span class="p">)</span>
+		<span class="k">except</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Albedo has not been calculated.&quot;</span><span class="p">)</span>	
+		
+		<span class="k">return</span> <span class="n">albedo</span></div>
+
+
+<div class="viewcode-block" id="SEBCS_SA.longWaveRad"><a class="viewcode-back" href="../../SEBCSsa.html#scripts.SEBCS_SA.SEBCS_SA.longWaveRad">[docs]</a>	<span class="k">def</span> <span class="nf">longWaveRad</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e_Z</span><span class="p">,</span> <span class="n">ta</span><span class="p">,</span> <span class="n">ts</span><span class="p">,</span> <span class="n">emissivity</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Calculation of long wave radiation downward and upward</span>
+<span class="sd">		fluxes.</span>
+<span class="sd">		</span>
+<span class="sd">		:param e_Z: Saturated water vapour pressure (kPa) at Z level</span>
+<span class="sd">			(default at 200 m above surface).</span>
+<span class="sd">		:type e_Z: numpy.ndarray</span>
+<span class="sd">		:param ta_K: Air temperature at level Z (default at 200 m).</span>
+<span class="sd">			in K.</span>
+<span class="sd">		:type ta_K: numpy.ndarray</span>
+<span class="sd">		:param ts_K: Surface temperature in K.</span>
+<span class="sd">		:type ts_K: numpy.ndarray</span>
+<span class="sd">		</span>
+<span class="sd">		:return RL_in: Incomming longwave radiation (W.m-2).</span>
+<span class="sd">		:rtype RL_in: numpy.ndarray</span>
+<span class="sd">		:return RL_out: Emitted longwave radiation (W.m-2).</span>
+<span class="sd">		:rtype RL_out: numpy.ndarray</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		
+		<span class="c1"># Atmospheric emissivity</span>
+		<span class="n">emis_atm</span> <span class="o">=</span> <span class="n">sr</span><span class="o">.</span><span class="n">atmEmissivity</span><span class="p">(</span><span class="n">e_Z</span><span class="p">,</span> <span class="n">ta</span><span class="p">)</span>
+		<span class="n">RL_in</span> <span class="o">=</span> <span class="n">sr</span><span class="o">.</span><span class="n">downRL</span><span class="p">(</span><span class="n">ta</span><span class="p">,</span> <span class="n">emis_atm</span><span class="p">)</span>
+		<span class="n">RL_out</span> <span class="o">=</span> <span class="n">sr</span><span class="o">.</span><span class="n">outRL</span><span class="p">(</span><span class="n">ts</span><span class="p">,</span> <span class="n">emissivity</span><span class="p">)</span>
+		
+		<span class="k">return</span> <span class="n">RL_in</span><span class="p">,</span> <span class="n">RL_out</span></div>
+		
+
+<div class="viewcode-block" id="SEBCS_SA.heatFluxes"><a class="viewcode-back" href="../../SEBCSsa.html#scripts.SEBCS_SA.SEBCS_SA.heatFluxes">[docs]</a>	<span class="k">def</span> <span class="nf">heatFluxes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ta_Z</span><span class="p">,</span> <span class="n">ts_C</span><span class="p">,</span> <span class="n">ts_K</span><span class="p">,</span> <span class="n">Rn_G</span><span class="p">,</span> <span class="n">albedo</span><span class="p">,</span> <span class="n">ndvi</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="s2">&quot;aero&quot;</span><span class="p">,</span>
+					<span class="n">U</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">canopy</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">h_min</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">h_max</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">msavi</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ro</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+					<span class="n">Z</span> <span class="o">=</span> <span class="mf">200.0</span><span class="p">,</span> <span class="n">Z_st</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="n">cp</span> <span class="o">=</span> <span class="mf">1012.0</span><span class="p">):</span>
+						
+		<span class="sd">&quot;&quot;&quot;Calculation of heat fluxes using aerodynamic or gradient</span>
+<span class="sd">		method.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+
+		<span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;aero&quot;</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">U</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Missing data. SEBCS can not calculate heat fluxes.&quot;</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">canopy</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+					<span class="k">if</span> <span class="n">h_min</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">h_max</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+						<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Missing data. SEBCS can not calculate heat fluxes.&quot;</span><span class="p">)</span>
+					<span class="k">else</span><span class="p">:</span>
+						<span class="n">h_eff</span> <span class="o">=</span> <span class="n">seb</span><span class="o">.</span><span class="n">vegHeight</span><span class="p">(</span><span class="n">h_min</span><span class="p">,</span> <span class="n">h_max</span><span class="p">,</span> <span class="n">msavi</span><span class="p">)</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">h_eff</span> <span class="o">=</span> <span class="n">canopy</span>
+				<span class="n">disp</span> <span class="o">=</span> <span class="n">seb</span><span class="o">.</span><span class="n">zeroPlaneDis</span><span class="p">(</span><span class="n">h_eff</span><span class="p">)</span>
+				<span class="n">z0m</span> <span class="o">=</span> <span class="n">seb</span><span class="o">.</span><span class="n">z0m</span><span class="p">(</span><span class="n">ndvi</span><span class="p">,</span> <span class="n">albedo</span><span class="p">)</span>
+				<span class="n">z0h</span> <span class="o">=</span> <span class="n">seb</span><span class="o">.</span><span class="n">z0h</span><span class="p">(</span><span class="n">z0m</span><span class="p">)</span>
+				<span class="n">Z_d</span> <span class="o">=</span> <span class="n">seb</span><span class="o">.</span><span class="n">z_d</span><span class="p">(</span><span class="n">Z</span><span class="p">,</span> <span class="n">disp</span><span class="p">)</span>
+				<span class="n">Z_d_z0m</span> <span class="o">=</span> <span class="n">seb</span><span class="o">.</span><span class="n">ln_z_d_z0</span><span class="p">(</span><span class="n">Z_d</span><span class="p">,</span> <span class="n">z0m</span><span class="p">)</span>
+				<span class="n">Z_d_z0h</span> <span class="o">=</span> <span class="n">seb</span><span class="o">.</span><span class="n">ln_z_d_z0</span><span class="p">(</span><span class="n">Z_d</span><span class="p">,</span> <span class="n">z0h</span><span class="p">)</span>
+				<span class="n">U_Z</span> <span class="o">=</span> <span class="n">seb</span><span class="o">.</span><span class="n">windSpeedZ</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">Z_st</span><span class="p">)</span>
+				<span class="n">psi_m</span><span class="p">,</span> <span class="n">psi_h</span><span class="p">,</span> <span class="n">frict</span> <span class="o">=</span> <span class="n">seb</span><span class="o">.</span><span class="n">stabCoef</span><span class="p">(</span><span class="n">U_Z</span><span class="p">,</span> <span class="n">ta_Z</span><span class="p">,</span> <span class="n">ts_C</span><span class="p">,</span> <span class="n">Z_d</span><span class="p">,</span> <span class="n">Z_d_z0m</span><span class="p">,</span> <span class="n">Z_d_z0h</span><span class="p">)</span>
+				<span class="n">ra</span> <span class="o">=</span> <span class="n">seb</span><span class="o">.</span><span class="n">raThom</span><span class="p">(</span><span class="n">U_Z</span><span class="p">,</span> <span class="n">psi_m</span><span class="p">,</span> <span class="n">psi_h</span><span class="p">,</span> <span class="n">Z_d_z0m</span><span class="p">,</span> <span class="n">Z_d_z0h</span><span class="p">)</span>
+				<span class="n">Tmax</span> <span class="o">=</span> <span class="n">seb</span><span class="o">.</span><span class="n">maxT</span><span class="p">(</span><span class="n">Rn_G</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="n">ta_Z</span><span class="p">,</span> <span class="n">ro</span><span class="p">,</span> <span class="n">cp</span><span class="p">)</span>
+				<span class="n">L_dry</span> <span class="o">=</span> <span class="n">seb</span><span class="o">.</span><span class="n">dryL</span><span class="p">(</span><span class="n">frict</span><span class="p">,</span> <span class="n">ro</span><span class="p">,</span> <span class="n">ta_Z</span><span class="p">,</span> <span class="n">Rn_G</span><span class="p">,</span> <span class="n">cp</span><span class="p">)</span>
+				<span class="n">FL</span> <span class="o">=</span> <span class="n">seb</span><span class="o">.</span><span class="n">functFL</span><span class="p">(</span><span class="n">L_dry</span><span class="p">,</span> <span class="n">frict</span><span class="p">,</span> <span class="n">ra</span><span class="p">)</span>
+				<span class="n">dT_dry</span> <span class="o">=</span> <span class="n">seb</span><span class="o">.</span><span class="n">dTdry</span><span class="p">(</span><span class="n">FL</span><span class="p">,</span> <span class="n">ts_K</span><span class="p">)</span>
+				<span class="n">dT_b</span> <span class="o">=</span> <span class="n">seb</span><span class="o">.</span><span class="n">coef_b</span><span class="p">(</span><span class="n">Tmax</span><span class="p">,</span> <span class="n">ta_Z</span><span class="p">,</span> <span class="n">dT_dry</span><span class="p">)</span>
+				<span class="n">dT_a</span> <span class="o">=</span> <span class="n">seb</span><span class="o">.</span><span class="n">coef_a</span><span class="p">(</span><span class="n">ta_Z</span><span class="p">,</span> <span class="n">dT_b</span><span class="p">)</span>
+				<span class="n">dT</span> <span class="o">=</span> <span class="n">seb</span><span class="o">.</span><span class="n">dT</span><span class="p">(</span><span class="n">ts_K</span><span class="p">,</span> <span class="n">dT_a</span><span class="p">,</span> <span class="n">dT_b</span><span class="p">)</span>
+			
+				<span class="n">H</span> <span class="o">=</span> <span class="n">seb</span><span class="o">.</span><span class="n">fluxHAer</span><span class="p">(</span><span class="n">ra</span><span class="p">,</span> <span class="n">ro</span><span class="p">,</span> <span class="n">dT</span><span class="p">,</span> <span class="n">cp</span><span class="p">)</span>
+				<span class="n">LE</span> <span class="o">=</span> <span class="n">seb</span><span class="o">.</span><span class="n">fluxLE</span><span class="p">(</span><span class="n">Rn_G</span><span class="p">,</span> <span class="n">H</span><span class="p">)</span>
+				<span class="n">EF</span> <span class="o">=</span> <span class="n">seb</span><span class="o">.</span><span class="n">aeroEF</span><span class="p">(</span><span class="n">LE</span><span class="p">,</span> <span class="n">Rn_G</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">EF</span> <span class="o">=</span> <span class="n">seb</span><span class="o">.</span><span class="n">gradEF</span><span class="p">(</span><span class="n">ts_C</span><span class="p">,</span> <span class="n">ta_Z</span><span class="p">)</span>
+			<span class="n">LE</span> <span class="o">=</span> <span class="n">seb</span><span class="o">.</span><span class="n">gradLE</span><span class="p">(</span><span class="n">EF</span><span class="p">,</span> <span class="n">Rn_G</span><span class="p">)</span>
+			<span class="n">H</span> <span class="o">=</span> <span class="n">seb</span><span class="o">.</span><span class="n">gradH</span><span class="p">(</span><span class="n">LE</span><span class="p">,</span> <span class="n">Rn_G</span><span class="p">)</span>
+			<span class="n">ra</span> <span class="o">=</span> <span class="n">seb</span><span class="o">.</span><span class="n">raGrad</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">ro</span><span class="p">,</span> <span class="n">ts_C</span><span class="p">,</span> <span class="n">ta_Z</span><span class="p">,</span> <span class="n">cp</span><span class="p">)</span>
+			<span class="n">frict</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">ra</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="c1"># 	except:</span>
+<span class="c1"># 			raise Exception(&quot;Heat fluxes has not been calculated.&quot;)</span>
+			
+		<span class="k">return</span> <span class="n">H</span><span class="p">,</span> <span class="n">LE</span><span class="p">,</span> <span class="n">EF</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="n">frict</span></div>
+			
+		
+<div class="viewcode-block" id="SEBCS_SA.dataExport"><a class="viewcode-back" href="../../SEBCSsa.html#scripts.SEBCS_SA.SEBCS_SA.dataExport">[docs]</a>	<span class="k">def</span> <span class="nf">dataExport</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_list_names</span><span class="p">,</span> <span class="n">out_folder</span><span class="p">,</span> <span class="n">driver</span><span class="p">,</span> <span class="n">gtransf</span><span class="p">,</span> <span class="n">prj</span><span class="p">,</span>
+					<span class="n">EPSG</span><span class="p">,</span> <span class="n">out_file_name</span><span class="p">,</span> <span class="n">multiband</span><span class="p">,</span> <span class="n">mask</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Export output layers.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		
+		<span class="n">out_names_all</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Rs_in&quot;</span><span class="p">,</span> <span class="s2">&quot;Rs_out&quot;</span><span class="p">,</span> <span class="s2">&quot;albedo&quot;</span><span class="p">,</span> <span class="s2">&quot;RL_in&quot;</span><span class="p">,</span> <span class="s2">&quot;RL_emit&quot;</span><span class="p">,</span> <span class="s2">&quot;Rn&quot;</span><span class="p">,</span> 
+					   <span class="s2">&quot;Ts&quot;</span><span class="p">,</span> <span class="s2">&quot;emis&quot;</span><span class="p">,</span> <span class="s2">&quot;LE&quot;</span><span class="p">,</span> <span class="s2">&quot;LEp&quot;</span><span class="p">,</span> <span class="s2">&quot;LE_PT&quot;</span><span class="p">,</span> <span class="s2">&quot;H&quot;</span><span class="p">,</span> <span class="s2">&quot;G&quot;</span><span class="p">,</span> <span class="s2">&quot;E_int&quot;</span><span class="p">,</span> 
+					   <span class="s2">&quot;EF&quot;</span><span class="p">,</span> <span class="s2">&quot;Bowen&quot;</span><span class="p">,</span> <span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;CWSI&quot;</span><span class="p">,</span> <span class="s2">&quot;frict_U&quot;</span><span class="p">,</span> <span class="s2">&quot;ra&quot;</span><span class="p">,</span>
+					   <span class="s2">&quot;rc&quot;</span><span class="p">,</span> <span class="s2">&quot;NDVI&quot;</span><span class="p">,</span> <span class="s2">&quot;MSAVI&quot;</span><span class="p">,</span> <span class="s2">&quot;NDMI&quot;</span><span class="p">,</span> <span class="s2">&quot;slope&quot;</span><span class="p">,</span> <span class="s2">&quot;aspect&quot;</span><span class="p">)</span>
+		<span class="n">out_lyrs_all</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">in_Rs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_Rs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">albedo</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">RL_in</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">RL_out</span><span class="p">,</span>
+						<span class="bp">self</span><span class="o">.</span><span class="n">Rn</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ts_C</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">emis</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">LE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">LEp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">LE_PT</span><span class="p">,</span>
+						<span class="bp">self</span><span class="o">.</span><span class="n">H</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">G</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">E_int</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">EF</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bowen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">omega</span><span class="p">,</span>
+						<span class="bp">self</span><span class="o">.</span><span class="n">CWSI</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">frict</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ra</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ndvi</span><span class="p">,</span>
+						<span class="bp">self</span><span class="o">.</span><span class="n">msavi</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ndmi</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">slope</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">aspect</span><span class="p">)</span>
+		
+		<span class="n">out_lyrs</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="n">out_names</span> <span class="o">=</span> <span class="p">[]</span>
+		
+		<span class="c1"># Create list of output layers indices</span>
+		<span class="n">index_list</span> <span class="o">=</span> <span class="p">[]</span>
+		
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">out_names_all</span><span class="p">:</span>
+			<span class="n">rule</span> <span class="o">=</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">output_list_names</span>
+			<span class="k">if</span> <span class="n">rule</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+				<span class="n">index_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">out_names_all</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+		
+		<span class="c1"># Export rasters:</span>
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">index_list</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">out_lyrs_all</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="c1"># Chose correct layer and its name and path and create list</span>
+				<span class="c1"># of out lyrs and its names</span>
+				
+				<span class="n">out_lyrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">out_lyrs_all</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+				<span class="n">out_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">out_names_all</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+		
+		<span class="c1"># Mask application</span>
+		<span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">out_lyrs</span><span class="p">)):</span>
+				<span class="n">out_lyrs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">out_lyrs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">mask</span>
+		
+		<span class="c1"># Replace nan and inf values in output lyrs by zero.</span>
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">out_lyrs</span><span class="p">)):</span>
+			<span class="n">out_lyrs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">out_lyrs</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+			<span class="n">out_lyrs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">out_lyrs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">out_lyrs</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+			<span class="n">out_lyrs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">out_lyrs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">out_lyrs</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+			<span class="n">out_lyrs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">out_lyrs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">out_lyrs</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+				
+		<span class="c1"># Export data</span>
+		<span class="n">seb</span><span class="o">.</span><span class="n">arrayToRast</span><span class="p">(</span><span class="n">out_lyrs</span><span class="p">,</span> <span class="n">out_names</span><span class="p">,</span> <span class="n">prj</span><span class="p">,</span> <span class="n">gtransf</span><span class="p">,</span> <span class="n">EPSG</span><span class="p">,</span> <span class="n">out_folder</span><span class="p">,</span>
+						<span class="n">driver</span><span class="p">,</span> <span class="n">out_file_name</span><span class="p">,</span> <span class="n">multiband</span><span class="p">)</span></div></div>
+			
+
+<span class="c1"># if __name__ == &quot;__main__&quot;:</span>
+<span class="c1"># 	band_red = &quot;B3.tif&quot;</span>
+<span class="c1"># 	band_nir = &quot;B4.tif&quot;</span>
+<span class="c1"># 	band_tir = &quot;Ts.tif&quot;</span>
+<span class="c1"># 	DMT = &quot;DMT.tif&quot;</span>
+<span class="c1"># 	ta = &quot;Ta_2m.tif&quot;</span>
+<span class="c1"># 	Rs_in = 600</span>
+<span class="c1"># 	Rh = 50</span>
+<span class="c1"># 	latitude = 49.50833</span>
+<span class="c1"># 	longitude = 15.50833</span>
+<span class="c1"># 	date_acq = &quot;2009-06-14&quot;</span>
+<span class="c1"># 	timeGMT = &quot;9:53:0.000&quot;</span>
+<span class="c1"># 	output_list = [&quot;Rs_in&quot;]</span>
+<span class="c1"># 	output_folder = os.path.join(os.path.dirname(__file__), &quot;vystup&quot;)</span>
+<span class="c1"># 	out_file_name = &quot;pokus1&quot;</span>
+<span class="c1"># 	method=&quot;aero&quot;</span>
+<span class="c1"># 	sat_type=&quot;L5&quot;</span>
+<span class="c1"># 	emis_rule=&quot;No&quot;</span>
+<span class="c1"># 	output_driver=&quot;GTiff&quot;</span>
+<span class="c1"># 	multiband = False</span>
+<span class="c1"># 	band_blue = &quot;B1.tif&quot;</span>
+<span class="c1"># 	band_green=&quot;B2.tif&quot;</span>
+<span class="c1"># 	band_sw1=&quot;B5.tif&quot;</span>
+<span class="c1"># 	band_sw2=&quot;B7.tif&quot;</span>
+<span class="c1"># 	U= &quot;U_2.tif&quot;</span>
+<span class="c1"># 	h_min = &quot;LU_min.tif&quot;</span>
+<span class="c1"># 	h_max = &quot;LU_max.tif&quot;</span>
+<span class="c1"># 	mask = &quot;maska.tif&quot;</span>
+<span class="c1"># 	Z_st = 2</span>
+<span class="c1"># 	albedo = None</span>
+<span class="c1"># 	</span>
+<span class="c1"># 	SEBCS_SA(band_red, band_nir, band_tir, DMT, ta,</span>
+<span class="c1"># 				Rs_in, Rh, latitude, longitude, date_acq, timeGMT,</span>
+<span class="c1"># 				output_list, output_folder, out_file_name,</span>
+<span class="c1"># 				method, sat_type, emis_rule, output_driver, multiband,</span>
+<span class="c1"># 				band_blue, band_green, band_sw1, band_sw2,</span>
+<span class="c1"># 				U, h_min, h_max, mask, albedo,</span>
+<span class="c1"># 				Z_st)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SEBCS beta documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2013-2019, Jakub Brom, University of South Bohemia in Ceske Budejovice, Faculty of Agriculture.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

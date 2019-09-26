@@ -13,7 +13,7 @@ Contents:
 
    tutorial
    SEBCSlib
-   SEBCS_SA
+   SEBCSsa
 
 
 Indices and tables
