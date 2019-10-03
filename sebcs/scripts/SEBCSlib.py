@@ -606,8 +606,10 @@ class VegIndices:
 
 		try:
 			ndvi = (nir - red) / (nir + red)
-			ndvi[ndvi == np.inf] = 0  # replacement inf values by 0
-			ndvi[ndvi == -np.inf] = 0  # replacement -inf values by 0
+			ndvi = np.where(ndvi == np.inf, 0, ndvi)  # replacement inf values
+			# by 0
+			ndvi = np.where(ndvi == -np.inf, 0, ndvi)  # replacement -inf
+		# values by 0
 		except ArithmeticError:
 			raise ArithmeticError("NDVI has not been calculated.")
 
@@ -615,7 +617,7 @@ class VegIndices:
 
 	def viSAVI(self, red, nir, L=0.5):
 		"""
-		Soil Adjusted Vegetation Index - SAVI.
+		Soil Adjusted Vegetation Index - SAVI (Huete, 1988).
 
 		:param red: Spectral reflectance in RED region (rel.)
 		:type red: numpy.ndarray
@@ -626,10 +628,46 @@ class VegIndices:
 
 		:return: Soil Adjusted Vegetation Index - SAVI (unitless)
 		:rtype: numpy.ndarray
+
+		\n
+		**References**\n
+		*Huete A.R. (1988): A soil-adjusted vegetation index (SAVI) Remote
+		Sensing of Environment 27, 47-57.*
 		"""
 
 		ignore_zero = np.seterr(all="ignore")
 		
+		try:
+			savi = (1 + L) * (nir - red) / (L + nir + red)
+		except ArithmeticError:
+			raise ArithmeticError("SAVI has not been calculated.")
+
+		return savi
+
+	def viOSAVI(self, red, nir, L=0.16):
+		"""
+		Optimized Soil Adjusted Vegetation Index - OSAVI (Rondeaux et al. (
+		1996)).
+
+		:param red: Spectral reflectance in RED region (rel.)
+		:type red: numpy.ndarray
+		:param nir: Spectral reflectance in NIR region (rel.)
+		:type nir: numpy.ndarray
+		:param L: Parameter L. Default L=0.5
+		:type L: float
+
+		:return: Soil Adjusted Vegetation Index - OSAVI (unitless)
+		:rtype: numpy.ndarray
+
+		\n
+		**References**\n
+		*Rondeaux G., Steven M., Baret F. (1996): Optimisation of
+		soil-adjusted vegetation indices Remote Sensing of Environment,
+		55 (1996), pp. 95-107*
+		"""
+
+		ignore_zero = np.seterr(all="ignore")
+
 		try:
 			savi = (1 + L) * (nir - red) / (L + nir + red)
 		except ArithmeticError:
@@ -664,7 +702,7 @@ class VegIndices:
 
 	def viMSAVI(self, red, nir):
 		"""
-		Modified Soil Adjusted Vegetation Index - SAVI.
+		Modified Soil Adjusted Vegetation Index - MSAVI (Qi et al. 1994).
 
 		:param red: Spectral reflectance in RED region (rel.)
 		:type red: numpy.ndarray
@@ -673,6 +711,13 @@ class VegIndices:
 
 		:return: Modified Soil Adjusted Vegetation Index - SAVI (unitless)
 		:rtype: numpy.ndarray
+
+		\n
+		**References**
+		*Qi, J., Chehbouni, A., Huete, A.R., Kerr, Y.H., Sorooshian, S.,
+		1994. A modified soil adjusted vegetation index. Remote Sensing of
+		Environment 48, 119–126. https://doi.org/10.1016/0034-4257(94)90134-1
+*
 		"""
 
 		ignore_zero = np.seterr(all="ignore")  # ignoring exceptions with dividing by zero
@@ -704,6 +749,106 @@ class VegIndices:
 			                      "calculated.")
 
 		return Fc
+
+	def LAI(self, red, nir, method=3):
+		"""
+
+		:param red: Spectral reflectance in RED region (rel.)
+		:type red: numpy.ndarray
+		:param nir: Spectral reflectance in NIR region (rel.)
+		:type nir: numpy.ndarray
+		:param method: Method of LAI calculation. Following methods are
+		available:\
+			1: Pôças\
+			2: Bastiaanssen'\
+			3: Jafaar (default)\
+			4: Anderson\
+			5: vineyard\
+			6: Carrasco\
+			7: Turner\
+		:type: int
+
+		:return: Leaf Area Index (LAI) :math:`(m^2.m^{-2})`
+		:rtype: numpy.ndarray
+
+		\n
+		**References**
+		*Anderson, M., Neale, C., Li, F., Norman, J., Kustas, W., Jayanthi,
+		H., Chavez, J., 2004. Upscaling ground observations of vegetation
+		water content, canopy height, and leaf area index during SMEX02 using
+		aircraft and Landsat imagery. Remote Sensing of Environment 92,
+		447–464. https://doi.org/10.1016/j.rse.2004.03.019
+		Bastiaanssen, W.G.M., Menenti, M., Feddes, R.A., Holtslag, A.A.M.,
+		1998. A remote sensing surface energy balance algorithm for land (
+		SEBAL). 1. Formulation. Journal of Hydrology 212–213, 198–212.
+		https://doi.org/10.1016/S0022-1694(98)00253-4
+		Carrasco-Benavides, M., Ortega-Farías, S., Lagos, L., Kleissl, J.,
+		Morales-Salinas, L., Kilic, A., 2014. Parameterization of the
+		Satellite-Based Model (METRIC) for the Estimation of Instantaneous
+		Surface Energy Balance Components over a Drip-Irrigated Vineyard.
+		Remote Sensing 6, 11342–11371. https://doi.org/10.3390/rs61111342
+		Jaafar, H.H., Ahmad, F.A., 2019. Time series trends of Landsat-based
+		ET using automated calibration in METRIC and SEBAL: The Bekaa
+		Valley, Lebanon. Remote Sensing of Environment S0034425718305947.
+		https://doi.org/10.1016/j.rse.2018.12.033
+		Pôças, I., Paço, T.A., Cunha, M., Andrade, J.A., Silvestre, J.,
+		Sousa, A., Santos, F.L., Pereira, L.S., Allen, R.G., 2014.
+		Satellite-based evapotranspiration of a super-intensive olive
+		orchard:  Application of METRIC algorithms. Biosystems Engineering
+		128, 69–81. https://doi.org/10.1016/j.biosystemseng.2014.06.019
+		Turner, D.P., Cohen, W.B., Kennedy, R.E., Fassnacht, K.S., Briggs,
+		J.M., 1999. Relationships between Leaf Area Index and Landsat TM
+		Spectral Vegetation Indices across Three Temperate Zone Sites.
+		Remote Sensing of Environment 70, 52–68.
+		https://doi.org/10.1016/S0034-4257(99)00057-7*
+		"""
+
+		savi = self.viSAVI(red, nir, 0.5)
+		ndvi = self.viNDVI(red, nir)
+		osavi = self.viOSAVI(red, nir)
+		msavi = self.viMSAVI(red, nir)
+		# methods = {1:'Pôças', 2:'Bastiaanssen', 3:'Jafaar', 4:'Anderson',
+		# 5:'vineyard', 6:'Carrasco', 7:'Turner'}
+
+		if method is 1:
+			LAI = np.where(savi > 0, 11.0 * savi**3, 0)
+			LAI = np.where(savi > 0.817, 6, LAI)
+
+		elif method is 2:
+			LAI = np.where(savi > 0, np.log((0.61 - savi)/0.51)/0.91 * (-1), 0)
+			LAI = np.where(savi >= 0.61, 6, LAI)
+
+		elif method is 3:
+			LAI_1 = np.where(savi > 0, 11.0 * savi ** 3, 0)
+			LAI_1 = np.where(savi > 0.817, 6, LAI_1)
+
+			LAI_2 = np.where(savi > 0, np.log((0.61 - savi) / 0.51) / 0.91 * (
+				-1), 0)
+			LAI_2 = np.where(savi >= 0.61, 6, LAI_2)
+
+			LAI = (LAI_1 + LAI_2)/2
+
+		elif method is 4:
+			LAI = (4 * osavi - 0.8) * (1 + 4.73e-6 * np.exp(15.64 * osavi))
+
+		elif method is 5:
+			LAI = 4.9 * ndvi -0.46
+
+		elif method is 6:
+			LAI = 1.2 - 3.08 * np.exp(-2013.35 * ndvi**6.41)
+
+		elif method is 7:
+			LAI = 0.5724 + 0.0989 * ndvi - 0.0114 * ndvi**2 + 0.0004 * ndvi**3
+
+		# elif method is 8:
+		# 	LAI = 6.0/(1 + np.exp(-(8 * savi - 5)))
+		# 	# Method proposed by Brom (mathematical deffinition only,
+		# 	not tested). Good approximation with another methods (1, 2, 3) but
+		# 	this method	is very sensitive on parameters in exponent
+
+		LAI = np.where(LAI <= 0, 0, LAI)
+
+		return LAI
 
 
 # noinspection PyMethodMayBeStatic,PyUnusedLocal
@@ -1432,6 +1577,7 @@ class WindStability(MeteoFeatures, HeatFluxes, VegIndices):
 		h_eff = h_min + (msavi - minmsavi) / (minmsavi - maxmsavi) * (h_min - h_max)
 		return h_eff
 
+
 	def zeroPlaneDis(self, h_eff):
 		"""
 		Zero plane displacement (m).
@@ -1458,8 +1604,8 @@ class WindStability(MeteoFeatures, HeatFluxes, VegIndices):
 
 		return z0m
 
-	def z0m(self, method=1, h_eff=None, band3=None, band4=None, ca=0.003,
-	        cb=5.26, cm=1.096, cn=-3.037, L=0.5):
+	def z0m(self, method=1, h_eff=None, red=None, nir=None, albedo=None,
+	        ca=0.003, cb=5.26, cm=1.096, cn=-3.037, L=0.5):
 		"""
 		Aerodynamic roughness of the surface for momentum transfer (m).
 		z0m can be calculated according to three different approaches:\n
@@ -1469,8 +1615,8 @@ class WindStability(MeteoFeatures, HeatFluxes, VegIndices):
 
 		:param method:
 		:param h_eff:
-		:param band3:
-		:param band4:
+		:param red:
+		:param nir:
 		:param ca:
 		:param cb:
 		:param cm:
@@ -1479,6 +1625,8 @@ class WindStability(MeteoFeatures, HeatFluxes, VegIndices):
 		:return:
 
 		TODO doplnit citace.
+		TODO doplnit do nastaveni metody vypoctu z0m
+		TODO ověřit METRIC verzi - výsledky jsou dost podivný....
 		"""
 
 		try:
@@ -1486,17 +1634,17 @@ class WindStability(MeteoFeatures, HeatFluxes, VegIndices):
 				z0m = h_eff * 0.123
 
 			elif method is 2:                               # Allen
-				savi = self.viSAVI(band3, band4, L)
+				savi = self.viSAVI(red, nir, L)
 				z0m = ca * np.exp(cb * savi)
 
 			else:                                           # METRIC
-				ndvi = self.viNDVI(band3, band4)
+				ndvi = self.viNDVI(red, nir)
 				z0m = np.exp(cm * ndvi / albedo + cn)
 				z0m = np.where(z0m < 0.001, 0.001, z0m)
+
 		except ArithmeticError:
 			raise ArithmeticError("Aerodynamic roughness of the surface for "
 			                      "momentum transfer has not been calculated")
-
 		return z0m
 
 	def z0h(self, z0m):
