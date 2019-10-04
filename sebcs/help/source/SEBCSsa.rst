@@ -1,7 +1,7 @@
-Documentation of SEBCS_SA
-=========================
+Documentation of SEBCS_main
+===========================
 
-SEBCS_SA includes some usable functions:-)
+SEBCS_main includes some usable functions:-)
 
-.. automodule:: scripts.SEBCS_SA
+.. automodule:: scripts.SEBCS_main
     :members:

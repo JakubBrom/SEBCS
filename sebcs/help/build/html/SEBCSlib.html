@@ -75,14 +75,14 @@
   <div class="section" id="documentation-of-sebcs-methods-library">
 <h1>Documentation of SEBCS methods library<a class="headerlink" href="#documentation-of-sebcs-methods-library" title="Permalink to this headline">¶</a></h1>
 <p>SEBCS library includes some usable functions:-)</p>
-<span class="target" id="module-scripts.SEBCSlib"></span><dl class="class">
-<dt id="scripts.SEBCSlib.GeoIO">
-<em class="property">class </em><code class="descclassname">scripts.SEBCSlib.</code><code class="descname">GeoIO</code><a class="reference internal" href="_modules/scripts/SEBCSlib.html#GeoIO"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.GeoIO" title="Permalink to this definition">¶</a></dt>
+<span class="target" id="module-scripts.SEBCS_lib"></span><dl class="class">
+<dt id="scripts.SEBCS_lib.GeoIO">
+<em class="property">class </em><code class="descclassname">scripts.SEBCS_lib.</code><code class="descname">GeoIO</code><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#GeoIO"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.GeoIO" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class includes functions for reading of geotransformation features
 from raster and for writing ne rasters from numpy arrays.</p>
 <dl class="method">
-<dt id="scripts.SEBCSlib.GeoIO.arrayToRast">
-<code class="descname">arrayToRast</code><span class="sig-paren">(</span><em>arrays</em>, <em>names</em>, <em>prj</em>, <em>gtransf</em>, <em>EPSG</em>, <em>out_folder</em>, <em>driver_name='GTiff'</em>, <em>out_file_name=None</em>, <em>multiband=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#GeoIO.arrayToRast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.GeoIO.arrayToRast" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.GeoIO.arrayToRast">
+<code class="descname">arrayToRast</code><span class="sig-paren">(</span><em>arrays</em>, <em>names</em>, <em>prj</em>, <em>gtransf</em>, <em>EPSG</em>, <em>out_folder</em>, <em>driver_name='GTiff'</em>, <em>out_file_name=None</em>, <em>multiband=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#GeoIO.arrayToRast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.GeoIO.arrayToRast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Export numpy 2D arrays to multiband or singleband raster
 files. Following common raster formats are accepted for export:</p>
 <ul class="simple">
@@ -120,8 +120,8 @@ files. Following common raster formats are accepted for export:</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.GeoIO.readGeo">
-<code class="descname">readGeo</code><span class="sig-paren">(</span><em>rast</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#GeoIO.readGeo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.GeoIO.readGeo" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.GeoIO.readGeo">
+<code class="descname">readGeo</code><span class="sig-paren">(</span><em>rast</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#GeoIO.readGeo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.GeoIO.readGeo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reading geographical information from raster using
 GDAL.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -157,8 +157,8 @@ GDAL.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="scripts.SEBCSlib.HeatFluxes">
-<em class="property">class </em><code class="descclassname">scripts.SEBCSlib.</code><code class="descname">HeatFluxes</code><a class="reference internal" href="_modules/scripts/SEBCSlib.html#HeatFluxes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.HeatFluxes" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.HeatFluxes">
+<em class="property">class </em><code class="descclassname">scripts.SEBCS_lib.</code><code class="descname">HeatFluxes</code><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#HeatFluxes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.HeatFluxes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculation of heat fluxes and heat balance features from spectral
 and thermal spatial data and meteorological measurements. The class
 contains a set of methods for calculation heat balance, e.g. ground
@@ -167,8 +167,8 @@ omega factor (decoupling coefficient), surface resistance for water
 vapour transfer etc. Calculation for both aerodynamic and gradient
 method is included.</p>
 <dl class="method">
-<dt id="scripts.SEBCSlib.HeatFluxes.aeroEF">
-<code class="descname">aeroEF</code><span class="sig-paren">(</span><em>LE</em>, <em>Rn</em>, <em>G</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#HeatFluxes.aeroEF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.HeatFluxes.aeroEF" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.HeatFluxes.aeroEF">
+<code class="descname">aeroEF</code><span class="sig-paren">(</span><em>LE</em>, <em>Rn</em>, <em>G</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#HeatFluxes.aeroEF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.HeatFluxes.aeroEF" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaporative fraction calculated using aerodynamic method (rel.).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -192,8 +192,8 @@ method is included.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.HeatFluxes.bowen">
-<code class="descname">bowen</code><span class="sig-paren">(</span><em>H</em>, <em>LE</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#HeatFluxes.bowen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.HeatFluxes.bowen" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.HeatFluxes.bowen">
+<code class="descname">bowen</code><span class="sig-paren">(</span><em>H</em>, <em>LE</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#HeatFluxes.bowen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.HeatFluxes.bowen" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bowen ratio according to Bowen (1926)</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -216,8 +216,8 @@ method is included.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.HeatFluxes.cwsi">
-<code class="descname">cwsi</code><span class="sig-paren">(</span><em>LEp</em>, <em>ra</em>, <em>rc</em>, <em>E_Z_sat</em>, <em>e_Z</em>, <em>rho</em>, <em>delta</em>, <em>gamma</em>, <em>cp=1012</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#HeatFluxes.cwsi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.HeatFluxes.cwsi" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.HeatFluxes.cwsi">
+<code class="descname">cwsi</code><span class="sig-paren">(</span><em>LEp</em>, <em>ra</em>, <em>rc</em>, <em>E_Z_sat</em>, <em>e_Z</em>, <em>rho</em>, <em>delta</em>, <em>gamma</em>, <em>cp=1012</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#HeatFluxes.cwsi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.HeatFluxes.cwsi" title="Permalink to this definition">¶</a></dt>
 <dd><p>Crop Water Stress Index calculated according to Jackson et al. (
 1981, 1988).</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -248,8 +248,8 @@ method is included.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.HeatFluxes.fluxHAer">
-<code class="descname">fluxHAer</code><span class="sig-paren">(</span><em>ra</em>, <em>rho</em>, <em>dT</em>, <em>cp=1012.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#HeatFluxes.fluxHAer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.HeatFluxes.fluxHAer" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.HeatFluxes.fluxHAer">
+<code class="descname">fluxHAer</code><span class="sig-paren">(</span><em>ra</em>, <em>rho</em>, <em>dT</em>, <em>cp=1012.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#HeatFluxes.fluxHAer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.HeatFluxes.fluxHAer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sensible heat flux <img class="math" src="_images/math/17ab3d62def32c3f6e35ef07a4b366ae3ca5feca.svg" alt="(W.m^{-2})"/> calculated using aerodynamic 
 method.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -275,8 +275,8 @@ method.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.HeatFluxes.fluxLE">
-<code class="descname">fluxLE</code><span class="sig-paren">(</span><em>Rn</em>, <em>G</em>, <em>H</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#HeatFluxes.fluxLE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.HeatFluxes.fluxLE" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.HeatFluxes.fluxLE">
+<code class="descname">fluxLE</code><span class="sig-paren">(</span><em>Rn</em>, <em>G</em>, <em>H</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#HeatFluxes.fluxLE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.HeatFluxes.fluxLE" title="Permalink to this definition">¶</a></dt>
 <dd><p>Latent heat flux <img class="math" src="_images/math/17ab3d62def32c3f6e35ef07a4b366ae3ca5feca.svg" alt="(W.m^{-2})"/></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -300,8 +300,8 @@ method.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.HeatFluxes.fluxLE_EQ">
-<code class="descname">fluxLE_EQ</code><span class="sig-paren">(</span><em>Rn</em>, <em>G</em>, <em>delta</em>, <em>gamma</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#HeatFluxes.fluxLE_EQ"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.HeatFluxes.fluxLE_EQ" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.HeatFluxes.fluxLE_EQ">
+<code class="descname">fluxLE_EQ</code><span class="sig-paren">(</span><em>Rn</em>, <em>G</em>, <em>delta</em>, <em>gamma</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#HeatFluxes.fluxLE_EQ"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.HeatFluxes.fluxLE_EQ" title="Permalink to this definition">¶</a></dt>
 <dd><p>Equilibrium evaporation rate <img class="math" src="_images/math/17ab3d62def32c3f6e35ef07a4b366ae3ca5feca.svg" alt="(W.m^{-2})"/>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -326,8 +326,8 @@ method.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.HeatFluxes.fluxLE_PT">
-<code class="descname">fluxLE_PT</code><span class="sig-paren">(</span><em>LE_eq</em>, <em>alpha=1.26</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#HeatFluxes.fluxLE_PT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.HeatFluxes.fluxLE_PT" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.HeatFluxes.fluxLE_PT">
+<code class="descname">fluxLE_PT</code><span class="sig-paren">(</span><em>LE_eq</em>, <em>alpha=1.26</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#HeatFluxes.fluxLE_PT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.HeatFluxes.fluxLE_PT" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaporation from wet surface according to Priestley-Taylor (1972).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -350,8 +350,8 @@ method.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.HeatFluxes.fluxLE_p">
-<code class="descname">fluxLE_p</code><span class="sig-paren">(</span><em>Rn</em>, <em>G</em>, <em>delta</em>, <em>VPD</em>, <em>ra</em>, <em>gamma</em>, <em>rho</em>, <em>cp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#HeatFluxes.fluxLE_p"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.HeatFluxes.fluxLE_p" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.HeatFluxes.fluxLE_p">
+<code class="descname">fluxLE_p</code><span class="sig-paren">(</span><em>Rn</em>, <em>G</em>, <em>delta</em>, <em>VPD</em>, <em>ra</em>, <em>gamma</em>, <em>rho</em>, <em>cp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#HeatFluxes.fluxLE_p"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.HeatFluxes.fluxLE_p" title="Permalink to this definition">¶</a></dt>
 <dd><p>Latent heat flux for potential evapotranspiration according to
 Penman (1948) <img class="math" src="_images/math/17ab3d62def32c3f6e35ef07a4b366ae3ca5feca.svg" alt="(W.m^{-2})"/>.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -381,8 +381,8 @@ Penman (1948) <img class="math" src="_images/math/17ab3d62def32c3f6e35ef07a4b366
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.HeatFluxes.gamma_x">
-<code class="descname">gamma_x</code><span class="sig-paren">(</span><em>rcp</em>, <em>ra</em>, <em>gamma</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#HeatFluxes.gamma_x"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.HeatFluxes.gamma_x" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.HeatFluxes.gamma_x">
+<code class="descname">gamma_x</code><span class="sig-paren">(</span><em>rcp</em>, <em>ra</em>, <em>gamma</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#HeatFluxes.gamma_x"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.HeatFluxes.gamma_x" title="Permalink to this definition">¶</a></dt>
 <dd><p>Psychrometric constant corrected on the rcp and ra according to
 Jackson et al. (1981, 1988).</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -407,8 +407,8 @@ Jackson et al. (1981, 1988).</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.HeatFluxes.gradEF">
-<code class="descname">gradEF</code><span class="sig-paren">(</span><em>ts</em>, <em>ta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#HeatFluxes.gradEF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.HeatFluxes.gradEF" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.HeatFluxes.gradEF">
+<code class="descname">gradEF</code><span class="sig-paren">(</span><em>ts</em>, <em>ta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#HeatFluxes.gradEF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.HeatFluxes.gradEF" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaporative fraction calculated from gradient method according
 to Suleiman and Crago (2004).</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -432,8 +432,8 @@ to Suleiman and Crago (2004).</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.HeatFluxes.gradH">
-<code class="descname">gradH</code><span class="sig-paren">(</span><em>LE</em>, <em>Rn</em>, <em>G</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#HeatFluxes.gradH"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.HeatFluxes.gradH" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.HeatFluxes.gradH">
+<code class="descname">gradH</code><span class="sig-paren">(</span><em>LE</em>, <em>Rn</em>, <em>G</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#HeatFluxes.gradH"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.HeatFluxes.gradH" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sensible heat flux <img class="math" src="_images/math/17ab3d62def32c3f6e35ef07a4b366ae3ca5feca.svg" alt="(W.m^{-2})"/> calculated using gradient method.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -457,8 +457,8 @@ to Suleiman and Crago (2004).</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.HeatFluxes.gradLE">
-<code class="descname">gradLE</code><span class="sig-paren">(</span><em>EF</em>, <em>Rn</em>, <em>G</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#HeatFluxes.gradLE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.HeatFluxes.gradLE" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.HeatFluxes.gradLE">
+<code class="descname">gradLE</code><span class="sig-paren">(</span><em>EF</em>, <em>Rn</em>, <em>G</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#HeatFluxes.gradLE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.HeatFluxes.gradLE" title="Permalink to this definition">¶</a></dt>
 <dd><p>Latent heat flux calculated using gradient method <img class="math" src="_images/math/17ab3d62def32c3f6e35ef07a4b366ae3ca5feca.svg" alt="(W.m^{-2})"/>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -482,8 +482,8 @@ to Suleiman and Crago (2004).</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.HeatFluxes.groundFlux">
-<code class="descname">groundFlux</code><span class="sig-paren">(</span><em>ndvi</em>, <em>Rn</em>, <em>ts</em>, <em>albedo</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#HeatFluxes.groundFlux"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.HeatFluxes.groundFlux" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.HeatFluxes.groundFlux">
+<code class="descname">groundFlux</code><span class="sig-paren">(</span><em>ndvi</em>, <em>Rn</em>, <em>ts</em>, <em>albedo</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#HeatFluxes.groundFlux"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.HeatFluxes.groundFlux" title="Permalink to this definition">¶</a></dt>
 <dd><p>Ground heat flux according to Bastiaanssen et al. (1998)</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -508,8 +508,8 @@ to Suleiman and Crago (2004).</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.HeatFluxes.intensityE">
-<code class="descname">intensityE</code><span class="sig-paren">(</span><em>LE</em>, <em>L</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#HeatFluxes.intensityE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.HeatFluxes.intensityE" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.HeatFluxes.intensityE">
+<code class="descname">intensityE</code><span class="sig-paren">(</span><em>LE</em>, <em>L</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#HeatFluxes.intensityE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.HeatFluxes.intensityE" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaporation intensity in <img class="math" src="_images/math/6ece102dce37047cba33551d30bed1123f73b8b2.svg" alt="mmol.m^{-2}.s^{-1}"/>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -532,8 +532,8 @@ to Suleiman and Crago (2004).</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.HeatFluxes.omega">
-<code class="descname">omega</code><span class="sig-paren">(</span><em>LE</em>, <em>LE_p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#HeatFluxes.omega"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.HeatFluxes.omega" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.HeatFluxes.omega">
+<code class="descname">omega</code><span class="sig-paren">(</span><em>LE</em>, <em>LE_p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#HeatFluxes.omega"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.HeatFluxes.omega" title="Permalink to this definition">¶</a></dt>
 <dd><p>Omega factor (Decoupling coefficient) according to Jarvis and
 McNaughton (1985)</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -561,8 +561,8 @@ Elsevier, pp. 1–49.</em></p>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.HeatFluxes.rcp">
-<code class="descname">rcp</code><span class="sig-paren">(</span><em>E_Z_sat</em>, <em>e_Z</em>, <em>rho</em>, <em>LE_p</em>, <em>ra</em>, <em>gamma</em>, <em>cp=1012.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#HeatFluxes.rcp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.HeatFluxes.rcp" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.HeatFluxes.rcp">
+<code class="descname">rcp</code><span class="sig-paren">(</span><em>E_Z_sat</em>, <em>e_Z</em>, <em>rho</em>, <em>LE_p</em>, <em>ra</em>, <em>gamma</em>, <em>cp=1012.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#HeatFluxes.rcp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.HeatFluxes.rcp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Surface resistance for water vapour transfer for potential
 evapotranspiration <img class="math" src="_images/math/370352244d2f01b99b605ada38edfd25bdacdd39.svg" alt="(s.m^{-1})"/>.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -591,8 +591,8 @@ evapotranspiration <img class="math" src="_images/math/370352244d2f01b99b605ada3
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.HeatFluxes.rs">
-<code class="descname">rs</code><span class="sig-paren">(</span><em>delta</em>, <em>gamma</em>, <em>omega</em>, <em>ra</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#HeatFluxes.rs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.HeatFluxes.rs" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.HeatFluxes.rs">
+<code class="descname">rs</code><span class="sig-paren">(</span><em>delta</em>, <em>gamma</em>, <em>omega</em>, <em>ra</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#HeatFluxes.rs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.HeatFluxes.rs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Surface resistance for water vapour transfer <img class="math" src="_images/math/370352244d2f01b99b605ada38edfd25bdacdd39.svg" alt="(s.m^{-1})"/></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -619,13 +619,13 @@ evapotranspiration <img class="math" src="_images/math/370352244d2f01b99b605ada3
 </dd></dl>
 
 <dl class="class">
-<dt id="scripts.SEBCSlib.MeteoFeatures">
-<em class="property">class </em><code class="descclassname">scripts.SEBCSlib.</code><code class="descname">MeteoFeatures</code><a class="reference internal" href="_modules/scripts/SEBCSlib.html#MeteoFeatures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.MeteoFeatures" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.MeteoFeatures">
+<em class="property">class </em><code class="descclassname">scripts.SEBCS_lib.</code><code class="descname">MeteoFeatures</code><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#MeteoFeatures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.MeteoFeatures" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculation of basic meteorological features and miscellaneous
 variables.</p>
 <dl class="method">
-<dt id="scripts.SEBCSlib.MeteoFeatures.airDensity">
-<code class="descname">airDensity</code><span class="sig-paren">(</span><em>ta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#MeteoFeatures.airDensity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.MeteoFeatures.airDensity" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.MeteoFeatures.airDensity">
+<code class="descname">airDensity</code><span class="sig-paren">(</span><em>ta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#MeteoFeatures.airDensity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.MeteoFeatures.airDensity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Volumetric dry air density <img class="math" src="_images/math/d74d01a8b897e6644811740bd76f0fdd44a2fa95.svg" alt="(kg.m^{-3})"/>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -642,8 +642,8 @@ variables.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.MeteoFeatures.airPress">
-<code class="descname">airPress</code><span class="sig-paren">(</span><em>ta</em>, <em>DMT</em>, <em>Z=200.0</em>, <em>P0=101.325</em>, <em>adiabatic=0.0065</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#MeteoFeatures.airPress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.MeteoFeatures.airPress" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.MeteoFeatures.airPress">
+<code class="descname">airPress</code><span class="sig-paren">(</span><em>ta</em>, <em>DMT</em>, <em>Z=200.0</em>, <em>P0=101.325</em>, <em>adiabatic=0.0065</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#MeteoFeatures.airPress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.MeteoFeatures.airPress" title="Permalink to this definition">¶</a></dt>
 <dd><p>Atmospheric air pressure at level Z (kPa)</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -669,8 +669,8 @@ variables.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.MeteoFeatures.airTemp">
-<code class="descname">airTemp</code><span class="sig-paren">(</span><em>ta_st</em>, <em>DMT</em>, <em>z_st=2.0</em>, <em>adiabatic=0.0065</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#MeteoFeatures.airTemp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.MeteoFeatures.airTemp" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.MeteoFeatures.airTemp">
+<code class="descname">airTemp</code><span class="sig-paren">(</span><em>ta_st</em>, <em>DMT</em>, <em>z_st=2.0</em>, <em>adiabatic=0.0065</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#MeteoFeatures.airTemp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.MeteoFeatures.airTemp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Air temperature, recalculated on height Z (m) from data measured in
 height Z_st (m).</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -696,8 +696,8 @@ height Z_st (m).</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.MeteoFeatures.delta">
-<code class="descname">delta</code><span class="sig-paren">(</span><em>ts</em>, <em>ta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#MeteoFeatures.delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.MeteoFeatures.delta" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.MeteoFeatures.delta">
+<code class="descname">delta</code><span class="sig-paren">(</span><em>ts</em>, <em>ta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#MeteoFeatures.delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.MeteoFeatures.delta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Slope of water vapour pressure gradient to temperature gradient - delta
 function <img class="math" src="_images/math/d793c41ab852eafc4506371b44cd5f0d50ce2ed7.svg" alt="(kPa.K^{-1})"/>. Calculation according to Jackson et
 al. (1998).</p>
@@ -722,8 +722,8 @@ al. (1998).</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.MeteoFeatures.emissivity">
-<code class="descname">emissivity</code><span class="sig-paren">(</span><em>Fc</em>, <em>red</em>, <em>ndvi</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#MeteoFeatures.emissivity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.MeteoFeatures.emissivity" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.MeteoFeatures.emissivity">
+<code class="descname">emissivity</code><span class="sig-paren">(</span><em>Fc</em>, <em>red</em>, <em>ndvi</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#MeteoFeatures.emissivity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.MeteoFeatures.emissivity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Surface emissivity calculated according to Sobrino et al. (2004) NDVI
 Treshold Method.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -748,8 +748,8 @@ Treshold Method.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.MeteoFeatures.gamma">
-<code class="descname">gamma</code><span class="sig-paren">(</span><em>airP</em>, <em>latent</em>, <em>cp=1012.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#MeteoFeatures.gamma"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.MeteoFeatures.gamma" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.MeteoFeatures.gamma">
+<code class="descname">gamma</code><span class="sig-paren">(</span><em>airP</em>, <em>latent</em>, <em>cp=1012.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#MeteoFeatures.gamma"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.MeteoFeatures.gamma" title="Permalink to this definition">¶</a></dt>
 <dd><p>Psychrometric constant <img class="math" src="_images/math/d793c41ab852eafc4506371b44cd5f0d50ce2ed7.svg" alt="(kPa.K^{-1})"/>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -773,8 +773,8 @@ Treshold Method.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.MeteoFeatures.latent">
-<code class="descname">latent</code><span class="sig-paren">(</span><em>ta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#MeteoFeatures.latent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.MeteoFeatures.latent" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.MeteoFeatures.latent">
+<code class="descname">latent</code><span class="sig-paren">(</span><em>ta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#MeteoFeatures.latent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.MeteoFeatures.latent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Latent heat for the water vapour exchange <img class="math" src="_images/math/bc5170d1383e54dea8d7afbf52cd6ce1b55b6cb3.svg" alt="(J.g^{-1})"/>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -791,8 +791,8 @@ Treshold Method.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.MeteoFeatures.satVapourPress">
-<code class="descname">satVapourPress</code><span class="sig-paren">(</span><em>ta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#MeteoFeatures.satVapourPress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.MeteoFeatures.satVapourPress" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.MeteoFeatures.satVapourPress">
+<code class="descname">satVapourPress</code><span class="sig-paren">(</span><em>ta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#MeteoFeatures.satVapourPress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.MeteoFeatures.satVapourPress" title="Permalink to this definition">¶</a></dt>
 <dd><p>Saturated water vapour pressure (kPa) calculated using Magnus-Tetens
 equation.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -810,8 +810,8 @@ equation.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.MeteoFeatures.vapourPress">
-<code class="descname">vapourPress</code><span class="sig-paren">(</span><em>E_sat</em>, <em>Rh</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#MeteoFeatures.vapourPress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.MeteoFeatures.vapourPress" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.MeteoFeatures.vapourPress">
+<code class="descname">vapourPress</code><span class="sig-paren">(</span><em>E_sat</em>, <em>Rh</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#MeteoFeatures.vapourPress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.MeteoFeatures.vapourPress" title="Permalink to this definition">¶</a></dt>
 <dd><p>Water vapour pressure in air (kPa).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -834,8 +834,8 @@ equation.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.MeteoFeatures.vpd">
-<code class="descname">vpd</code><span class="sig-paren">(</span><em>E_sat</em>, <em>e_abs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#MeteoFeatures.vpd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.MeteoFeatures.vpd" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.MeteoFeatures.vpd">
+<code class="descname">vpd</code><span class="sig-paren">(</span><em>E_sat</em>, <em>e_abs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#MeteoFeatures.vpd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.MeteoFeatures.vpd" title="Permalink to this definition">¶</a></dt>
 <dd><p>Water vapour pressure deficit (kPa).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -860,16 +860,16 @@ equation.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="scripts.SEBCSlib.SolarRadBalance">
-<em class="property">class </em><code class="descclassname">scripts.SEBCSlib.</code><code class="descname">SolarRadBalance</code><a class="reference internal" href="_modules/scripts/SEBCSlib.html#SolarRadBalance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.SolarRadBalance" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.SolarRadBalance">
+<em class="property">class </em><code class="descclassname">scripts.SEBCS_lib.</code><code class="descname">SolarRadBalance</code><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#SolarRadBalance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.SolarRadBalance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class contains functions for calculation of solar radiation balance
 and topographic features: incident radiation in dependence on surface
 geometry, slope of terrain, aspect of terrain, albedo, longwave radiation
 fluxes and atmospheric emissivity, shortwave radiation reflectance
 and total net radiation</p>
 <dl class="method">
-<dt id="scripts.SEBCSlib.SolarRadBalance.albedoBrom">
-<code class="descname">albedoBrom</code><span class="sig-paren">(</span><em>ndvi</em>, <em>msavi</em>, <em>c_a=0.08611</em>, <em>c_b=0.894716</em>, <em>c_c=5.558657</em>, <em>c_d=-0.11829</em>, <em>c_e=-1.9818</em>, <em>c_f=-4.50339</em>, <em>c_g=-11.4625</em>, <em>c_h=7.461454</em>, <em>c_i=5.299396</em>, <em>c_j=4.76657</em>, <em>c_k=-2.3127</em>, <em>c_l=-3.42739</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#SolarRadBalance.albedoBrom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.SolarRadBalance.albedoBrom" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.SolarRadBalance.albedoBrom">
+<code class="descname">albedoBrom</code><span class="sig-paren">(</span><em>ndvi</em>, <em>msavi</em>, <em>c_a=0.08611</em>, <em>c_b=0.894716</em>, <em>c_c=5.558657</em>, <em>c_d=-0.11829</em>, <em>c_e=-1.9818</em>, <em>c_f=-4.50339</em>, <em>c_g=-11.4625</em>, <em>c_h=7.461454</em>, <em>c_i=5.299396</em>, <em>c_j=4.76657</em>, <em>c_k=-2.3127</em>, <em>c_l=-3.42739</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#SolarRadBalance.albedoBrom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.SolarRadBalance.albedoBrom" title="Permalink to this definition">¶</a></dt>
 <dd><p>Albedo (rel.) calculated according to Duffková and Brom et al. (2012)</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -904,8 +904,8 @@ and total net radiation</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.SolarRadBalance.albedoLandsat">
-<code class="descname">albedoLandsat</code><span class="sig-paren">(</span><em>blue</em>, <em>green</em>, <em>red</em>, <em>nir</em>, <em>swir1</em>, <em>swir2</em>, <em>sat_type</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#SolarRadBalance.albedoLandsat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.SolarRadBalance.albedoLandsat" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.SolarRadBalance.albedoLandsat">
+<code class="descname">albedoLandsat</code><span class="sig-paren">(</span><em>blue</em>, <em>green</em>, <em>red</em>, <em>nir</em>, <em>swir1</em>, <em>swir2</em>, <em>sat_type</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#SolarRadBalance.albedoLandsat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.SolarRadBalance.albedoLandsat" title="Permalink to this definition">¶</a></dt>
 <dd><p>Albedo (rel.) calculated for Landsat satellite sensors. Albedo
 for Landsat 4 TM, 5 TM and Landsat 7 ETM+ is calculated
 according to Tasumi et al. (2008). Albedo for Landsat 8 OLI/TIRS
@@ -953,8 +953,8 @@ Surface Energy Balance. Journal of Hydrologic Engineering 13, 51–63.</em>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.SolarRadBalance.atmEmissivity">
-<code class="descname">atmEmissivity</code><span class="sig-paren">(</span><em>e_Z</em>, <em>ta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#SolarRadBalance.atmEmissivity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.SolarRadBalance.atmEmissivity" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.SolarRadBalance.atmEmissivity">
+<code class="descname">atmEmissivity</code><span class="sig-paren">(</span><em>e_Z</em>, <em>ta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#SolarRadBalance.atmEmissivity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.SolarRadBalance.atmEmissivity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Atmospheric emissivity calculated according to Idso (see
 Brutsaert 1982).</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -978,8 +978,8 @@ Brutsaert 1982).</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.SolarRadBalance.downRL">
-<code class="descname">downRL</code><span class="sig-paren">(</span><em>ta</em>, <em>emis_a</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#SolarRadBalance.downRL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.SolarRadBalance.downRL" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.SolarRadBalance.downRL">
+<code class="descname">downRL</code><span class="sig-paren">(</span><em>ta</em>, <em>emis_a</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#SolarRadBalance.downRL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.SolarRadBalance.downRL" title="Permalink to this definition">¶</a></dt>
 <dd><p>Funtion calculates downward flux of longwave radiation <img class="math" src="_images/math/bfce6931ab405789038f1055cdacb88e15c3f3c4.svg" alt="(W.m^{
 -2})"/></p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -1003,8 +1003,8 @@ Brutsaert 1982).</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.SolarRadBalance.netRad">
-<code class="descname">netRad</code><span class="sig-paren">(</span><em>Rs_in_corr</em>, <em>Rs_out</em>, <em>RL_in</em>, <em>RL_out</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#SolarRadBalance.netRad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.SolarRadBalance.netRad" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.SolarRadBalance.netRad">
+<code class="descname">netRad</code><span class="sig-paren">(</span><em>Rs_in_corr</em>, <em>Rs_out</em>, <em>RL_in</em>, <em>RL_out</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#SolarRadBalance.netRad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.SolarRadBalance.netRad" title="Permalink to this definition">¶</a></dt>
 <dd><p>Total net radiation.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1029,8 +1029,8 @@ Brutsaert 1982).</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.SolarRadBalance.outRL">
-<code class="descname">outRL</code><span class="sig-paren">(</span><em>ts</em>, <em>emiss</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#SolarRadBalance.outRL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.SolarRadBalance.outRL" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.SolarRadBalance.outRL">
+<code class="descname">outRL</code><span class="sig-paren">(</span><em>ts</em>, <em>emiss</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#SolarRadBalance.outRL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.SolarRadBalance.outRL" title="Permalink to this definition">¶</a></dt>
 <dd><p>Upward flux of longwave radiation <img class="math" src="_images/math/17ab3d62def32c3f6e35ef07a4b366ae3ca5feca.svg" alt="(W.m^{-2})"/></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1053,8 +1053,8 @@ Brutsaert 1982).</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.SolarRadBalance.reflectRs">
-<code class="descname">reflectRs</code><span class="sig-paren">(</span><em>Rs_in_corr</em>, <em>albedo</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#SolarRadBalance.reflectRs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.SolarRadBalance.reflectRs" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.SolarRadBalance.reflectRs">
+<code class="descname">reflectRs</code><span class="sig-paren">(</span><em>Rs_in_corr</em>, <em>albedo</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#SolarRadBalance.reflectRs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.SolarRadBalance.reflectRs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Amount of shortwave radiation reflected from surface <img class="math" src="_images/math/17ab3d62def32c3f6e35ef07a4b366ae3ca5feca.svg" alt="(W.m^{-2})"/></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1077,8 +1077,8 @@ Brutsaert 1982).</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.SolarRadBalance.slopeAspect">
-<code class="descname">slopeAspect</code><span class="sig-paren">(</span><em>DMT</em>, <em>x_size</em>, <em>y_size</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#SolarRadBalance.slopeAspect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.SolarRadBalance.slopeAspect" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.SolarRadBalance.slopeAspect">
+<code class="descname">slopeAspect</code><span class="sig-paren">(</span><em>DMT</em>, <em>x_size</em>, <em>y_size</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#SolarRadBalance.slopeAspect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.SolarRadBalance.slopeAspect" title="Permalink to this definition">¶</a></dt>
 <dd><p>Slope and aspect of terrain (DMT) in degrees.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1108,8 +1108,8 @@ Brutsaert 1982).</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.SolarRadBalance.solarInTopo">
-<code class="descname">solarInTopo</code><span class="sig-paren">(</span><em>Rs_in</em>, <em>slope</em>, <em>aspect</em>, <em>latitude</em>, <em>longitude</em>, <em>date_acq</em>, <em>time_acq</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#SolarRadBalance.solarInTopo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.SolarRadBalance.solarInTopo" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.SolarRadBalance.solarInTopo">
+<code class="descname">solarInTopo</code><span class="sig-paren">(</span><em>Rs_in</em>, <em>slope</em>, <em>aspect</em>, <em>latitude</em>, <em>longitude</em>, <em>date_acq</em>, <em>time_acq</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#SolarRadBalance.solarInTopo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.SolarRadBalance.solarInTopo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculation of incident shortwave solar radiation flux
 according to the solar geometry, position (latitude
 and longitude) and shape of surface (slope and orientation).
@@ -1145,12 +1145,12 @@ in calculation.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="scripts.SEBCSlib.VegIndices">
-<em class="property">class </em><code class="descclassname">scripts.SEBCSlib.</code><code class="descname">VegIndices</code><a class="reference internal" href="_modules/scripts/SEBCSlib.html#VegIndices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.VegIndices" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.VegIndices">
+<em class="property">class </em><code class="descclassname">scripts.SEBCS_lib.</code><code class="descname">VegIndices</code><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#VegIndices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.VegIndices" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculation of vegetation indices from spectral data.</p>
 <dl class="method">
-<dt id="scripts.SEBCSlib.VegIndices.LAI">
-<code class="descname">LAI</code><span class="sig-paren">(</span><em>red</em>, <em>nir</em>, <em>method=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#VegIndices.LAI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.VegIndices.LAI" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.VegIndices.LAI">
+<code class="descname">LAI</code><span class="sig-paren">(</span><em>red</em>, <em>nir</em>, <em>method=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#VegIndices.LAI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.VegIndices.LAI" title="Permalink to this definition">¶</a></dt>
 <dd><p>Leaf Area Index (LAI) calculated according to several methods.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1213,8 +1213,8 @@ https://doi.org/10.1016/S0034-4257(99)00057-7</em></p>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.VegIndices.fractVegCover">
-<code class="descname">fractVegCover</code><span class="sig-paren">(</span><em>ndvi</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#VegIndices.fractVegCover"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.VegIndices.fractVegCover" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.VegIndices.fractVegCover">
+<code class="descname">fractVegCover</code><span class="sig-paren">(</span><em>ndvi</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#VegIndices.fractVegCover"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.VegIndices.fractVegCover" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fractional vegetation cover layer - Fc.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1231,8 +1231,8 @@ https://doi.org/10.1016/S0034-4257(99)00057-7</em></p>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.VegIndices.viMSAVI">
-<code class="descname">viMSAVI</code><span class="sig-paren">(</span><em>red</em>, <em>nir</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#VegIndices.viMSAVI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.VegIndices.viMSAVI" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.VegIndices.viMSAVI">
+<code class="descname">viMSAVI</code><span class="sig-paren">(</span><em>red</em>, <em>nir</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#VegIndices.viMSAVI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.VegIndices.viMSAVI" title="Permalink to this definition">¶</a></dt>
 <dd><p>Modified Soil Adjusted Vegetation Index - MSAVI (Qi et al. 1994).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1259,8 +1259,8 @@ Environment 48, 119–126. https://doi.org/10.1016/0034-4257(94)90134-1</em></p>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.VegIndices.viNDMI">
-<code class="descname">viNDMI</code><span class="sig-paren">(</span><em>nir</em>, <em>swir1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#VegIndices.viNDMI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.VegIndices.viNDMI" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.VegIndices.viNDMI">
+<code class="descname">viNDMI</code><span class="sig-paren">(</span><em>nir</em>, <em>swir1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#VegIndices.viNDMI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.VegIndices.viNDMI" title="Permalink to this definition">¶</a></dt>
 <dd><p>Normalized Vegetation Moisture Index - NDMI.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1283,8 +1283,8 @@ Environment 48, 119–126. https://doi.org/10.1016/0034-4257(94)90134-1</em></p>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.VegIndices.viNDVI">
-<code class="descname">viNDVI</code><span class="sig-paren">(</span><em>red</em>, <em>nir</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#VegIndices.viNDVI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.VegIndices.viNDVI" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.VegIndices.viNDVI">
+<code class="descname">viNDVI</code><span class="sig-paren">(</span><em>red</em>, <em>nir</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#VegIndices.viNDVI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.VegIndices.viNDVI" title="Permalink to this definition">¶</a></dt>
 <dd><p>Normalized Difference Vegetation Index - NDVI.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1307,8 +1307,8 @@ Environment 48, 119–126. https://doi.org/10.1016/0034-4257(94)90134-1</em></p>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.VegIndices.viOSAVI">
-<code class="descname">viOSAVI</code><span class="sig-paren">(</span><em>red</em>, <em>nir</em>, <em>L=0.16</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#VegIndices.viOSAVI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.VegIndices.viOSAVI" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.VegIndices.viOSAVI">
+<code class="descname">viOSAVI</code><span class="sig-paren">(</span><em>red</em>, <em>nir</em>, <em>L=0.16</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#VegIndices.viOSAVI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.VegIndices.viOSAVI" title="Permalink to this definition">¶</a></dt>
 <dd><p>Optimized Soil Adjusted Vegetation Index - OSAVI (Rondeaux et al. (
 1996)).</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -1337,8 +1337,8 @@ soil-adjusted vegetation indices Remote Sensing of Environment,
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.VegIndices.viSAVI">
-<code class="descname">viSAVI</code><span class="sig-paren">(</span><em>red</em>, <em>nir</em>, <em>L=0.5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#VegIndices.viSAVI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.VegIndices.viSAVI" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.VegIndices.viSAVI">
+<code class="descname">viSAVI</code><span class="sig-paren">(</span><em>red</em>, <em>nir</em>, <em>L=0.5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#VegIndices.viSAVI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.VegIndices.viSAVI" title="Permalink to this definition">¶</a></dt>
 <dd><p>Soil Adjusted Vegetation Index - SAVI (Huete, 1988).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1367,8 +1367,8 @@ Sensing of Environment 27, 47-57.</em></p>
 </dd></dl>
 
 <dl class="class">
-<dt id="scripts.SEBCSlib.WindStability">
-<em class="property">class </em><code class="descclassname">scripts.SEBCSlib.</code><code class="descname">WindStability</code><a class="reference internal" href="_modules/scripts/SEBCSlib.html#WindStability"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.WindStability" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.WindStability">
+<em class="property">class </em><code class="descclassname">scripts.SEBCS_lib.</code><code class="descname">WindStability</code><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#WindStability"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.WindStability" title="Permalink to this definition">¶</a></dt>
 <dd><p>Atmospheric stability calculation. Class includes methods for calculation
 of boundary layer stability, friction velocity and aerodynamic
 resistance of the surface. Methods for calculation of stability
@@ -1376,8 +1376,8 @@ parameters for both aerodynamic and gradient methods are included.
 Methods for SEBAL procedure are also used. Some another features
 are included.</p>
 <dl class="method">
-<dt id="scripts.SEBCSlib.WindStability.aeroSEBAL">
-<code class="descname">aeroSEBAL</code><span class="sig-paren">(</span><em>Uz</em>, <em>ta</em>, <em>ts</em>, <em>z0m</em>, <em>Rn</em>, <em>G</em>, <em>rho</em>, <em>niter=10</em>, <em>Z=200</em>, <em>z1=0.1</em>, <em>z2=2</em>, <em>cp=1012.0</em>, <em>kappa=0.41</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#WindStability.aeroSEBAL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.WindStability.aeroSEBAL" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.WindStability.aeroSEBAL">
+<code class="descname">aeroSEBAL</code><span class="sig-paren">(</span><em>Uz</em>, <em>ta</em>, <em>ts</em>, <em>z0m</em>, <em>Rn</em>, <em>G</em>, <em>rho</em>, <em>niter=10</em>, <em>Z=200</em>, <em>z1=0.1</em>, <em>z2=2</em>, <em>cp=1012.0</em>, <em>kappa=0.41</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#WindStability.aeroSEBAL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.WindStability.aeroSEBAL" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculation of sensible heat flux and surface aerodynamic resistance
 according to Bastiaanssen et al. (1998).</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -1418,8 +1418,8 @@ according to Bastiaanssen et al. (1998).</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.WindStability.coefX">
-<code class="descname">coefX</code><span class="sig-paren">(</span><em>Z</em>, <em>L</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#WindStability.coefX"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.WindStability.coefX" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.WindStability.coefX">
+<code class="descname">coefX</code><span class="sig-paren">(</span><em>Z</em>, <em>L</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#WindStability.coefX"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.WindStability.coefX" title="Permalink to this definition">¶</a></dt>
 <dd><p>X coefficient for atmospheric stability calculation.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1443,8 +1443,8 @@ Default 200 m.</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.WindStability.coef_a">
-<code class="descname">coef_a</code><span class="sig-paren">(</span><em>t_wet</em>, <em>cb</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#WindStability.coef_a"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.WindStability.coef_a" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.WindStability.coef_a">
+<code class="descname">coef_a</code><span class="sig-paren">(</span><em>t_wet</em>, <em>cb</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#WindStability.coef_a"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.WindStability.coef_a" title="Permalink to this definition">¶</a></dt>
 <dd><p>Coefficient a calculated from temperature gradient.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1467,8 +1467,8 @@ Default 200 m.</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.WindStability.coef_b">
-<code class="descname">coef_b</code><span class="sig-paren">(</span><em>t_dry</em>, <em>t_wet</em>, <em>t_max</em>, <em>ta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#WindStability.coef_b"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.WindStability.coef_b" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.WindStability.coef_b">
+<code class="descname">coef_b</code><span class="sig-paren">(</span><em>t_dry</em>, <em>t_wet</em>, <em>t_max</em>, <em>ta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#WindStability.coef_b"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.WindStability.coef_b" title="Permalink to this definition">¶</a></dt>
 <dd><p>Coefficient b calculated from temperature gradient.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1493,8 +1493,8 @@ Default 200 m.</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.WindStability.dT">
-<code class="descname">dT</code><span class="sig-paren">(</span><em>ts</em>, <em>ta</em>, <em>Rn</em>, <em>G</em>, <em>ra</em>, <em>rho</em>, <em>cp=1012.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#WindStability.dT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.WindStability.dT" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.WindStability.dT">
+<code class="descname">dT</code><span class="sig-paren">(</span><em>ts</em>, <em>ta</em>, <em>Rn</em>, <em>G</em>, <em>ra</em>, <em>rho</em>, <em>cp=1012.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#WindStability.dT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.WindStability.dT" title="Permalink to this definition">¶</a></dt>
 <dd><p>Temperature gradient calculated according to SEBAL
 (Bastiaanssen et al. 1998).</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -1523,8 +1523,8 @@ Default 200 m.</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.WindStability.dryT">
-<code class="descname">dryT</code><span class="sig-paren">(</span><em>ts</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#WindStability.dryT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.WindStability.dryT" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.WindStability.dryT">
+<code class="descname">dryT</code><span class="sig-paren">(</span><em>ts</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#WindStability.dryT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.WindStability.dryT" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extraction of temperature for dry surface.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1541,8 +1541,8 @@ Default 200 m.</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.WindStability.frictVelo">
-<code class="descname">frictVelo</code><span class="sig-paren">(</span><em>Uz</em>, <em>z0m</em>, <em>Z=200.0</em>, <em>psi_m=0</em>, <em>kappa=0.41</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#WindStability.frictVelo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.WindStability.frictVelo" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.WindStability.frictVelo">
+<code class="descname">frictVelo</code><span class="sig-paren">(</span><em>Uz</em>, <em>z0m</em>, <em>Z=200.0</em>, <em>psi_m=0</em>, <em>kappa=0.41</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#WindStability.frictVelo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.WindStability.frictVelo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Friction velocity of wind speed (m/s) corrected on atmospheric
 stability.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -1571,8 +1571,8 @@ Defaul 0.</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.WindStability.lengthMO">
-<code class="descname">lengthMO</code><span class="sig-paren">(</span><em>frict</em>, <em>ts</em>, <em>H=None</em>, <em>rho=None</em>, <em>t_virt=None</em>, <em>cp=1012</em>, <em>kappa=0.41</em>, <em>gravit=9.81</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#WindStability.lengthMO"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.WindStability.lengthMO" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.WindStability.lengthMO">
+<code class="descname">lengthMO</code><span class="sig-paren">(</span><em>frict</em>, <em>ts</em>, <em>H=None</em>, <em>rho=None</em>, <em>t_virt=None</em>, <em>cp=1012</em>, <em>kappa=0.41</em>, <em>gravit=9.81</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#WindStability.lengthMO"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.WindStability.lengthMO" title="Permalink to this definition">¶</a></dt>
 <dd><p>Monin-Obukhov length (m)</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1601,8 +1601,8 @@ Defaul 0.</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.WindStability.maxT">
-<code class="descname">maxT</code><span class="sig-paren">(</span><em>Rn</em>, <em>G</em>, <em>ra</em>, <em>ta</em>, <em>rho</em>, <em>cp=1012.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#WindStability.maxT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.WindStability.maxT" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.WindStability.maxT">
+<code class="descname">maxT</code><span class="sig-paren">(</span><em>Rn</em>, <em>G</em>, <em>ra</em>, <em>ta</em>, <em>rho</em>, <em>cp=1012.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#WindStability.maxT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.WindStability.maxT" title="Permalink to this definition">¶</a></dt>
 <dd><p>Maximal surface temperature calculated on physical basis (K).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1629,8 +1629,8 @@ Defaul 0.</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.WindStability.psiH">
-<code class="descname">psiH</code><span class="sig-paren">(</span><em>L</em>, <em>X</em>, <em>Z=200</em>, <em>a=1.0</em>, <em>b=0.667</em>, <em>c=5.0</em>, <em>d=0.35</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#WindStability.psiH"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.WindStability.psiH" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.WindStability.psiH">
+<code class="descname">psiH</code><span class="sig-paren">(</span><em>L</em>, <em>X</em>, <em>Z=200</em>, <em>a=1.0</em>, <em>b=0.667</em>, <em>c=5.0</em>, <em>d=0.35</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#WindStability.psiH"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.WindStability.psiH" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculation of stability parameter for heat transfer (-)
 according to Beljaars et Holstag (1991) for stable conditions
 and Liu et al. (2007) for unstable and neutral conditions.</p>
@@ -1661,8 +1661,8 @@ Default 200 m.</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.WindStability.psiM">
-<code class="descname">psiM</code><span class="sig-paren">(</span><em>L</em>, <em>X</em>, <em>Z=200</em>, <em>a=1.0</em>, <em>b=0.667</em>, <em>c=5.0</em>, <em>d=0.35</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#WindStability.psiM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.WindStability.psiM" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.WindStability.psiM">
+<code class="descname">psiM</code><span class="sig-paren">(</span><em>L</em>, <em>X</em>, <em>Z=200</em>, <em>a=1.0</em>, <em>b=0.667</em>, <em>c=5.0</em>, <em>d=0.35</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#WindStability.psiM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.WindStability.psiM" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculation of stability parameter for momentum transfer (-)
 according to Beljaars et Holstag (1991) for stable conditions
 and Liu et al. (2007) for unstable and neutral conditions.</p>
@@ -1693,8 +1693,8 @@ Default 200 m.</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.WindStability.raGrad">
-<code class="descname">raGrad</code><span class="sig-paren">(</span><em>H</em>, <em>rho</em>, <em>ts</em>, <em>ta</em>, <em>cp=1012</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#WindStability.raGrad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.WindStability.raGrad" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.WindStability.raGrad">
+<code class="descname">raGrad</code><span class="sig-paren">(</span><em>H</em>, <em>rho</em>, <em>ts</em>, <em>ta</em>, <em>cp=1012</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#WindStability.raGrad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.WindStability.raGrad" title="Permalink to this definition">¶</a></dt>
 <dd><p>Aerodynamic resistance for heat and momentum transfer <cite>(s.m^{-1})</cite>
 calculated from conversion of sensible heat flux equation.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -1721,8 +1721,8 @@ calculated from conversion of sensible heat flux equation.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.WindStability.raSEBAL">
-<code class="descname">raSEBAL</code><span class="sig-paren">(</span><em>frict</em>, <em>psiH_z1</em>, <em>psiH_z2</em>, <em>z1=0.1</em>, <em>z2=2.0</em>, <em>kappa=0.41</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#WindStability.raSEBAL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.WindStability.raSEBAL" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.WindStability.raSEBAL">
+<code class="descname">raSEBAL</code><span class="sig-paren">(</span><em>frict</em>, <em>psiH_z1</em>, <em>psiH_z2</em>, <em>z1=0.1</em>, <em>z2=2.0</em>, <em>kappa=0.41</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#WindStability.raSEBAL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.WindStability.raSEBAL" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculation of surface aerodynamic resistance for heat transfer based on
 SEBAL approach (Bastiaanssen, 1998).</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -1750,8 +1750,8 @@ SEBAL approach (Bastiaanssen, 1998).</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.WindStability.raThom">
-<code class="descname">raThom</code><span class="sig-paren">(</span><em>Uz</em>, <em>z0m</em>, <em>z0h</em>, <em>psi_m=0.0</em>, <em>psi_h=0.0</em>, <em>Z=200.0</em>, <em>kappa=0.41</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#WindStability.raThom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.WindStability.raThom" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.WindStability.raThom">
+<code class="descname">raThom</code><span class="sig-paren">(</span><em>Uz</em>, <em>z0m</em>, <em>z0h</em>, <em>psi_m=0.0</em>, <em>psi_h=0.0</em>, <em>Z=200.0</em>, <em>kappa=0.41</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#WindStability.raThom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.WindStability.raThom" title="Permalink to this definition">¶</a></dt>
 <dd><p>Aerodynamic resistance for heat and momentum transfer (s.m-1)
 calculated according to Thom (1975).</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -1788,8 +1788,8 @@ Vol. 1 Principles. Academic Press, London, pp. 57–110.</em></p>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.WindStability.stabCoef">
-<code class="descname">stabCoef</code><span class="sig-paren">(</span><em>Uz</em>, <em>ta</em>, <em>ts</em>, <em>z0m</em>, <em>z0h</em>, <em>Z=200</em>, <em>L=-10000.0</em>, <em>n_iter=10</em>, <em>a=1.0</em>, <em>b=0.667</em>, <em>c=5.0</em>, <em>d=0.35</em>, <em>kappa=0.41</em>, <em>gravit=9.81</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#WindStability.stabCoef"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.WindStability.stabCoef" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.WindStability.stabCoef">
+<code class="descname">stabCoef</code><span class="sig-paren">(</span><em>Uz</em>, <em>ta</em>, <em>ts</em>, <em>z0m</em>, <em>z0h</em>, <em>Z=200</em>, <em>L=-10000.0</em>, <em>n_iter=10</em>, <em>a=1.0</em>, <em>b=0.667</em>, <em>c=5.0</em>, <em>d=0.35</em>, <em>kappa=0.41</em>, <em>gravit=9.81</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#WindStability.stabCoef"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.WindStability.stabCoef" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stability parameters calculation using iterative procedure
 described by Itier (1980).</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -1845,8 +1845,8 @@ Default -10000.0</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.WindStability.vegHeight">
-<code class="descname">vegHeight</code><span class="sig-paren">(</span><em>h_min</em>, <em>h_max</em>, <em>msavi</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#WindStability.vegHeight"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.WindStability.vegHeight" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.WindStability.vegHeight">
+<code class="descname">vegHeight</code><span class="sig-paren">(</span><em>h_min</em>, <em>h_max</em>, <em>msavi</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#WindStability.vegHeight"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.WindStability.vegHeight" title="Permalink to this definition">¶</a></dt>
 <dd><p>Height of effective vegetation cover (m) derived from MSAVI index
 according to Gao et al. (2011).</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -1877,8 +1877,8 @@ https://doi.org/10.5194/hess-15-119-2011</em></p>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.WindStability.virtTemp">
-<code class="descname">virtTemp</code><span class="sig-paren">(</span><em>ta</em>, <em>ts</em>, <em>z0h</em>, <em>Z=200</em>, <em>psi_h=0</em>, <em>kappa=0.41</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#WindStability.virtTemp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.WindStability.virtTemp" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.WindStability.virtTemp">
+<code class="descname">virtTemp</code><span class="sig-paren">(</span><em>ta</em>, <em>ts</em>, <em>z0h</em>, <em>Z=200</em>, <em>psi_h=0</em>, <em>kappa=0.41</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#WindStability.virtTemp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.WindStability.virtTemp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Virtual temperature (K) corrected on atmospheric stability.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1905,8 +1905,8 @@ https://doi.org/10.5194/hess-15-119-2011</em></p>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.WindStability.wetT">
-<code class="descname">wetT</code><span class="sig-paren">(</span><em>ta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#WindStability.wetT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.WindStability.wetT" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.WindStability.wetT">
+<code class="descname">wetT</code><span class="sig-paren">(</span><em>ta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#WindStability.wetT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.WindStability.wetT" title="Permalink to this definition">¶</a></dt>
 <dd><p>Surface temperature for wet surface. In this case surface temperature
 for wet surface is equal to air temperature. This statement follows 
 from imagine that the LE = Rn - G and thus H is close to zero.</p>
@@ -1926,8 +1926,8 @@ from imagine that the LE = Rn - G and thus H is close to zero.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.WindStability.windSpeedZ">
-<code class="descname">windSpeedZ</code><span class="sig-paren">(</span><em>U</em>, <em>Z=200.0</em>, <em>Z_st=2.0</em>, <em>h_st=0.12</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#WindStability.windSpeedZ"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.WindStability.windSpeedZ" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.WindStability.windSpeedZ">
+<code class="descname">windSpeedZ</code><span class="sig-paren">(</span><em>U</em>, <em>Z=200.0</em>, <em>Z_st=2.0</em>, <em>h_st=0.12</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#WindStability.windSpeedZ"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.WindStability.windSpeedZ" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wind speed recalculated to height Z according to logarithmic law
 (Gao et al. 2011).</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -1962,8 +1962,8 @@ https://doi.org/10.5194/hess-15-119-2011</em></p>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.WindStability.z0h">
-<code class="descname">z0h</code><span class="sig-paren">(</span><em>z0m</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#WindStability.z0h"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.WindStability.z0h" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.WindStability.z0h">
+<code class="descname">z0h</code><span class="sig-paren">(</span><em>z0m</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#WindStability.z0h"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.WindStability.z0h" title="Permalink to this definition">¶</a></dt>
 <dd><p>Aerodynamic roughness of the surface for heat transfer (m) calculated
 according to Thom (1975).</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -1985,8 +1985,8 @@ Vol. 1 Principles. Academic Press, London, pp. 57–110.</em></p>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.WindStability.z0m">
-<code class="descname">z0m</code><span class="sig-paren">(</span><em>h_eff</em>, <em>LAI</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#WindStability.z0m"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.WindStability.z0m" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.WindStability.z0m">
+<code class="descname">z0m</code><span class="sig-paren">(</span><em>h_eff</em>, <em>LAI</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#WindStability.z0m"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.WindStability.z0m" title="Permalink to this definition">¶</a></dt>
 <dd><p>Aerodynamic roughness of the surface for momentum transfer (m).
 z0m is calculated according to Tasumi (2003) for vegetation cover
 lower tha 1 m and according to Thom (1975) for vegetation cover
@@ -2024,8 +2024,8 @@ Vol. 1 Principles. Academic Press, London, pp. 57–110.</em></p>
 </dd></dl>
 
 <dl class="method">
-<dt id="scripts.SEBCSlib.WindStability.zeroPlaneDis">
-<code class="descname">zeroPlaneDis</code><span class="sig-paren">(</span><em>h_eff</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#WindStability.zeroPlaneDis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.WindStability.zeroPlaneDis" title="Permalink to this definition">¶</a></dt>
+<dt id="scripts.SEBCS_lib.WindStability.zeroPlaneDis">
+<code class="descname">zeroPlaneDis</code><span class="sig-paren">(</span><em>h_eff</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCS_lib.html#WindStability.zeroPlaneDis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCS_lib.WindStability.zeroPlaneDis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Zero plane displacement (m) calculated according to Thom (1975).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />

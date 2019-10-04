@@ -8,7 +8,7 @@
 #
 #                              -------------------
 #        begin                : 14-03-01
-#        date                 : 19-09-20
+#        date                 : 19-10-04
 #        git sha              : $Format:%H$
 #        copyright            : (C) 2014-2019 Jakub Brom
 #        email                : jbrom@zf.jcu.cz
