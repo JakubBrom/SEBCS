@@ -661,8 +661,10 @@
 
 		<span class="k">try</span><span class="p">:</span>
 			<span class="n">ndvi</span> <span class="o">=</span> <span class="p">(</span><span class="n">nir</span> <span class="o">-</span> <span class="n">red</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">nir</span> <span class="o">+</span> <span class="n">red</span><span class="p">)</span>
-			<span class="n">ndvi</span><span class="p">[</span><span class="n">ndvi</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># replacement inf values by 0</span>
-			<span class="n">ndvi</span><span class="p">[</span><span class="n">ndvi</span> <span class="o">==</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># replacement -inf values by 0</span>
+			<span class="n">ndvi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">ndvi</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">ndvi</span><span class="p">)</span>  <span class="c1"># replacement inf values</span>
+			<span class="c1"># by 0</span>
+			<span class="n">ndvi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">ndvi</span> <span class="o">==</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">ndvi</span><span class="p">)</span>  <span class="c1"># replacement -inf</span>
+		<span class="c1"># values by 0</span>
 		<span class="k">except</span> <span class="ne">ArithmeticError</span><span class="p">:</span>
 			<span class="k">raise</span> <span class="ne">ArithmeticError</span><span class="p">(</span><span class="s2">&quot;NDVI has not been calculated.&quot;</span><span class="p">)</span>
 
@@ -670,7 +672,7 @@
 
 <div class="viewcode-block" id="VegIndices.viSAVI"><a class="viewcode-back" href="../../SEBCSlib.html#scripts.SEBCSlib.VegIndices.viSAVI">[docs]</a>	<span class="k">def</span> <span class="nf">viSAVI</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">red</span><span class="p">,</span> <span class="n">nir</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">		Soil Adjusted Vegetation Index - SAVI.</span>
+<span class="sd">		Soil Adjusted Vegetation Index - SAVI (Huete, 1988).</span>
 
 <span class="sd">		:param red: Spectral reflectance in RED region (rel.)</span>
 <span class="sd">		:type red: numpy.ndarray</span>
@@ -681,10 +683,46 @@
 
 <span class="sd">		:return: Soil Adjusted Vegetation Index - SAVI (unitless)</span>
 <span class="sd">		:rtype: numpy.ndarray</span>
+
+<span class="sd">		\n</span>
+<span class="sd">		**References**\n</span>
+<span class="sd">		*Huete A.R. (1988): A soil-adjusted vegetation index (SAVI) Remote</span>
+<span class="sd">		Sensing of Environment 27, 47-57.*</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 
 		<span class="n">ignore_zero</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
 		
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">savi</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">L</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">nir</span> <span class="o">-</span> <span class="n">red</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">L</span> <span class="o">+</span> <span class="n">nir</span> <span class="o">+</span> <span class="n">red</span><span class="p">)</span>
+		<span class="k">except</span> <span class="ne">ArithmeticError</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">ArithmeticError</span><span class="p">(</span><span class="s2">&quot;SAVI has not been calculated.&quot;</span><span class="p">)</span>
+
+		<span class="k">return</span> <span class="n">savi</span></div>
+
+<div class="viewcode-block" id="VegIndices.viOSAVI"><a class="viewcode-back" href="../../SEBCSlib.html#scripts.SEBCSlib.VegIndices.viOSAVI">[docs]</a>	<span class="k">def</span> <span class="nf">viOSAVI</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">red</span><span class="p">,</span> <span class="n">nir</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="mf">0.16</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Optimized Soil Adjusted Vegetation Index - OSAVI (Rondeaux et al. (</span>
+<span class="sd">		1996)).</span>
+
+<span class="sd">		:param red: Spectral reflectance in RED region (rel.)</span>
+<span class="sd">		:type red: numpy.ndarray</span>
+<span class="sd">		:param nir: Spectral reflectance in NIR region (rel.)</span>
+<span class="sd">		:type nir: numpy.ndarray</span>
+<span class="sd">		:param L: Parameter L. Default L=0.5</span>
+<span class="sd">		:type L: float</span>
+
+<span class="sd">		:return: Soil Adjusted Vegetation Index - OSAVI (unitless)</span>
+<span class="sd">		:rtype: numpy.ndarray</span>
+
+<span class="sd">		\n</span>
+<span class="sd">		**References**\n</span>
+<span class="sd">		*Rondeaux G., Steven M., Baret F. (1996): Optimisation of</span>
+<span class="sd">		soil-adjusted vegetation indices Remote Sensing of Environment,</span>
+<span class="sd">		55 (1996), pp. 95-107*</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+
+		<span class="n">ignore_zero</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+
 		<span class="k">try</span><span class="p">:</span>
 			<span class="n">savi</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">L</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">nir</span> <span class="o">-</span> <span class="n">red</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">L</span> <span class="o">+</span> <span class="n">nir</span> <span class="o">+</span> <span class="n">red</span><span class="p">)</span>
 		<span class="k">except</span> <span class="ne">ArithmeticError</span><span class="p">:</span>
@@ -719,7 +757,7 @@
 
 <div class="viewcode-block" id="VegIndices.viMSAVI"><a class="viewcode-back" href="../../SEBCSlib.html#scripts.SEBCSlib.VegIndices.viMSAVI">[docs]</a>	<span class="k">def</span> <span class="nf">viMSAVI</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">red</span><span class="p">,</span> <span class="n">nir</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">		Modified Soil Adjusted Vegetation Index - SAVI.</span>
+<span class="sd">		Modified Soil Adjusted Vegetation Index - MSAVI (Qi et al. 1994).</span>
 
 <span class="sd">		:param red: Spectral reflectance in RED region (rel.)</span>
 <span class="sd">		:type red: numpy.ndarray</span>
@@ -728,6 +766,12 @@
 
 <span class="sd">		:return: Modified Soil Adjusted Vegetation Index - SAVI (unitless)</span>
 <span class="sd">		:rtype: numpy.ndarray</span>
+
+<span class="sd">		\n</span>
+<span class="sd">		**References**\n</span>
+<span class="sd">		*Qi, J., Chehbouni, A., Huete, A.R., Kerr, Y.H., Sorooshian, S.,</span>
+<span class="sd">		1994. A modified soil adjusted vegetation index. Remote Sensing of</span>
+<span class="sd">		Environment 48, 119–126. https://doi.org/10.1016/0034-4257(94)90134-1*</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 
 		<span class="n">ignore_zero</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>  <span class="c1"># ignoring exceptions with dividing by zero</span>
@@ -758,7 +802,109 @@
 			<span class="k">raise</span> <span class="ne">ArithmeticError</span><span class="p">(</span><span class="s2">&quot;Fractional cover index has not been &quot;</span>
 			                      <span class="s2">&quot;calculated.&quot;</span><span class="p">)</span>
 
-		<span class="k">return</span> <span class="n">Fc</span></div></div>
+		<span class="k">return</span> <span class="n">Fc</span></div>
+
+<div class="viewcode-block" id="VegIndices.LAI"><a class="viewcode-back" href="../../SEBCSlib.html#scripts.SEBCSlib.VegIndices.LAI">[docs]</a>	<span class="k">def</span> <span class="nf">LAI</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">red</span><span class="p">,</span> <span class="n">nir</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Leaf Area Index (LAI) calculated according to several methods.</span>
+
+<span class="sd">		:param red: Spectral reflectance in RED region (rel.)</span>
+<span class="sd">		:type red: numpy.ndarray</span>
+<span class="sd">		:param nir: Spectral reflectance in NIR region (rel.)</span>
+<span class="sd">		:type nir: numpy.ndarray</span>
+<span class="sd">		:param method: Method of LAI calculation:\n</span>
+<span class="sd">				* 1: Pôças</span>
+<span class="sd">				* 2: Bastiaanssen</span>
+<span class="sd">				* 3: Jafaar (default)</span>
+<span class="sd">				* 4: Anderson</span>
+<span class="sd">				* 5: vineyard</span>
+<span class="sd">				* 6: Carrasco</span>
+<span class="sd">				* 7: Turner</span>
+<span class="sd">		:type method: int</span>
+
+<span class="sd">		:return: Leaf Area Index (LAI) :math:`(m^2.m^{-2})`</span>
+<span class="sd">		:rtype: numpy.ndarray</span>
+
+<span class="sd">		\n</span>
+<span class="sd">		**References**\n</span>
+<span class="sd">		*Anderson, M., Neale, C., Li, F., Norman, J., Kustas, W., Jayanthi,</span>
+<span class="sd">		H., Chavez, J., 2004. Upscaling ground observations of vegetation</span>
+<span class="sd">		water content, canopy height, and leaf area index during SMEX02 using</span>
+<span class="sd">		aircraft and Landsat imagery. Remote Sensing of Environment 92,</span>
+<span class="sd">		447–464. https://doi.org/10.1016/j.rse.2004.03.019* \n</span>
+<span class="sd">		*Bastiaanssen, W.G.M., Menenti, M., Feddes, R.A., Holtslag, A.A.M.,</span>
+<span class="sd">		1998. A remote sensing surface energy balance algorithm for land (</span>
+<span class="sd">		SEBAL). 1. Formulation. Journal of Hydrology 212–213, 198–212.</span>
+<span class="sd">		https://doi.org/10.1016/S0022-1694(98)00253-4* \n</span>
+<span class="sd">		*Carrasco-Benavides, M., Ortega-Farías, S., Lagos, L., Kleissl, J.,</span>
+<span class="sd">		Morales-Salinas, L., Kilic, A., 2014. Parameterization of the</span>
+<span class="sd">		Satellite-Based Model (METRIC) for the Estimation of Instantaneous</span>
+<span class="sd">		Surface Energy Balance Components over a Drip-Irrigated Vineyard.</span>
+<span class="sd">		Remote Sensing 6, 11342–11371. https://doi.org/10.3390/rs61111342* \n</span>
+<span class="sd">		*Jaafar, H.H., Ahmad, F.A., 2019. Time series trends of Landsat-based</span>
+<span class="sd">		ET using automated calibration in METRIC and SEBAL: The Bekaa</span>
+<span class="sd">		Valley, Lebanon. Remote Sensing of Environment S0034425718305947.</span>
+<span class="sd">		https://doi.org/10.1016/j.rse.2018.12.033* \n</span>
+<span class="sd">		*Pôças, I., Paço, T.A., Cunha, M., Andrade, J.A., Silvestre, J.,</span>
+<span class="sd">		Sousa, A., Santos, F.L., Pereira, L.S., Allen, R.G., 2014.</span>
+<span class="sd">		Satellite-based evapotranspiration of a super-intensive olive</span>
+<span class="sd">		orchard:  Application of METRIC algorithms. Biosystems Engineering</span>
+<span class="sd">		128, 69–81. https://doi.org/10.1016/j.biosystemseng.2014.06.019* \n</span>
+<span class="sd">		*Turner, D.P., Cohen, W.B., Kennedy, R.E., Fassnacht, K.S., Briggs,</span>
+<span class="sd">		J.M., 1999. Relationships between Leaf Area Index and Landsat TM</span>
+<span class="sd">		Spectral Vegetation Indices across Three Temperate Zone Sites.</span>
+<span class="sd">		Remote Sensing of Environment 70, 52–68.</span>
+<span class="sd">		https://doi.org/10.1016/S0034-4257(99)00057-7*</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+
+		<span class="n">savi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">viSAVI</span><span class="p">(</span><span class="n">red</span><span class="p">,</span> <span class="n">nir</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+		<span class="n">ndvi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">viNDVI</span><span class="p">(</span><span class="n">red</span><span class="p">,</span> <span class="n">nir</span><span class="p">)</span>
+		<span class="n">osavi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">viOSAVI</span><span class="p">(</span><span class="n">red</span><span class="p">,</span> <span class="n">nir</span><span class="p">)</span>
+		<span class="n">msavi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">viMSAVI</span><span class="p">(</span><span class="n">red</span><span class="p">,</span> <span class="n">nir</span><span class="p">)</span>
+		<span class="c1"># methods = {1:&#39;Pôças&#39;, 2:&#39;Bastiaanssen&#39;, 3:&#39;Jafaar&#39;, 4:&#39;Anderson&#39;,</span>
+		<span class="c1"># 5:&#39;vineyard&#39;, 6:&#39;Carrasco&#39;, 7:&#39;Turner&#39;}</span>
+
+		<span class="k">if</span> <span class="n">method</span> <span class="ow">is</span> <span class="mi">1</span><span class="p">:</span>     <span class="c1"># Pôças</span>
+			<span class="n">LAI</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">savi</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">11.0</span> <span class="o">*</span> <span class="n">savi</span><span class="o">**</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+			<span class="n">LAI</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">savi</span> <span class="o">&gt;</span> <span class="mf">0.817</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="n">LAI</span><span class="p">)</span>
+
+		<span class="k">elif</span> <span class="n">method</span> <span class="ow">is</span> <span class="mi">2</span><span class="p">:</span>   <span class="c1"># Bastiaanssen</span>
+			<span class="n">LAI</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">savi</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">((</span><span class="mf">0.61</span> <span class="o">-</span> <span class="n">savi</span><span class="p">)</span><span class="o">/</span><span class="mf">0.51</span><span class="p">)</span><span class="o">/</span><span class="mf">0.91</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+			<span class="n">LAI</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">savi</span> <span class="o">&gt;=</span> <span class="mf">0.61</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="n">LAI</span><span class="p">)</span>
+
+		<span class="k">elif</span> <span class="n">method</span> <span class="ow">is</span> <span class="mi">3</span><span class="p">:</span>   <span class="c1"># Jafaar</span>
+			<span class="n">LAI_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">savi</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">11.0</span> <span class="o">*</span> <span class="n">savi</span> <span class="o">**</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+			<span class="n">LAI_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">savi</span> <span class="o">&gt;</span> <span class="mf">0.817</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="n">LAI_1</span><span class="p">)</span>
+
+			<span class="n">LAI_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">savi</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">((</span><span class="mf">0.61</span> <span class="o">-</span> <span class="n">savi</span><span class="p">)</span> <span class="o">/</span> <span class="mf">0.51</span><span class="p">)</span> <span class="o">/</span> <span class="mf">0.91</span> <span class="o">*</span> <span class="p">(</span>
+				<span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+			<span class="n">LAI_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">savi</span> <span class="o">&gt;=</span> <span class="mf">0.61</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="n">LAI_2</span><span class="p">)</span>
+
+			<span class="n">LAI</span> <span class="o">=</span> <span class="p">(</span><span class="n">LAI_1</span> <span class="o">+</span> <span class="n">LAI_2</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
+
+		<span class="k">elif</span> <span class="n">method</span> <span class="ow">is</span> <span class="mi">4</span><span class="p">:</span>   <span class="c1"># Anderson</span>
+			<span class="n">LAI</span> <span class="o">=</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">osavi</span> <span class="o">-</span> <span class="mf">0.8</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mf">4.73e-6</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mf">15.64</span> <span class="o">*</span> <span class="n">osavi</span><span class="p">))</span>
+
+		<span class="k">elif</span> <span class="n">method</span> <span class="ow">is</span> <span class="mi">5</span><span class="p">:</span>   <span class="c1"># vineyard</span>
+			<span class="n">LAI</span> <span class="o">=</span> <span class="mf">4.9</span> <span class="o">*</span> <span class="n">ndvi</span> <span class="o">-</span><span class="mf">0.46</span>
+
+		<span class="k">elif</span> <span class="n">method</span> <span class="ow">is</span> <span class="mi">6</span><span class="p">:</span>   <span class="c1"># Carrasco</span>
+			<span class="n">LAI</span> <span class="o">=</span> <span class="mf">1.2</span> <span class="o">-</span> <span class="mf">3.08</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">2013.35</span> <span class="o">*</span> <span class="n">ndvi</span><span class="o">**</span><span class="mf">6.41</span><span class="p">)</span>
+
+		<span class="k">elif</span> <span class="n">method</span> <span class="ow">is</span> <span class="mi">7</span><span class="p">:</span>   <span class="c1"># Turner</span>
+			<span class="n">LAI</span> <span class="o">=</span> <span class="mf">0.5724</span> <span class="o">+</span> <span class="mf">0.0989</span> <span class="o">*</span> <span class="n">ndvi</span> <span class="o">-</span> <span class="mf">0.0114</span> <span class="o">*</span> <span class="n">ndvi</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mf">0.0004</span> <span class="o">*</span> <span class="n">ndvi</span><span class="o">**</span><span class="mi">3</span>
+
+		<span class="c1"># elif method is 8:</span>
+		<span class="c1"># 	LAI = 6.0/(1 + np.exp(-(8 * savi - 5)))</span>
+		<span class="c1"># 	# Method proposed by Brom (mathematical definition only,</span>
+		<span class="c1"># 	not tested). Good approximation with another methods (1, 2, 3) but</span>
+		<span class="c1"># 	this method	is very sensitive on parameters in exponent</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">ArithmeticError</span><span class="p">(</span><span class="s2">&quot;LAI has not been calculated.&quot;</span><span class="p">)</span>
+
+		<span class="n">LAI</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">LAI</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">LAI</span><span class="p">)</span>
+
+		<span class="k">return</span> <span class="n">LAI</span></div></div>
 
 
 <span class="c1"># noinspection PyMethodMayBeStatic,PyUnusedLocal</span>
@@ -781,9 +927,9 @@
 <span class="sd">		Latent heat flux for potential evapotranspiration according to</span>
 <span class="sd">		Penman (1948) :math:`(W.m^{-2})`.</span>
 
-<span class="sd">		:param Rn: Total net radiation :math `(W.m^{-2})`</span>
+<span class="sd">		:param Rn: Total net radiation :math:`(W.m^{-2})`</span>
 <span class="sd">		:type Rn: numpy.ndarray</span>
-<span class="sd">		:param G: Ground heat flux :math `(W.m^{-2})`</span>
+<span class="sd">		:param G: Ground heat flux :math:`(W.m^{-2})`</span>
 <span class="sd">		:type G: numpy.ndarray</span>
 <span class="sd">		:param delta: Delta function :math:`(kPa.K^{-1})`</span>
 <span class="sd">		:type delta: numpy.ndarray</span>
@@ -815,9 +961,9 @@
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		Equilibrium evaporation rate :math:`(W.m^{-2})`.</span>
 
-<span class="sd">		:param Rn: Total net radiation :math `(W.m^{-2})`</span>
+<span class="sd">		:param Rn: Total net radiation :math:`(W.m^{-2})`</span>
 <span class="sd">		:type Rn: numpy.ndarray</span>
-<span class="sd">		:param G: Ground heat flux :math `(W.m^{-2})`</span>
+<span class="sd">		:param G: Ground heat flux :math:`(W.m^{-2})`</span>
 <span class="sd">		:type G: numpy.ndarray</span>
 <span class="sd">		:param delta: Delta function :math:`(kPa.K^{-1})`</span>
 <span class="sd">		:type delta: numpy.ndarray</span>
@@ -1467,7 +1613,7 @@
 
 
 <span class="c1"># noinspection PyMethodMayBeStatic,PyUnusedLocal</span>
-<div class="viewcode-block" id="WindStability"><a class="viewcode-back" href="../../SEBCSlib.html#scripts.SEBCSlib.WindStability">[docs]</a><span class="k">class</span> <span class="nc">WindStability</span><span class="p">(</span><span class="n">MeteoFeatures</span><span class="p">,</span> <span class="n">HeatFluxes</span><span class="p">):</span>
+<div class="viewcode-block" id="WindStability"><a class="viewcode-back" href="../../SEBCSlib.html#scripts.SEBCSlib.WindStability">[docs]</a><span class="k">class</span> <span class="nc">WindStability</span><span class="p">(</span><span class="n">MeteoFeatures</span><span class="p">,</span> <span class="n">HeatFluxes</span><span class="p">,</span> <span class="n">VegIndices</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Atmospheric stability calculation. Class includes methods for calculation</span>
 <span class="sd">	of boundary layer stability, friction velocity and aerodynamic</span>
@@ -1482,63 +1628,69 @@
 <span class="sd">		height of vegetation cover (m) derived from MSAVI index</span>
 <span class="sd">		according to Gao et al. (2011).</span>
 <span class="sd">		&quot;&quot;&quot;</span>
+
 		<span class="n">minmsavi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">msavi</span><span class="p">[</span><span class="n">msavi</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">])</span>
 		<span class="n">maxmsavi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">msavi</span><span class="p">)</span>
 		<span class="n">h_eff</span> <span class="o">=</span> <span class="n">h_min</span> <span class="o">+</span> <span class="p">(</span><span class="n">msavi</span> <span class="o">-</span> <span class="n">minmsavi</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">minmsavi</span> <span class="o">-</span> <span class="n">maxmsavi</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">h_min</span> <span class="o">-</span> <span class="n">h_max</span><span class="p">)</span>
 		<span class="k">return</span> <span class="n">h_eff</span></div>
 
+
 <div class="viewcode-block" id="WindStability.zeroPlaneDis"><a class="viewcode-back" href="../../SEBCSlib.html#scripts.SEBCSlib.WindStability.zeroPlaneDis">[docs]</a>	<span class="k">def</span> <span class="nf">zeroPlaneDis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">h_eff</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		Zero plane displacement (m).</span>
 <span class="sd">		&quot;&quot;&quot;</span>
+
 		<span class="n">disp</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">/</span> <span class="mf">3.0</span> <span class="o">*</span> <span class="n">h_eff</span>
 		<span class="k">return</span> <span class="n">disp</span></div>
 
-<div class="viewcode-block" id="WindStability.z0m_METRIC"><a class="viewcode-back" href="../../SEBCSlib.html#scripts.SEBCSlib.WindStability.z0m_METRIC">[docs]</a>	<span class="k">def</span> <span class="nf">z0m_METRIC</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ndvi</span><span class="p">,</span> <span class="n">albedo</span><span class="p">):</span>
+<div class="viewcode-block" id="WindStability.z0m"><a class="viewcode-back" href="../../SEBCSlib.html#scripts.SEBCSlib.WindStability.z0m">[docs]</a>	<span class="k">def</span> <span class="nf">z0m</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">h_eff</span><span class="p">,</span> <span class="n">LAI</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">		Aerodynamic roughness of the surface for momentum transfer (m). </span>
-<span class="sd">		Calculated according to pySEBAL (see Jaafar, H.H., Ahmad, F.A.,</span>
-<span class="sd">		2019. Time series trends of Landsat-based ET using automated</span>
-<span class="sd">		calibration in METRIC and SEBAL: The Bekaa Valley, Lebanon. </span>
-<span class="sd">		Remote Sensing of Environment S0034425718305947.</span>
-<span class="sd">		https://doi.org/10.1016/j.rse.2018.12.033)</span>
+<span class="sd">		Aerodynamic roughness of the surface for momentum transfer (m).</span>
+<span class="sd">		z0m is calculated according to Tasumi (2003) for vegetation cover</span>
+<span class="sd">		lower tha 1 m and according to Thom (1975) for vegetation cover</span>
+<span class="sd">		higher than 1 m. The lowest value of z0m is 0.005, which is typical</span>
+<span class="sd">		value for agricultural bare soils (Allen et al. 2007)</span>
+
+<span class="sd">		:param h_eff:</span>
+<span class="sd">		:param LAI:</span>
+<span class="sd">		:return:</span>
+
+<span class="sd">		\n</span>
+<span class="sd">		**References**\</span>
+<span class="sd">		*Allen, R.G., Tasumi, M., Trezza, R., 2007. Satellite-Based Energy</span>
+<span class="sd">		Balance for Mapping Evapotranspiration with Internalized Calibration</span>
+<span class="sd">		(METRIC)—Model. J. Irrig. Drain Eng. 133, 380–394.</span>
+<span class="sd">		https://doi.org/10.1061/(ASCE)0733-9437(2007)133:4(380) \</span>
+<span class="sd">		Tasumi, M., 2003. Progress in Operational Estimation of Regional</span>
+<span class="sd">		Evapotranspiration Using Satellite Imagery (Ph.D. Thesis).</span>
+<span class="sd">		University of Idaho, Moscow, Idaho.\</span>
+<span class="sd">		Thom, A.S., 1975. Momentum, mass and heat exchange of plant</span>
+<span class="sd">		communities, in: Monteith, J.L. (Ed.), Vegetation and the Atmosphere,</span>
+<span class="sd">		Vol. 1 Principles. Academic Press, London, pp. 57–110.*</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 
-		<span class="n">n</span> <span class="o">=</span> <span class="o">-</span><span class="mf">5.037</span>
-		<span class="n">m</span> <span class="o">=</span> <span class="mf">1.096</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">z0m</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">h_eff</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.018</span> <span class="o">*</span> <span class="n">LAI</span><span class="p">,</span> <span class="mf">0.123</span> <span class="o">*</span> <span class="n">h_eff</span><span class="p">)</span>
+			<span class="n">z0m</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">z0m</span> <span class="o">&lt;</span> <span class="mf">0.005</span><span class="p">,</span> <span class="mf">0.005</span><span class="p">,</span> <span class="n">z0m</span><span class="p">)</span>
 
-		<span class="n">z0m</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">m</span> <span class="o">*</span> <span class="n">ndvi</span> <span class="o">/</span> <span class="n">albedo</span> <span class="o">+</span> <span class="n">n</span><span class="p">)</span>
-
-		<span class="n">z0m</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">z0m</span> <span class="o">&lt;</span> <span class="mf">0.001</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">,</span> <span class="n">z0m</span><span class="p">)</span>
-
-		<span class="k">return</span> <span class="n">z0m</span></div>
-
-<div class="viewcode-block" id="WindStability.z0m"><a class="viewcode-back" href="../../SEBCSlib.html#scripts.SEBCSlib.WindStability.z0m">[docs]</a>	<span class="k">def</span> <span class="nf">z0m</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">h_eff</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">savi</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ca</span><span class="o">=</span><span class="mf">0.003</span><span class="p">,</span> <span class="n">cb</span><span class="o">=</span><span class="mf">5.26</span><span class="p">):</span>
-		<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">		Aerodynamic roughness of the surface for momentum transfer (m). </span>
-<span class="sd">		Calculated according to Thom (1975).</span>
-<span class="sd">		&quot;&quot;&quot;</span>
-
-		<span class="k">if</span> <span class="n">savi</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-			<span class="n">z0m</span> <span class="o">=</span> <span class="n">h_eff</span> <span class="o">*</span> <span class="mf">0.123</span>
-		<span class="k">else</span><span class="p">:</span>
-			<span class="n">z0m</span> <span class="o">=</span> <span class="n">ca</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">cb</span> <span class="o">*</span> <span class="n">savi</span><span class="p">)</span>
-
+		<span class="k">except</span> <span class="ne">ArithmeticError</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">ArithmeticError</span><span class="p">(</span><span class="s2">&quot;Aerodynamic roughness of the surface for &quot;</span>
+			                      <span class="s2">&quot;momentum transfer has not been calculated&quot;</span><span class="p">)</span>
 		<span class="k">return</span> <span class="n">z0m</span></div>
 
 <div class="viewcode-block" id="WindStability.z0h"><a class="viewcode-back" href="../../SEBCSlib.html#scripts.SEBCSlib.WindStability.z0h">[docs]</a>	<span class="k">def</span> <span class="nf">z0h</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z0m</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">		Aerodynamic roughness of the surface for heat transfer (m)</span>
+<span class="sd">		Aerodynamic roughness of the surface for heat transfer (m).</span>
+
+<span class="sd">		:param z0m: Aerodynamic roughness of the surface for momentum\</span>
+<span class="sd">		transfer (m)</span>
+<span class="sd">		:type z0m: numpy.ndarray, float</span>
+
+<span class="sd">		:return: Aerodynamic roughness of the surface for heat transfer (m)</span>
+<span class="sd">		:rtype: numpy.ndarray, float</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 		<span class="n">z0h</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">z0m</span>
 		<span class="k">return</span> <span class="n">z0h</span></div>
-
-<div class="viewcode-block" id="WindStability.z_d"><a class="viewcode-back" href="../../SEBCSlib.html#scripts.SEBCSlib.WindStability.z_d">[docs]</a>	<span class="k">def</span> <span class="nf">z_d</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">disp</span><span class="p">):</span>
-		<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">		Z - d difference. Z is height of meteorological measurement (m) - Z = 200 m is used.</span>
-<span class="sd">		&quot;&quot;&quot;</span>
-		<span class="n">Z_d</span> <span class="o">=</span> <span class="n">Z</span> <span class="o">-</span> <span class="n">disp</span>
-		<span class="k">return</span> <span class="n">Z_d</span></div>
 
 <div class="viewcode-block" id="WindStability.windSpeedZ"><a class="viewcode-back" href="../../SEBCSlib.html#scripts.SEBCSlib.WindStability.windSpeedZ">[docs]</a>	<span class="k">def</span> <span class="nf">windSpeedZ</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="n">Z</span><span class="o">=</span><span class="mf">200.0</span><span class="p">,</span> <span class="n">Z_st</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">h_st</span><span class="o">=</span><span class="mf">0.12</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
@@ -1944,7 +2096,7 @@
 <span class="sd">		Aerodynamic resistance for heat and momentum transfer `(s.m^{-1})`</span>
 <span class="sd">		calculated from conversion of sensible heat flux equation.</span>
 
-<span class="sd">		:param H: Sensible heat flux :math `(W.m^{-2})`</span>
+<span class="sd">		:param H: Sensible heat flux :math:`(W.m^{-2})`</span>
 <span class="sd">		:type H: numpy.ndarray</span>
 <span class="sd">		:param rho: Specific air density :math:`(g.m^{-3})`</span>
 <span class="sd">		:type rho: numpy.ndarray</span>

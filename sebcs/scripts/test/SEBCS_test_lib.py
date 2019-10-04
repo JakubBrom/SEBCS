@@ -39,7 +39,6 @@ if __name__ == "__main__":
 	LAI5 = vi.LAI(red_band, nir_band, 5)
 	LAI6 = vi.LAI(red_band, nir_band, 6)
 	LAI7 = vi.LAI(red_band, nir_band, 7)
-	LAI8 = vi.LAI(red_band, nir_band, 8)
 
 
 	# Konstanty
@@ -100,7 +99,6 @@ if __name__ == "__main__":
 	# plt.scatter(savi, LAI5)
 	# plt.scatter(savi, LAI6)
 	plt.scatter(savi, LAI7)
-	plt.scatter(savi, LAI8)
 	# plt.plot(ts, H2)
 	# plt.plot(ts, ra3)
 	plt.show()

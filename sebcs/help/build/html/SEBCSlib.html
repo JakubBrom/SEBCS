@@ -308,8 +308,8 @@ method.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>Rn</strong> (<em>numpy.ndarray</em>) – Total net radiation :math <cite>(W.m^{-2})</cite></li>
-<li><strong>G</strong> (<em>numpy.ndarray</em>) – Ground heat flux :math <cite>(W.m^{-2})</cite></li>
+<li><strong>Rn</strong> (<em>numpy.ndarray</em>) – Total net radiation <img class="math" src="_images/math/17ab3d62def32c3f6e35ef07a4b366ae3ca5feca.svg" alt="(W.m^{-2})"/></li>
+<li><strong>G</strong> (<em>numpy.ndarray</em>) – Ground heat flux <img class="math" src="_images/math/17ab3d62def32c3f6e35ef07a4b366ae3ca5feca.svg" alt="(W.m^{-2})"/></li>
 <li><strong>delta</strong> (<em>numpy.ndarray</em>) – Delta function <img class="math" src="_images/math/d793c41ab852eafc4506371b44cd5f0d50ce2ed7.svg" alt="(kPa.K^{-1})"/></li>
 <li><strong>gamma</strong> (<em>numpy.ndarray</em>) – Psychrometric constant <img class="math" src="_images/math/d793c41ab852eafc4506371b44cd5f0d50ce2ed7.svg" alt="(kPa.K^{-1})"/>.</li>
 </ul>
@@ -359,8 +359,8 @@ Penman (1948) <img class="math" src="_images/math/17ab3d62def32c3f6e35ef07a4b366
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>Rn</strong> (<em>numpy.ndarray</em>) – Total net radiation :math <cite>(W.m^{-2})</cite></li>
-<li><strong>G</strong> (<em>numpy.ndarray</em>) – Ground heat flux :math <cite>(W.m^{-2})</cite></li>
+<li><strong>Rn</strong> (<em>numpy.ndarray</em>) – Total net radiation <img class="math" src="_images/math/17ab3d62def32c3f6e35ef07a4b366ae3ca5feca.svg" alt="(W.m^{-2})"/></li>
+<li><strong>G</strong> (<em>numpy.ndarray</em>) – Ground heat flux <img class="math" src="_images/math/17ab3d62def32c3f6e35ef07a4b366ae3ca5feca.svg" alt="(W.m^{-2})"/></li>
 <li><strong>delta</strong> (<em>numpy.ndarray</em>) – Delta function <img class="math" src="_images/math/d793c41ab852eafc4506371b44cd5f0d50ce2ed7.svg" alt="(kPa.K^{-1})"/></li>
 <li><strong>VPD</strong> (<em>numpy.ndarray</em>) – Water vapour pressure in air (kPa)</li>
 <li><strong>ra</strong> (<em>numpy.ndarray</em>) – Aerodynamic resistance <img class="math" src="_images/math/370352244d2f01b99b605ada38edfd25bdacdd39.svg" alt="(s.m^{-1})"/></li>
@@ -1149,6 +1149,70 @@ in calculation.</p>
 <em class="property">class </em><code class="descclassname">scripts.SEBCSlib.</code><code class="descname">VegIndices</code><a class="reference internal" href="_modules/scripts/SEBCSlib.html#VegIndices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.VegIndices" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculation of vegetation indices from spectral data.</p>
 <dl class="method">
+<dt id="scripts.SEBCSlib.VegIndices.LAI">
+<code class="descname">LAI</code><span class="sig-paren">(</span><em>red</em>, <em>nir</em>, <em>method=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#VegIndices.LAI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.VegIndices.LAI" title="Permalink to this definition">¶</a></dt>
+<dd><p>Leaf Area Index (LAI) calculated according to several methods.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>red</strong> (<em>numpy.ndarray</em>) – Spectral reflectance in RED region (rel.)</li>
+<li><strong>nir</strong> (<em>numpy.ndarray</em>) – Spectral reflectance in NIR region (rel.)</li>
+<li><strong>method</strong> (<em>int</em>) – <p>Method of LAI calculation:</p>
+<ul>
+<li>1: Pôças</li>
+<li>2: Bastiaanssen</li>
+<li>3: Jafaar (default)</li>
+<li>4: Anderson</li>
+<li>5: vineyard</li>
+<li>6: Carrasco</li>
+<li>7: Turner</li>
+</ul>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Leaf Area Index (LAI) <img class="math" src="_images/math/9ad11d5ab7022d12ba4412d61afacaa7b41e25eb.svg" alt="(m^2.m^{-2})"/></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">numpy.ndarray</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>References</strong></p>
+<p><em>Anderson, M., Neale, C., Li, F., Norman, J., Kustas, W., Jayanthi,
+H., Chavez, J., 2004. Upscaling ground observations of vegetation
+water content, canopy height, and leaf area index during SMEX02 using
+aircraft and Landsat imagery. Remote Sensing of Environment 92,
+447–464. https://doi.org/10.1016/j.rse.2004.03.019</em></p>
+<p><em>Bastiaanssen, W.G.M., Menenti, M., Feddes, R.A., Holtslag, A.A.M.,
+1998. A remote sensing surface energy balance algorithm for land (
+SEBAL). 1. Formulation. Journal of Hydrology 212–213, 198–212.
+https://doi.org/10.1016/S0022-1694(98)00253-4</em></p>
+<p><em>Carrasco-Benavides, M., Ortega-Farías, S., Lagos, L., Kleissl, J.,
+Morales-Salinas, L., Kilic, A., 2014. Parameterization of the
+Satellite-Based Model (METRIC) for the Estimation of Instantaneous
+Surface Energy Balance Components over a Drip-Irrigated Vineyard.
+Remote Sensing 6, 11342–11371. https://doi.org/10.3390/rs61111342</em></p>
+<p><em>Jaafar, H.H., Ahmad, F.A., 2019. Time series trends of Landsat-based
+ET using automated calibration in METRIC and SEBAL: The Bekaa
+Valley, Lebanon. Remote Sensing of Environment S0034425718305947.
+https://doi.org/10.1016/j.rse.2018.12.033</em></p>
+<p><em>Pôças, I., Paço, T.A., Cunha, M., Andrade, J.A., Silvestre, J.,
+Sousa, A., Santos, F.L., Pereira, L.S., Allen, R.G., 2014.
+Satellite-based evapotranspiration of a super-intensive olive
+orchard:  Application of METRIC algorithms. Biosystems Engineering
+128, 69–81. https://doi.org/10.1016/j.biosystemseng.2014.06.019</em></p>
+<p><em>Turner, D.P., Cohen, W.B., Kennedy, R.E., Fassnacht, K.S., Briggs,
+J.M., 1999. Relationships between Leaf Area Index and Landsat TM
+Spectral Vegetation Indices across Three Temperate Zone Sites.
+Remote Sensing of Environment 70, 52–68.
+https://doi.org/10.1016/S0034-4257(99)00057-7</em></p>
+</dd></dl>
+
+<dl class="method">
 <dt id="scripts.SEBCSlib.VegIndices.fractVegCover">
 <code class="descname">fractVegCover</code><span class="sig-paren">(</span><em>ndvi</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#VegIndices.fractVegCover"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.VegIndices.fractVegCover" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fractional vegetation cover layer - Fc.</p>
@@ -1169,7 +1233,7 @@ in calculation.</p>
 <dl class="method">
 <dt id="scripts.SEBCSlib.VegIndices.viMSAVI">
 <code class="descname">viMSAVI</code><span class="sig-paren">(</span><em>red</em>, <em>nir</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#VegIndices.viMSAVI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.VegIndices.viMSAVI" title="Permalink to this definition">¶</a></dt>
-<dd><p>Modified Soil Adjusted Vegetation Index - SAVI.</p>
+<dd><p>Modified Soil Adjusted Vegetation Index - MSAVI (Qi et al. 1994).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1188,6 +1252,10 @@ in calculation.</p>
 </tr>
 </tbody>
 </table>
+<p><strong>References</strong></p>
+<p><em>Qi, J., Chehbouni, A., Huete, A.R., Kerr, Y.H., Sorooshian, S.,
+1994. A modified soil adjusted vegetation index. Remote Sensing of
+Environment 48, 119–126. https://doi.org/10.1016/0034-4257(94)90134-1</em></p>
 </dd></dl>
 
 <dl class="method">
@@ -1239,9 +1307,39 @@ in calculation.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="scripts.SEBCSlib.VegIndices.viOSAVI">
+<code class="descname">viOSAVI</code><span class="sig-paren">(</span><em>red</em>, <em>nir</em>, <em>L=0.16</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#VegIndices.viOSAVI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.VegIndices.viOSAVI" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optimized Soil Adjusted Vegetation Index - OSAVI (Rondeaux et al. (
+1996)).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>red</strong> (<em>numpy.ndarray</em>) – Spectral reflectance in RED region (rel.)</li>
+<li><strong>nir</strong> (<em>numpy.ndarray</em>) – Spectral reflectance in NIR region (rel.)</li>
+<li><strong>L</strong> (<em>float</em>) – Parameter L. Default L=0.5</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Soil Adjusted Vegetation Index - OSAVI (unitless)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">numpy.ndarray</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>References</strong></p>
+<p><em>Rondeaux G., Steven M., Baret F. (1996): Optimisation of
+soil-adjusted vegetation indices Remote Sensing of Environment,
+55 (1996), pp. 95-107</em></p>
+</dd></dl>
+
+<dl class="method">
 <dt id="scripts.SEBCSlib.VegIndices.viSAVI">
 <code class="descname">viSAVI</code><span class="sig-paren">(</span><em>red</em>, <em>nir</em>, <em>L=0.5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#VegIndices.viSAVI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.VegIndices.viSAVI" title="Permalink to this definition">¶</a></dt>
-<dd><p>Soil Adjusted Vegetation Index - SAVI.</p>
+<dd><p>Soil Adjusted Vegetation Index - SAVI (Huete, 1988).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1261,6 +1359,9 @@ in calculation.</p>
 </tr>
 </tbody>
 </table>
+<p><strong>References</strong></p>
+<p><em>Huete A.R. (1988): A soil-adjusted vegetation index (SAVI) Remote
+Sensing of Environment 27, 47-57.</em></p>
 </dd></dl>
 
 </dd></dl>
@@ -1601,7 +1702,7 @@ calculated from conversion of sensible heat flux equation.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>H</strong> (<em>numpy.ndarray</em>) – Sensible heat flux :math <cite>(W.m^{-2})</cite></li>
+<li><strong>H</strong> (<em>numpy.ndarray</em>) – Sensible heat flux <img class="math" src="_images/math/17ab3d62def32c3f6e35ef07a4b366ae3ca5feca.svg" alt="(W.m^{-2})"/></li>
 <li><strong>rho</strong> (<em>numpy.ndarray</em>) – Specific air density <img class="math" src="_images/math/33223e2102dac2b47995a54fe6729f96aa1dbea2.svg" alt="(g.m^{-3})"/></li>
 <li><strong>ts</strong> – Surface temperature <img class="math" src="_images/math/67d3006bea7b2cb67bb0036142103b1e0c8d1496.svg" alt="(\SI{}\degreeCelsius)"/></li>
 <li><strong>ta</strong> (<em>numpy.ndarray</em>) – Air temperature at level Z <img class="math" src="_images/math/67d3006bea7b2cb67bb0036142103b1e0c8d1496.svg" alt="(\SI{}\degreeCelsius)"/></li>
@@ -1828,31 +1929,52 @@ reference cover used for meteostations.</li>
 <dl class="method">
 <dt id="scripts.SEBCSlib.WindStability.z0h">
 <code class="descname">z0h</code><span class="sig-paren">(</span><em>z0m</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#WindStability.z0h"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.WindStability.z0h" title="Permalink to this definition">¶</a></dt>
-<dd><p>Aerodynamic roughness of the surface for heat transfer (m)</p>
+<dd><p>Aerodynamic roughness of the surface for heat transfer (m).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>z0m</strong> (<em>numpy.ndarray</em><em>, </em><em>float</em>) – Aerodynamic roughness of the surface for momentum           transfer (m)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Aerodynamic roughness of the surface for heat transfer (m)</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">numpy.ndarray, float</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="scripts.SEBCSlib.WindStability.z0m">
-<code class="descname">z0m</code><span class="sig-paren">(</span><em>h_eff=None</em>, <em>savi=None</em>, <em>ca=0.003</em>, <em>cb=5.26</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#WindStability.z0m"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.WindStability.z0m" title="Permalink to this definition">¶</a></dt>
-<dd><p>Aerodynamic roughness of the surface for momentum transfer (m). 
-Calculated according to Thom (1975).</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="scripts.SEBCSlib.WindStability.z0m_METRIC">
-<code class="descname">z0m_METRIC</code><span class="sig-paren">(</span><em>ndvi</em>, <em>albedo</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#WindStability.z0m_METRIC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.WindStability.z0m_METRIC" title="Permalink to this definition">¶</a></dt>
-<dd><p>Aerodynamic roughness of the surface for momentum transfer (m). 
-Calculated according to pySEBAL (see Jaafar, H.H., Ahmad, F.A.,
-2019. Time series trends of Landsat-based ET using automated
-calibration in METRIC and SEBAL: The Bekaa Valley, Lebanon. 
-Remote Sensing of Environment S0034425718305947.
-<a class="reference external" href="https://doi.org/10.1016/j.rse.2018.12.033">https://doi.org/10.1016/j.rse.2018.12.033</a>)</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="scripts.SEBCSlib.WindStability.z_d">
-<code class="descname">z_d</code><span class="sig-paren">(</span><em>Z</em>, <em>disp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#WindStability.z_d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.WindStability.z_d" title="Permalink to this definition">¶</a></dt>
-<dd><p>Z - d difference. Z is height of meteorological measurement (m) - Z = 200 m is used.</p>
+<code class="descname">z0m</code><span class="sig-paren">(</span><em>h_eff</em>, <em>LAI</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#WindStability.z0m"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.WindStability.z0m" title="Permalink to this definition">¶</a></dt>
+<dd><p>Aerodynamic roughness of the surface for momentum transfer (m).
+z0m is calculated according to Tasumi (2003) for vegetation cover
+lower tha 1 m and according to Thom (1975) for vegetation cover
+higher than 1 m. The lowest value of z0m is 0.005, which is typical
+value for agricultural bare soils (Allen et al. 2007)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>h_eff</strong> – </li>
+<li><strong>LAI</strong> – </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>References</strong>          <em>Allen, R.G., Tasumi, M., Trezza, R., 2007. Satellite-Based Energy
+Balance for Mapping Evapotranspiration with Internalized Calibration
+(METRIC)—Model. J. Irrig. Drain Eng. 133, 380–394.
+https://doi.org/10.1061/(ASCE)0733-9437(2007)133:4(380)                 Tasumi, M., 2003. Progress in Operational Estimation of Regional
+Evapotranspiration Using Satellite Imagery (Ph.D. Thesis).
+University of Idaho, Moscow, Idaho.             Thom, A.S., 1975. Momentum, mass and heat exchange of plant
+communities, in: Monteith, J.L. (Ed.), Vegetation and the Atmosphere,
+Vol. 1 Principles. Academic Press, London, pp. 57–110.</em></p>
 </dd></dl>
 
 <dl class="method">

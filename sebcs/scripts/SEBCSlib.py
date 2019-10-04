@@ -580,7 +580,7 @@ class SolarRadBalance:
 		return Rn
 
 
-# noinspection PyMethodMayBeStatic,PyUnusedLocal
+# noinspection PyMethodMayBeStatic,PyUnusedLocal,SpellCheckingInspection,SpellCheckingInspection
 class VegIndices:
 	"""
 	Calculation of vegetation indices from spectral data.
@@ -615,25 +615,27 @@ class VegIndices:
 
 		return ndvi
 
+	# noinspection SpellCheckingInspection
 	def viSAVI(self, red, nir, L=0.5):
+		# noinspection SpellCheckingInspection
 		"""
-		Soil Adjusted Vegetation Index - SAVI (Huete, 1988).
+				Soil Adjusted Vegetation Index - SAVI (Huete, 1988).
 
-		:param red: Spectral reflectance in RED region (rel.)
-		:type red: numpy.ndarray
-		:param nir: Spectral reflectance in NIR region (rel.)
-		:type nir: numpy.ndarray
-		:param L: Parameter L. Default L=0.5
-		:type L: float
+				:param red: Spectral reflectance in RED region (rel.)
+				:type red: numpy.ndarray
+				:param nir: Spectral reflectance in NIR region (rel.)
+				:type nir: numpy.ndarray
+				:param L: Parameter L. Default L=0.5
+				:type L: float
 
-		:return: Soil Adjusted Vegetation Index - SAVI (unitless)
-		:rtype: numpy.ndarray
+				:return: Soil Adjusted Vegetation Index - SAVI (unitless)
+				:rtype: numpy.ndarray
 
-		\n
-		**References**\n
-		*Huete A.R. (1988): A soil-adjusted vegetation index (SAVI) Remote
-		Sensing of Environment 27, 47-57.*
-		"""
+				\n
+				**References**\n
+				*Huete A.R. (1988): A soil-adjusted vegetation index (SAVI) Remote
+				Sensing of Environment 27, 47-57.*
+				"""
 
 		ignore_zero = np.seterr(all="ignore")
 		
@@ -713,11 +715,10 @@ class VegIndices:
 		:rtype: numpy.ndarray
 
 		\n
-		**References**
+		**References**\n
 		*Qi, J., Chehbouni, A., Huete, A.R., Kerr, Y.H., Sorooshian, S.,
 		1994. A modified soil adjusted vegetation index. Remote Sensing of
-		Environment 48, 119–126. https://doi.org/10.1016/0034-4257(94)90134-1
-*
+		Environment 48, 119–126. https://doi.org/10.1016/0034-4257(94)90134-1*
 		"""
 
 		ignore_zero = np.seterr(all="ignore")  # ignoring exceptions with dividing by zero
@@ -752,51 +753,51 @@ class VegIndices:
 
 	def LAI(self, red, nir, method=3):
 		"""
+		Leaf Area Index (LAI) calculated according to several methods.
 
 		:param red: Spectral reflectance in RED region (rel.)
 		:type red: numpy.ndarray
 		:param nir: Spectral reflectance in NIR region (rel.)
 		:type nir: numpy.ndarray
-		:param method: Method of LAI calculation. Following methods are
-		available:\
-			1: Pôças\
-			2: Bastiaanssen'\
-			3: Jafaar (default)\
-			4: Anderson\
-			5: vineyard\
-			6: Carrasco\
-			7: Turner\
-		:type: int
+		:param method: Method of LAI calculation:\n
+				* 1: Pôças
+				* 2: Bastiaanssen
+				* 3: Jafaar (default)
+				* 4: Anderson
+				* 5: vineyard
+				* 6: Carrasco
+				* 7: Turner
+		:type method: int
 
 		:return: Leaf Area Index (LAI) :math:`(m^2.m^{-2})`
 		:rtype: numpy.ndarray
 
 		\n
-		**References**
+		**References**\n
 		*Anderson, M., Neale, C., Li, F., Norman, J., Kustas, W., Jayanthi,
 		H., Chavez, J., 2004. Upscaling ground observations of vegetation
 		water content, canopy height, and leaf area index during SMEX02 using
 		aircraft and Landsat imagery. Remote Sensing of Environment 92,
-		447–464. https://doi.org/10.1016/j.rse.2004.03.019
-		Bastiaanssen, W.G.M., Menenti, M., Feddes, R.A., Holtslag, A.A.M.,
+		447–464. https://doi.org/10.1016/j.rse.2004.03.019* \n
+		*Bastiaanssen, W.G.M., Menenti, M., Feddes, R.A., Holtslag, A.A.M.,
 		1998. A remote sensing surface energy balance algorithm for land (
 		SEBAL). 1. Formulation. Journal of Hydrology 212–213, 198–212.
-		https://doi.org/10.1016/S0022-1694(98)00253-4
-		Carrasco-Benavides, M., Ortega-Farías, S., Lagos, L., Kleissl, J.,
+		https://doi.org/10.1016/S0022-1694(98)00253-4* \n
+		*Carrasco-Benavides, M., Ortega-Farías, S., Lagos, L., Kleissl, J.,
 		Morales-Salinas, L., Kilic, A., 2014. Parameterization of the
 		Satellite-Based Model (METRIC) for the Estimation of Instantaneous
 		Surface Energy Balance Components over a Drip-Irrigated Vineyard.
-		Remote Sensing 6, 11342–11371. https://doi.org/10.3390/rs61111342
-		Jaafar, H.H., Ahmad, F.A., 2019. Time series trends of Landsat-based
+		Remote Sensing 6, 11342–11371. https://doi.org/10.3390/rs61111342* \n
+		*Jaafar, H.H., Ahmad, F.A., 2019. Time series trends of Landsat-based
 		ET using automated calibration in METRIC and SEBAL: The Bekaa
 		Valley, Lebanon. Remote Sensing of Environment S0034425718305947.
-		https://doi.org/10.1016/j.rse.2018.12.033
-		Pôças, I., Paço, T.A., Cunha, M., Andrade, J.A., Silvestre, J.,
+		https://doi.org/10.1016/j.rse.2018.12.033* \n
+		*Pôças, I., Paço, T.A., Cunha, M., Andrade, J.A., Silvestre, J.,
 		Sousa, A., Santos, F.L., Pereira, L.S., Allen, R.G., 2014.
 		Satellite-based evapotranspiration of a super-intensive olive
 		orchard:  Application of METRIC algorithms. Biosystems Engineering
-		128, 69–81. https://doi.org/10.1016/j.biosystemseng.2014.06.019
-		Turner, D.P., Cohen, W.B., Kennedy, R.E., Fassnacht, K.S., Briggs,
+		128, 69–81. https://doi.org/10.1016/j.biosystemseng.2014.06.019* \n
+		*Turner, D.P., Cohen, W.B., Kennedy, R.E., Fassnacht, K.S., Briggs,
 		J.M., 1999. Relationships between Leaf Area Index and Landsat TM
 		Spectral Vegetation Indices across Three Temperate Zone Sites.
 		Remote Sensing of Environment 70, 52–68.
@@ -810,15 +811,15 @@ class VegIndices:
 		# methods = {1:'Pôças', 2:'Bastiaanssen', 3:'Jafaar', 4:'Anderson',
 		# 5:'vineyard', 6:'Carrasco', 7:'Turner'}
 
-		if method is 1:
+		if method is 1:     # Pôças
 			LAI = np.where(savi > 0, 11.0 * savi**3, 0)
 			LAI = np.where(savi > 0.817, 6, LAI)
 
-		elif method is 2:
+		elif method is 2:   # Bastiaanssen
 			LAI = np.where(savi > 0, np.log((0.61 - savi)/0.51)/0.91 * (-1), 0)
 			LAI = np.where(savi >= 0.61, 6, LAI)
 
-		elif method is 3:
+		elif method is 3:   # Jafaar
 			LAI_1 = np.where(savi > 0, 11.0 * savi ** 3, 0)
 			LAI_1 = np.where(savi > 0.817, 6, LAI_1)
 
@@ -828,23 +829,25 @@ class VegIndices:
 
 			LAI = (LAI_1 + LAI_2)/2
 
-		elif method is 4:
+		elif method is 4:   # Anderson
 			LAI = (4 * osavi - 0.8) * (1 + 4.73e-6 * np.exp(15.64 * osavi))
 
-		elif method is 5:
-			LAI = 4.9 * ndvi -0.46
+		elif method is 5:   # vineyard
+			LAI = 4.9 * ndvi - 0.46
 
-		elif method is 6:
+		elif method is 6:   # Carrasco
 			LAI = 1.2 - 3.08 * np.exp(-2013.35 * ndvi**6.41)
 
-		elif method is 7:
+		elif method is 7:   # Turner
 			LAI = 0.5724 + 0.0989 * ndvi - 0.0114 * ndvi**2 + 0.0004 * ndvi**3
 
 		# elif method is 8:
 		# 	LAI = 6.0/(1 + np.exp(-(8 * savi - 5)))
-		# 	# Method proposed by Brom (mathematical deffinition only,
+		# 	# Method proposed by Brom (mathematical definition only,
 		# 	not tested). Good approximation with another methods (1, 2, 3) but
 		# 	this method	is very sensitive on parameters in exponent
+		else:
+			raise ArithmeticError("LAI has not been calculated.")
 
 		LAI = np.where(LAI <= 0, 0, LAI)
 
@@ -937,7 +940,7 @@ class HeatFluxes:
 		:type alpha: float
 
 		:return: Latent heat flux for wet surface calculated by\
-		Priestle-Taylor :math:`(W.m^{-2})`
+		Priestley-Taylor :math:`(W.m^{-2})`
 		:rtype: numpy.ndarray
 		"""
 
@@ -1215,7 +1218,7 @@ class HeatFluxes:
 		try:
 			rcp = (E_Z_sat - e_Z) * rho * cp / (gamma * LE_p) - ra
 		except ArithmeticError:
-			raise ArithmeticError("Surface resistance for water wapour "
+			raise ArithmeticError("Surface resistance for water vapour "
 			                      "transfer for potential evaporation has not "
 			                      "been calculated")
 
@@ -1256,7 +1259,7 @@ class HeatFluxes:
 		:type LEp: numpy.ndarray
 		:param ra: Aerodynamic resistance :math:`(s.m^{-1})`
 		:type ra: numpy.ndarray
-		:param rc: Surface resistavce for water vapour transfer\
+		:param rc: Surface resistance for water vapour transfer\
 		 :math:`(s.m^{-1})`
 		:param E_Z_sat: Saturated water vapour pressure (kPa).
 		:type E_Z_sat: numpy.ndarray
@@ -1330,7 +1333,7 @@ class MeteoFeatures:
 		:param ta_st: Air temperature measured at height z_st\
 		:math:`(\SI{}\degreeCelsius)`
 		:type ta_st: numpy.ndarray, float
-		:param z_st: Height of air temparature measurement on meteo station (m)
+		:param z_st: Height of air temperature measurement on meteo station (m)
 		:type z_st: float
 		:param adiabatic: Adiabatic lapse rate :math:`(\SI{}\degreeCelsius)`
 		:type adiabatic: float
@@ -1368,8 +1371,8 @@ class MeteoFeatures:
 		"""
 
 		try:
-			airP = P0 * ((ta + 273.15)/(ta + 273.15 + adiabatic
-				* (DMT + Z)))**5.257
+			airP = P0 * ((ta + 273.15)/(ta + 273.15 + adiabatic * (DMT +
+			                                                       Z)))**5.257
 
 		except ArithmeticError:
 			raise ArithmeticError("Air pressure has not been calculated.")
@@ -1433,7 +1436,7 @@ class MeteoFeatures:
 		try:
 			VPD = E_sat - e_abs
 		except ArithmeticError:
-			raise ArithmeticError("Water vapour pressure defficit has not "
+			raise ArithmeticError("Water vapour pressure deficit has not "
 			                      "been calculated.")
 
 		return VPD
@@ -1569,78 +1572,86 @@ class WindStability(MeteoFeatures, HeatFluxes, VegIndices):
 
 	def vegHeight(self, h_min, h_max, msavi):
 		"""
-		height of vegetation cover (m) derived from MSAVI index
+		Height of effective vegetation cover (m) derived from MSAVI index
 		according to Gao et al. (2011).
+
+		:param h_min: Maximal height of vegetation cover (m)
+		:type h_max: numpy.ndarray
+		:param h_max: Minimal height of vegetation cover (m)
+		:type h_min: numpy.ndarray
+		:param msavi: Modified Soil Adjusted Vegetation Index (MSAVI)
+		:type msavi: numpy.ndarray
+
+		:return: Effective vegetation cover height (m)
+		:rtype: numpy.ndarray
+
+		\n
+		**References**\n
+		*Gao, Z.Q., Liu, C.S., Gao, W., Chang, N.-B., 2011. A coupled remote
+		sensing and the Surface Energy Balance with Topography Algorithm
+		(SEBTA) to estimate actual evapotranspiration over heterogeneous
+		terrain. Hydrol. Earth Syst. Sci. 15, 119–139.
+		https://doi.org/10.5194/hess-15-119-2011*
 		"""
+
 		minmsavi = np.min(msavi[msavi != 0])
 		maxmsavi = np.max(msavi)
 		h_eff = h_min + (msavi - minmsavi) / (minmsavi - maxmsavi) * (h_min - h_max)
 		return h_eff
 
-
 	def zeroPlaneDis(self, h_eff):
 		"""
-		Zero plane displacement (m).
+		Zero plane displacement (m) calculated according to Thom (1975).
+
+		:param h_eff: Effective vegetation cover height (m)
+		:type h_eff: numpy.ndarray
+
+		:return: Zero plane displacement (m)
+		:rtype: numpy.ndarray
+
+		\n
+		**References**\n
+		*Thom, A.S., 1975. Momentum, mass and heat exchange of plant
+		communities, in: Monteith, J.L. (Ed.), Vegetation and the Atmosphere,
+		Vol. 1 Principles. Academic Press, London, pp. 57–110.*
 		"""
+
 		disp = 2.0 / 3.0 * h_eff
 		return disp
 
-	def z0m_METRIC(self, ndvi, albedo):
-		"""
-		Aerodynamic roughness of the surface for momentum transfer (m). 
-		Calculated according to pySEBAL (see Jaafar, H.H., Ahmad, F.A.,
-		2019. Time series trends of Landsat-based ET using automated
-		calibration in METRIC and SEBAL: The Bekaa Valley, Lebanon. 
-		Remote Sensing of Environment S0034425718305947.
-		https://doi.org/10.1016/j.rse.2018.12.033)
-		"""
-
-		n = -5.037
-		m = 1.096
-
-		z0m = np.exp(m * ndvi / albedo + n)
-
-		z0m = np.where(z0m < 0.001, 0.001, z0m)
-
-		return z0m
-
-	def z0m(self, method=1, h_eff=None, red=None, nir=None, albedo=None,
-	        ca=0.003, cb=5.26, cm=1.096, cn=-3.037, L=0.5):
+	def z0m(self, h_eff, LAI):
 		"""
 		Aerodynamic roughness of the surface for momentum transfer (m).
-		z0m can be calculated according to three different approaches:\n
-			- Thom (1975)\
-			- Allen et al. ()\
-			- METRIC (Tasumi et al. XXX)
+		z0m is calculated according to Tasumi (2003) for vegetation cover
+		lower tha 1 m and according to Thom (1975) for vegetation cover
+		higher than 1 m. The lowest value of z0m is 0.005, which is typical
+		value for agricultural bare soils (Allen et al. 2007)
 
-		:param method:
-		:param h_eff:
-		:param red:
-		:param nir:
-		:param ca:
-		:param cb:
-		:param cm:
-		:param cn:
-		:param L:
-		:return:
+		:param h_eff: Effective vegetation cover height (m)
+		:type h_eff: numpy.ndarray
+		:param LAI: Leaf Area Index
+		:type LAI: numpy.ndarray
 
-		TODO doplnit citace.
-		TODO doplnit do nastaveni metody vypoctu z0m
-		TODO ověřit METRIC verzi - výsledky jsou dost podivný....
+		:return: Aerodynamic roughness of the surface for momentum transfer (m)
+		:rtype: numpy.ndarray
+
+		\n
+		**References**\n
+		*Allen, R.G., Tasumi, M., Trezza, R., 2007. Satellite-Based Energy
+		Balance for Mapping Evapotranspiration with Internalized Calibration
+		(METRIC)—Model. J. Irrig. Drain Eng. 133, 380–394.
+		https://doi.org/10.1061/(ASCE)0733-9437(2007)133:4(380) *\n
+		*Tasumi, M., 2003. Progress in Operational Estimation of Regional
+		Evapotranspiration Using Satellite Imagery (Ph.D. Thesis).
+		University of Idaho, Moscow, Idaho.*\n
+		*Thom, A.S., 1975. Momentum, mass and heat exchange of plant
+		communities, in: Monteith, J.L. (Ed.), Vegetation and the Atmosphere,
+		Vol. 1 Principles. Academic Press, London, pp. 57–110.*
 		"""
 
 		try:
-			if method is 1:                                 # Thom
-				z0m = h_eff * 0.123
-
-			elif method is 2:                               # Allen
-				savi = self.viSAVI(red, nir, L)
-				z0m = ca * np.exp(cb * savi)
-
-			else:                                           # METRIC
-				ndvi = self.viNDVI(red, nir)
-				z0m = np.exp(cm * ndvi / albedo + cn)
-				z0m = np.where(z0m < 0.001, 0.001, z0m)
+			z0m = np.where(h_eff <= 1.0, 0.018 * LAI, 0.123 * h_eff)
+			z0m = np.where(z0m < 0.005, 0.005, z0m)
 
 		except ArithmeticError:
 			raise ArithmeticError("Aerodynamic roughness of the surface for "
@@ -1649,7 +1660,8 @@ class WindStability(MeteoFeatures, HeatFluxes, VegIndices):
 
 	def z0h(self, z0m):
 		"""
-		Aerodynamic roughness of the surface for heat transfer (m).
+		Aerodynamic roughness of the surface for heat transfer (m) calculated
+		according to Thom (1975).
 
 		:param z0m: Aerodynamic roughness of the surface for momentum\
 		transfer (m)
@@ -1657,6 +1669,12 @@ class WindStability(MeteoFeatures, HeatFluxes, VegIndices):
 
 		:return: Aerodynamic roughness of the surface for heat transfer (m)
 		:rtype: numpy.ndarray, float
+
+		\n
+		**References**\n
+		*Thom, A.S., 1975. Momentum, mass and heat exchange of plant
+		communities, in: Monteith, J.L. (Ed.), Vegetation and the Atmosphere,
+		Vol. 1 Principles. Academic Press, London, pp. 57–110.*
 		"""
 		z0h = 0.1 * z0m
 		return z0h
@@ -1680,6 +1698,14 @@ class WindStability(MeteoFeatures, HeatFluxes, VegIndices):
 
 		:return: Wind speed at mixinf layer (m/s)
 		:rtype: float
+
+		\n
+		**References**\n
+		*Gao, Z.Q., Liu, C.S., Gao, W., Chang, N.B., 2011. A coupled remote
+		sensing and the Surface Energy Balance with Topography Algorithm
+		(SEBTA) to estimate actual evapotranspiration over heterogeneous
+		terrain. Hydrol. Earth Syst. Sci. 15, 119–139.
+		https://doi.org/10.5194/hess-15-119-2011*
 		"""
 
 		ignore_zero = np.seterr(all="ignore")
@@ -1830,11 +1856,13 @@ class WindStability(MeteoFeatures, HeatFluxes, VegIndices):
 		dzeta = Z / L
 
 		try:
-			psi_h_stab = -(
-					(1 + 2 * a * dzeta / 3) ** 1.5 + b * (dzeta - c / d) * np.exp((-d) * dzeta) + (b * c / d - 1))
+			psi_h_stab = -((1 + 2 * a * dzeta / 3) ** 1.5 + b
+			               * (dzeta - c / d) * np.exp((-d) * dzeta)
+			               + (b * c/d - 1))
 		except ArithmeticError:
-			raise ArithmeticError(
-				"Stability coefficient for heat transfer for stable conditions has not been calculated")
+			raise ArithmeticError("Stability coefficient for heat transfer "
+			                      "for stable conditions has not been "
+			                      "calculated")
 
 		try:
 			psi_h_unstab = 2.0 * np.log((1.0 + X ** 2.0) / 2.0)
@@ -2015,6 +2043,12 @@ class WindStability(MeteoFeatures, HeatFluxes, VegIndices):
 		:return ra: Aerodynamic resistance for heat and momentum
 					transfer (s.m-1) calculated according to Thom (1975)
 		:rtype ra: numpy.ndarray
+
+		\n
+		**References**\n
+		*Thom, A.S., 1975. Momentum, mass and heat exchange of plant
+		communities, in: Monteith, J.L. (Ed.), Vegetation and the Atmosphere,
+		Vol. 1 Principles. Academic Press, London, pp. 57–110.*
 		"""
 
 		try:

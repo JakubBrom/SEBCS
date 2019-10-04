@@ -22,6 +22,9 @@
  ***************************************************************************/
 """
 
+# TODO: add LAI to list of outputs
+# TODO: add SAVI to list of outputs
+
 # Imports
 import os
 import time
@@ -30,7 +33,7 @@ import sys
 import os.path
 
 # Import PyQt libs
-from PyQt5.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, QDate, QTime, Qt, QThread, QUrl
+from PyQt5.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, QDate, QTime, Qt, QUrl
 from PyQt5.QtGui import QIcon, QDesktopServices
 from PyQt5.QtWidgets import QAction, QFileDialog, QProgressBar, QPushButton
 from qgis.gui import QgsMessageBar

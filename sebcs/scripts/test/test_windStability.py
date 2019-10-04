@@ -64,11 +64,7 @@ class TestWindStability(TestCase):
 		self.fail()
 
 	def test_z0m(self):
-
-		self.z0m = ws.z0m(method=2, h_eff=self.h_effect, red=self.red_band,
-		             nir=self.nir_band, albedo=self.alb)
-
-		self.assertEqual(self.z0m_z, self.z0m[4])
+		self.fail()
 
 	def test_z0h(self):
 		self.fail()
