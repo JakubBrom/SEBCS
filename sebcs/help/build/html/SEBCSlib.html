@@ -227,7 +227,7 @@ method is included.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>LEp</strong> (<em>numpy.ndarray</em>) – Potential evaporation latent heat flux <img class="math" src="_images/math/17ab3d62def32c3f6e35ef07a4b366ae3ca5feca.svg" alt="(W.m^{-2})"/></li>
 <li><strong>ra</strong> (<em>numpy.ndarray</em>) – Aerodynamic resistance <img class="math" src="_images/math/370352244d2f01b99b605ada38edfd25bdacdd39.svg" alt="(s.m^{-1})"/></li>
-<li><strong>rc</strong> – Surface resistavce for water vapour transfer          <img class="math" src="_images/math/370352244d2f01b99b605ada38edfd25bdacdd39.svg" alt="(s.m^{-1})"/></li>
+<li><strong>rc</strong> – Surface resistance for water vapour transfer          <img class="math" src="_images/math/370352244d2f01b99b605ada38edfd25bdacdd39.svg" alt="(s.m^{-1})"/></li>
 <li><strong>E_Z_sat</strong> (<em>numpy.ndarray</em>) – Saturated water vapour pressure (kPa).</li>
 <li><strong>e_Z</strong> (<em>numpy.ndarray</em>) – Water vapour pressure (kPa).</li>
 <li><strong>rho</strong> (<em>numpy.ndarray</em>) – Specific air density <img class="math" src="_images/math/33223e2102dac2b47995a54fe6729f96aa1dbea2.svg" alt="(g.m^{-3})"/></li>
@@ -339,7 +339,7 @@ method.</p>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Latent heat flux for wet surface calculated by         Priestle-Taylor <img class="math" src="_images/math/17ab3d62def32c3f6e35ef07a4b366ae3ca5feca.svg" alt="(W.m^{-2})"/></p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Latent heat flux for wet surface calculated by         Priestley-Taylor <img class="math" src="_images/math/17ab3d62def32c3f6e35ef07a4b366ae3ca5feca.svg" alt="(W.m^{-2})"/></p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">numpy.ndarray</p>
@@ -680,7 +680,7 @@ height Z_st (m).</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>DMT</strong> (<em>numpy.ndarray</em><em>, </em><em>float</em>) – Digital elevation model (m)</li>
 <li><strong>ta_st</strong> (<em>numpy.ndarray</em><em>, </em><em>float</em>) – Air temperature measured at height z_st           <img class="math" src="_images/math/67d3006bea7b2cb67bb0036142103b1e0c8d1496.svg" alt="(\SI{}\degreeCelsius)"/></li>
-<li><strong>z_st</strong> (<em>float</em>) – Height of air temparature measurement on meteo station (m)</li>
+<li><strong>z_st</strong> (<em>float</em>) – Height of air temperature measurement on meteo station (m)</li>
 <li><strong>adiabatic</strong> (<em>float</em>) – Adiabatic lapse rate <img class="math" src="_images/math/67d3006bea7b2cb67bb0036142103b1e0c8d1496.svg" alt="(\SI{}\degreeCelsius)"/></li>
 </ul>
 </td>
@@ -1781,6 +1781,10 @@ transfer (s.m-1) calculated according to Thom (1975)</p>
 </tr>
 </tbody>
 </table>
+<p><strong>References</strong></p>
+<p><em>Thom, A.S., 1975. Momentum, mass and heat exchange of plant
+communities, in: Monteith, J.L. (Ed.), Vegetation and the Atmosphere,
+Vol. 1 Principles. Academic Press, London, pp. 57–110.</em></p>
 </dd></dl>
 
 <dl class="method">
@@ -1843,8 +1847,33 @@ Default -10000.0</li>
 <dl class="method">
 <dt id="scripts.SEBCSlib.WindStability.vegHeight">
 <code class="descname">vegHeight</code><span class="sig-paren">(</span><em>h_min</em>, <em>h_max</em>, <em>msavi</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#WindStability.vegHeight"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.WindStability.vegHeight" title="Permalink to this definition">¶</a></dt>
-<dd><p>height of vegetation cover (m) derived from MSAVI index
+<dd><p>Height of effective vegetation cover (m) derived from MSAVI index
 according to Gao et al. (2011).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>h_min</strong> (<em>numpy.ndarray</em>) – Maximal height of vegetation cover (m)</li>
+<li><strong>h_max</strong> (<em>numpy.ndarray</em>) – Minimal height of vegetation cover (m)</li>
+<li><strong>msavi</strong> (<em>numpy.ndarray</em>) – Modified Soil Adjusted Vegetation Index (MSAVI)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Effective vegetation cover height (m)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">numpy.ndarray</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>References</strong></p>
+<p><em>Gao, Z.Q., Liu, C.S., Gao, W., Chang, N.-B., 2011. A coupled remote
+sensing and the Surface Energy Balance with Topography Algorithm
+(SEBTA) to estimate actual evapotranspiration over heterogeneous
+terrain. Hydrol. Earth Syst. Sci. 15, 119–139.
+https://doi.org/10.5194/hess-15-119-2011</em></p>
 </dd></dl>
 
 <dl class="method">
@@ -1924,12 +1953,19 @@ reference cover used for meteostations.</li>
 </tr>
 </tbody>
 </table>
+<p><strong>References</strong></p>
+<p><em>Gao, Z.Q., Liu, C.S., Gao, W., Chang, N.B., 2011. A coupled remote
+sensing and the Surface Energy Balance with Topography Algorithm
+(SEBTA) to estimate actual evapotranspiration over heterogeneous
+terrain. Hydrol. Earth Syst. Sci. 15, 119–139.
+https://doi.org/10.5194/hess-15-119-2011</em></p>
 </dd></dl>
 
 <dl class="method">
 <dt id="scripts.SEBCSlib.WindStability.z0h">
 <code class="descname">z0h</code><span class="sig-paren">(</span><em>z0m</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#WindStability.z0h"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.WindStability.z0h" title="Permalink to this definition">¶</a></dt>
-<dd><p>Aerodynamic roughness of the surface for heat transfer (m).</p>
+<dd><p>Aerodynamic roughness of the surface for heat transfer (m) calculated
+according to Thom (1975).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1942,6 +1978,10 @@ reference cover used for meteostations.</li>
 </tr>
 </tbody>
 </table>
+<p><strong>References</strong></p>
+<p><em>Thom, A.S., 1975. Momentum, mass and heat exchange of plant
+communities, in: Monteith, J.L. (Ed.), Vegetation and the Atmosphere,
+Vol. 1 Principles. Academic Press, London, pp. 57–110.</em></p>
 </dd></dl>
 
 <dl class="method">
@@ -1957,22 +1997,28 @@ value for agricultural bare soils (Allen et al. 2007)</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>h_eff</strong> – </li>
-<li><strong>LAI</strong> – </li>
+<li><strong>h_eff</strong> (<em>numpy.ndarray</em>) – Effective vegetation cover height (m)</li>
+<li><strong>LAI</strong> (<em>numpy.ndarray</em>) – Leaf Area Index</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Aerodynamic roughness of the surface for momentum transfer (m)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">numpy.ndarray</p>
 </td>
 </tr>
 </tbody>
 </table>
-<p><strong>References</strong>          <em>Allen, R.G., Tasumi, M., Trezza, R., 2007. Satellite-Based Energy
+<p><strong>References</strong></p>
+<p><em>Allen, R.G., Tasumi, M., Trezza, R., 2007. Satellite-Based Energy
 Balance for Mapping Evapotranspiration with Internalized Calibration
 (METRIC)—Model. J. Irrig. Drain Eng. 133, 380–394.
-https://doi.org/10.1061/(ASCE)0733-9437(2007)133:4(380)                 Tasumi, M., 2003. Progress in Operational Estimation of Regional
+https://doi.org/10.1061/(ASCE)0733-9437(2007)133:4(380)</em></p>
+<p><em>Tasumi, M., 2003. Progress in Operational Estimation of Regional
 Evapotranspiration Using Satellite Imagery (Ph.D. Thesis).
-University of Idaho, Moscow, Idaho.             Thom, A.S., 1975. Momentum, mass and heat exchange of plant
+University of Idaho, Moscow, Idaho.</em></p>
+<p><em>Thom, A.S., 1975. Momentum, mass and heat exchange of plant
 communities, in: Monteith, J.L. (Ed.), Vegetation and the Atmosphere,
 Vol. 1 Principles. Academic Press, London, pp. 57–110.</em></p>
 </dd></dl>
@@ -1980,7 +2026,23 @@ Vol. 1 Principles. Academic Press, London, pp. 57–110.</em></p>
 <dl class="method">
 <dt id="scripts.SEBCSlib.WindStability.zeroPlaneDis">
 <code class="descname">zeroPlaneDis</code><span class="sig-paren">(</span><em>h_eff</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/SEBCSlib.html#WindStability.zeroPlaneDis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scripts.SEBCSlib.WindStability.zeroPlaneDis" title="Permalink to this definition">¶</a></dt>
-<dd><p>Zero plane displacement (m).</p>
+<dd><p>Zero plane displacement (m) calculated according to Thom (1975).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>h_eff</strong> (<em>numpy.ndarray</em>) – Effective vegetation cover height (m)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Zero plane displacement (m)</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">numpy.ndarray</td>
+</tr>
+</tbody>
+</table>
+<p><strong>References</strong></p>
+<p><em>Thom, A.S., 1975. Momentum, mass and heat exchange of plant
+communities, in: Monteith, J.L. (Ed.), Vegetation and the Atmosphere,
+Vol. 1 Principles. Academic Press, London, pp. 57–110.</em></p>
 </dd></dl>
 
 </dd></dl>

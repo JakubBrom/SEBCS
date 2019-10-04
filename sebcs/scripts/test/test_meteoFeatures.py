@@ -33,7 +33,7 @@
 from unittest import TestCase
 import numpy as np
 import matplotlib.pyplot as plt
-from sebcs.scripts.SEBCSlib import MeteoFeatures
+from sebcs.scripts.SEBCS_lib import MeteoFeatures
 
 met = MeteoFeatures()
 

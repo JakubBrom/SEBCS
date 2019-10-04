@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # /***************************************************************************
-# SEBCSlib.py
+# SEBCS_lib.py
 #
 # Collection of functions for energy balance and its components calculation.
 #
@@ -1640,7 +1640,7 @@ class WindStability(MeteoFeatures, HeatFluxes, VegIndices):
 		*Allen, R.G., Tasumi, M., Trezza, R., 2007. Satellite-Based Energy
 		Balance for Mapping Evapotranspiration with Internalized Calibration
 		(METRIC)—Model. J. Irrig. Drain Eng. 133, 380–394.
-		https://doi.org/10.1061/(ASCE)0733-9437(2007)133:4(380) *\n
+		https://doi.org/10.1061/(ASCE)0733-9437(2007)133:4(380)* \n
 		*Tasumi, M., 2003. Progress in Operational Estimation of Regional
 		Evapotranspiration Using Satellite Imagery (Ph.D. Thesis).
 		University of Idaho, Moscow, Idaho.*\n

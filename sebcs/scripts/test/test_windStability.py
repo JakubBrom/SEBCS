@@ -30,7 +30,7 @@
 from unittest import TestCase
 import numpy as np
 import matplotlib.pyplot as plt
-from sebcs.scripts.SEBCSlib import WindStability
+from sebcs.scripts.SEBCS_lib import WindStability
 
 ws = WindStability()
 

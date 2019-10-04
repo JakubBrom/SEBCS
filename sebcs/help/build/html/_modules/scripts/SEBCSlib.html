@@ -635,7 +635,7 @@
 		<span class="k">return</span> <span class="n">Rn</span></div></div>
 
 
-<span class="c1"># noinspection PyMethodMayBeStatic,PyUnusedLocal</span>
+<span class="c1"># noinspection PyMethodMayBeStatic,PyUnusedLocal,SpellCheckingInspection,SpellCheckingInspection</span>
 <div class="viewcode-block" id="VegIndices"><a class="viewcode-back" href="../../SEBCSlib.html#scripts.SEBCSlib.VegIndices">[docs]</a><span class="k">class</span> <span class="nc">VegIndices</span><span class="p">:</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Calculation of vegetation indices from spectral data.</span>
@@ -670,25 +670,27 @@
 
 		<span class="k">return</span> <span class="n">ndvi</span></div>
 
+	<span class="c1"># noinspection SpellCheckingInspection</span>
 <div class="viewcode-block" id="VegIndices.viSAVI"><a class="viewcode-back" href="../../SEBCSlib.html#scripts.SEBCSlib.VegIndices.viSAVI">[docs]</a>	<span class="k">def</span> <span class="nf">viSAVI</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">red</span><span class="p">,</span> <span class="n">nir</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+		<span class="c1"># noinspection SpellCheckingInspection</span>
 		<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">		Soil Adjusted Vegetation Index - SAVI (Huete, 1988).</span>
+<span class="sd">				Soil Adjusted Vegetation Index - SAVI (Huete, 1988).</span>
 
-<span class="sd">		:param red: Spectral reflectance in RED region (rel.)</span>
-<span class="sd">		:type red: numpy.ndarray</span>
-<span class="sd">		:param nir: Spectral reflectance in NIR region (rel.)</span>
-<span class="sd">		:type nir: numpy.ndarray</span>
-<span class="sd">		:param L: Parameter L. Default L=0.5</span>
-<span class="sd">		:type L: float</span>
+<span class="sd">				:param red: Spectral reflectance in RED region (rel.)</span>
+<span class="sd">				:type red: numpy.ndarray</span>
+<span class="sd">				:param nir: Spectral reflectance in NIR region (rel.)</span>
+<span class="sd">				:type nir: numpy.ndarray</span>
+<span class="sd">				:param L: Parameter L. Default L=0.5</span>
+<span class="sd">				:type L: float</span>
 
-<span class="sd">		:return: Soil Adjusted Vegetation Index - SAVI (unitless)</span>
-<span class="sd">		:rtype: numpy.ndarray</span>
+<span class="sd">				:return: Soil Adjusted Vegetation Index - SAVI (unitless)</span>
+<span class="sd">				:rtype: numpy.ndarray</span>
 
-<span class="sd">		\n</span>
-<span class="sd">		**References**\n</span>
-<span class="sd">		*Huete A.R. (1988): A soil-adjusted vegetation index (SAVI) Remote</span>
-<span class="sd">		Sensing of Environment 27, 47-57.*</span>
-<span class="sd">		&quot;&quot;&quot;</span>
+<span class="sd">				\n</span>
+<span class="sd">				**References**\n</span>
+<span class="sd">				*Huete A.R. (1988): A soil-adjusted vegetation index (SAVI) Remote</span>
+<span class="sd">				Sensing of Environment 27, 47-57.*</span>
+<span class="sd">				&quot;&quot;&quot;</span>
 
 		<span class="n">ignore_zero</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
 		
@@ -886,7 +888,7 @@
 			<span class="n">LAI</span> <span class="o">=</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">osavi</span> <span class="o">-</span> <span class="mf">0.8</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mf">4.73e-6</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mf">15.64</span> <span class="o">*</span> <span class="n">osavi</span><span class="p">))</span>
 
 		<span class="k">elif</span> <span class="n">method</span> <span class="ow">is</span> <span class="mi">5</span><span class="p">:</span>   <span class="c1"># vineyard</span>
-			<span class="n">LAI</span> <span class="o">=</span> <span class="mf">4.9</span> <span class="o">*</span> <span class="n">ndvi</span> <span class="o">-</span><span class="mf">0.46</span>
+			<span class="n">LAI</span> <span class="o">=</span> <span class="mf">4.9</span> <span class="o">*</span> <span class="n">ndvi</span> <span class="o">-</span> <span class="mf">0.46</span>
 
 		<span class="k">elif</span> <span class="n">method</span> <span class="ow">is</span> <span class="mi">6</span><span class="p">:</span>   <span class="c1"># Carrasco</span>
 			<span class="n">LAI</span> <span class="o">=</span> <span class="mf">1.2</span> <span class="o">-</span> <span class="mf">3.08</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">2013.35</span> <span class="o">*</span> <span class="n">ndvi</span><span class="o">**</span><span class="mf">6.41</span><span class="p">)</span>
@@ -993,7 +995,7 @@
 <span class="sd">		:type alpha: float</span>
 
 <span class="sd">		:return: Latent heat flux for wet surface calculated by\</span>
-<span class="sd">		Priestle-Taylor :math:`(W.m^{-2})`</span>
+<span class="sd">		Priestley-Taylor :math:`(W.m^{-2})`</span>
 <span class="sd">		:rtype: numpy.ndarray</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 
@@ -1271,7 +1273,7 @@
 		<span class="k">try</span><span class="p">:</span>
 			<span class="n">rcp</span> <span class="o">=</span> <span class="p">(</span><span class="n">E_Z_sat</span> <span class="o">-</span> <span class="n">e_Z</span><span class="p">)</span> <span class="o">*</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">cp</span> <span class="o">/</span> <span class="p">(</span><span class="n">gamma</span> <span class="o">*</span> <span class="n">LE_p</span><span class="p">)</span> <span class="o">-</span> <span class="n">ra</span>
 		<span class="k">except</span> <span class="ne">ArithmeticError</span><span class="p">:</span>
-			<span class="k">raise</span> <span class="ne">ArithmeticError</span><span class="p">(</span><span class="s2">&quot;Surface resistance for water wapour &quot;</span>
+			<span class="k">raise</span> <span class="ne">ArithmeticError</span><span class="p">(</span><span class="s2">&quot;Surface resistance for water vapour &quot;</span>
 			                      <span class="s2">&quot;transfer for potential evaporation has not &quot;</span>
 			                      <span class="s2">&quot;been calculated&quot;</span><span class="p">)</span>
 
@@ -1312,7 +1314,7 @@
 <span class="sd">		:type LEp: numpy.ndarray</span>
 <span class="sd">		:param ra: Aerodynamic resistance :math:`(s.m^{-1})`</span>
 <span class="sd">		:type ra: numpy.ndarray</span>
-<span class="sd">		:param rc: Surface resistavce for water vapour transfer\</span>
+<span class="sd">		:param rc: Surface resistance for water vapour transfer\</span>
 <span class="sd">		 :math:`(s.m^{-1})`</span>
 <span class="sd">		:param E_Z_sat: Saturated water vapour pressure (kPa).</span>
 <span class="sd">		:type E_Z_sat: numpy.ndarray</span>
@@ -1386,7 +1388,7 @@
 <span class="sd">		:param ta_st: Air temperature measured at height z_st\</span>
 <span class="sd">		:math:`(\SI{}\degreeCelsius)`</span>
 <span class="sd">		:type ta_st: numpy.ndarray, float</span>
-<span class="sd">		:param z_st: Height of air temparature measurement on meteo station (m)</span>
+<span class="sd">		:param z_st: Height of air temperature measurement on meteo station (m)</span>
 <span class="sd">		:type z_st: float</span>
 <span class="sd">		:param adiabatic: Adiabatic lapse rate :math:`(\SI{}\degreeCelsius)`</span>
 <span class="sd">		:type adiabatic: float</span>
@@ -1424,8 +1426,8 @@
 <span class="sd">		&quot;&quot;&quot;</span>
 
 		<span class="k">try</span><span class="p">:</span>
-			<span class="n">airP</span> <span class="o">=</span> <span class="n">P0</span> <span class="o">*</span> <span class="p">((</span><span class="n">ta</span> <span class="o">+</span> <span class="mf">273.15</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">ta</span> <span class="o">+</span> <span class="mf">273.15</span> <span class="o">+</span> <span class="n">adiabatic</span>
-				<span class="o">*</span> <span class="p">(</span><span class="n">DMT</span> <span class="o">+</span> <span class="n">Z</span><span class="p">)))</span><span class="o">**</span><span class="mf">5.257</span>
+			<span class="n">airP</span> <span class="o">=</span> <span class="n">P0</span> <span class="o">*</span> <span class="p">((</span><span class="n">ta</span> <span class="o">+</span> <span class="mf">273.15</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">ta</span> <span class="o">+</span> <span class="mf">273.15</span> <span class="o">+</span> <span class="n">adiabatic</span> <span class="o">*</span> <span class="p">(</span><span class="n">DMT</span> <span class="o">+</span>
+			                                                       <span class="n">Z</span><span class="p">)))</span><span class="o">**</span><span class="mf">5.257</span>
 
 		<span class="k">except</span> <span class="ne">ArithmeticError</span><span class="p">:</span>
 			<span class="k">raise</span> <span class="ne">ArithmeticError</span><span class="p">(</span><span class="s2">&quot;Air pressure has not been calculated.&quot;</span><span class="p">)</span>
@@ -1489,7 +1491,7 @@
 		<span class="k">try</span><span class="p">:</span>
 			<span class="n">VPD</span> <span class="o">=</span> <span class="n">E_sat</span> <span class="o">-</span> <span class="n">e_abs</span>
 		<span class="k">except</span> <span class="ne">ArithmeticError</span><span class="p">:</span>
-			<span class="k">raise</span> <span class="ne">ArithmeticError</span><span class="p">(</span><span class="s2">&quot;Water vapour pressure defficit has not &quot;</span>
+			<span class="k">raise</span> <span class="ne">ArithmeticError</span><span class="p">(</span><span class="s2">&quot;Water vapour pressure deficit has not &quot;</span>
 			                      <span class="s2">&quot;been calculated.&quot;</span><span class="p">)</span>
 
 		<span class="k">return</span> <span class="n">VPD</span></div>
@@ -1625,8 +1627,26 @@
 
 <div class="viewcode-block" id="WindStability.vegHeight"><a class="viewcode-back" href="../../SEBCSlib.html#scripts.SEBCSlib.WindStability.vegHeight">[docs]</a>	<span class="k">def</span> <span class="nf">vegHeight</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">h_min</span><span class="p">,</span> <span class="n">h_max</span><span class="p">,</span> <span class="n">msavi</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">		height of vegetation cover (m) derived from MSAVI index</span>
+<span class="sd">		Height of effective vegetation cover (m) derived from MSAVI index</span>
 <span class="sd">		according to Gao et al. (2011).</span>
+
+<span class="sd">		:param h_min: Maximal height of vegetation cover (m)</span>
+<span class="sd">		:type h_max: numpy.ndarray</span>
+<span class="sd">		:param h_max: Minimal height of vegetation cover (m)</span>
+<span class="sd">		:type h_min: numpy.ndarray</span>
+<span class="sd">		:param msavi: Modified Soil Adjusted Vegetation Index (MSAVI)</span>
+<span class="sd">		:type msavi: numpy.ndarray</span>
+
+<span class="sd">		:return: Effective vegetation cover height (m)</span>
+<span class="sd">		:rtype: numpy.ndarray</span>
+
+<span class="sd">		\n</span>
+<span class="sd">		**References**\n</span>
+<span class="sd">		*Gao, Z.Q., Liu, C.S., Gao, W., Chang, N.-B., 2011. A coupled remote</span>
+<span class="sd">		sensing and the Surface Energy Balance with Topography Algorithm</span>
+<span class="sd">		(SEBTA) to estimate actual evapotranspiration over heterogeneous</span>
+<span class="sd">		terrain. Hydrol. Earth Syst. Sci. 15, 119–139.</span>
+<span class="sd">		https://doi.org/10.5194/hess-15-119-2011*</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 
 		<span class="n">minmsavi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">msavi</span><span class="p">[</span><span class="n">msavi</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">])</span>
@@ -1634,10 +1654,21 @@
 		<span class="n">h_eff</span> <span class="o">=</span> <span class="n">h_min</span> <span class="o">+</span> <span class="p">(</span><span class="n">msavi</span> <span class="o">-</span> <span class="n">minmsavi</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">minmsavi</span> <span class="o">-</span> <span class="n">maxmsavi</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">h_min</span> <span class="o">-</span> <span class="n">h_max</span><span class="p">)</span>
 		<span class="k">return</span> <span class="n">h_eff</span></div>
 
-
 <div class="viewcode-block" id="WindStability.zeroPlaneDis"><a class="viewcode-back" href="../../SEBCSlib.html#scripts.SEBCSlib.WindStability.zeroPlaneDis">[docs]</a>	<span class="k">def</span> <span class="nf">zeroPlaneDis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">h_eff</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">		Zero plane displacement (m).</span>
+<span class="sd">		Zero plane displacement (m) calculated according to Thom (1975).</span>
+
+<span class="sd">		:param h_eff: Effective vegetation cover height (m)</span>
+<span class="sd">		:type h_eff: numpy.ndarray</span>
+
+<span class="sd">		:return: Zero plane displacement (m)</span>
+<span class="sd">		:rtype: numpy.ndarray</span>
+
+<span class="sd">		\n</span>
+<span class="sd">		**References**\n</span>
+<span class="sd">		*Thom, A.S., 1975. Momentum, mass and heat exchange of plant</span>
+<span class="sd">		communities, in: Monteith, J.L. (Ed.), Vegetation and the Atmosphere,</span>
+<span class="sd">		Vol. 1 Principles. Academic Press, London, pp. 57–110.*</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 
 		<span class="n">disp</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">/</span> <span class="mf">3.0</span> <span class="o">*</span> <span class="n">h_eff</span>
@@ -1651,20 +1682,24 @@
 <span class="sd">		higher than 1 m. The lowest value of z0m is 0.005, which is typical</span>
 <span class="sd">		value for agricultural bare soils (Allen et al. 2007)</span>
 
-<span class="sd">		:param h_eff:</span>
-<span class="sd">		:param LAI:</span>
-<span class="sd">		:return:</span>
+<span class="sd">		:param h_eff: Effective vegetation cover height (m)</span>
+<span class="sd">		:type h_eff: numpy.ndarray</span>
+<span class="sd">		:param LAI: Leaf Area Index</span>
+<span class="sd">		:type LAI: numpy.ndarray</span>
+
+<span class="sd">		:return: Aerodynamic roughness of the surface for momentum transfer (m)</span>
+<span class="sd">		:rtype: numpy.ndarray</span>
 
 <span class="sd">		\n</span>
-<span class="sd">		**References**\</span>
+<span class="sd">		**References**\n</span>
 <span class="sd">		*Allen, R.G., Tasumi, M., Trezza, R., 2007. Satellite-Based Energy</span>
 <span class="sd">		Balance for Mapping Evapotranspiration with Internalized Calibration</span>
 <span class="sd">		(METRIC)—Model. J. Irrig. Drain Eng. 133, 380–394.</span>
-<span class="sd">		https://doi.org/10.1061/(ASCE)0733-9437(2007)133:4(380) \</span>
-<span class="sd">		Tasumi, M., 2003. Progress in Operational Estimation of Regional</span>
+<span class="sd">		https://doi.org/10.1061/(ASCE)0733-9437(2007)133:4(380)* \n</span>
+<span class="sd">		*Tasumi, M., 2003. Progress in Operational Estimation of Regional</span>
 <span class="sd">		Evapotranspiration Using Satellite Imagery (Ph.D. Thesis).</span>
-<span class="sd">		University of Idaho, Moscow, Idaho.\</span>
-<span class="sd">		Thom, A.S., 1975. Momentum, mass and heat exchange of plant</span>
+<span class="sd">		University of Idaho, Moscow, Idaho.*\n</span>
+<span class="sd">		*Thom, A.S., 1975. Momentum, mass and heat exchange of plant</span>
 <span class="sd">		communities, in: Monteith, J.L. (Ed.), Vegetation and the Atmosphere,</span>
 <span class="sd">		Vol. 1 Principles. Academic Press, London, pp. 57–110.*</span>
 <span class="sd">		&quot;&quot;&quot;</span>
@@ -1680,7 +1715,8 @@
 
 <div class="viewcode-block" id="WindStability.z0h"><a class="viewcode-back" href="../../SEBCSlib.html#scripts.SEBCSlib.WindStability.z0h">[docs]</a>	<span class="k">def</span> <span class="nf">z0h</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z0m</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">		Aerodynamic roughness of the surface for heat transfer (m).</span>
+<span class="sd">		Aerodynamic roughness of the surface for heat transfer (m) calculated</span>
+<span class="sd">		according to Thom (1975).</span>
 
 <span class="sd">		:param z0m: Aerodynamic roughness of the surface for momentum\</span>
 <span class="sd">		transfer (m)</span>
@@ -1688,6 +1724,12 @@
 
 <span class="sd">		:return: Aerodynamic roughness of the surface for heat transfer (m)</span>
 <span class="sd">		:rtype: numpy.ndarray, float</span>
+
+<span class="sd">		\n</span>
+<span class="sd">		**References**\n</span>
+<span class="sd">		*Thom, A.S., 1975. Momentum, mass and heat exchange of plant</span>
+<span class="sd">		communities, in: Monteith, J.L. (Ed.), Vegetation and the Atmosphere,</span>
+<span class="sd">		Vol. 1 Principles. Academic Press, London, pp. 57–110.*</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 		<span class="n">z0h</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">z0m</span>
 		<span class="k">return</span> <span class="n">z0h</span></div>
@@ -1711,6 +1753,14 @@
 
 <span class="sd">		:return: Wind speed at mixinf layer (m/s)</span>
 <span class="sd">		:rtype: float</span>
+
+<span class="sd">		\n</span>
+<span class="sd">		**References**\n</span>
+<span class="sd">		*Gao, Z.Q., Liu, C.S., Gao, W., Chang, N.B., 2011. A coupled remote</span>
+<span class="sd">		sensing and the Surface Energy Balance with Topography Algorithm</span>
+<span class="sd">		(SEBTA) to estimate actual evapotranspiration over heterogeneous</span>
+<span class="sd">		terrain. Hydrol. Earth Syst. Sci. 15, 119–139.</span>
+<span class="sd">		https://doi.org/10.5194/hess-15-119-2011*</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 
 		<span class="n">ignore_zero</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
@@ -1861,11 +1911,13 @@
 		<span class="n">dzeta</span> <span class="o">=</span> <span class="n">Z</span> <span class="o">/</span> <span class="n">L</span>
 
 		<span class="k">try</span><span class="p">:</span>
-			<span class="n">psi_h_stab</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span>
-					<span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">a</span> <span class="o">*</span> <span class="n">dzeta</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span> <span class="o">**</span> <span class="mf">1.5</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="p">(</span><span class="n">dzeta</span> <span class="o">-</span> <span class="n">c</span> <span class="o">/</span> <span class="n">d</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">((</span><span class="o">-</span><span class="n">d</span><span class="p">)</span> <span class="o">*</span> <span class="n">dzeta</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">b</span> <span class="o">*</span> <span class="n">c</span> <span class="o">/</span> <span class="n">d</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+			<span class="n">psi_h_stab</span> <span class="o">=</span> <span class="o">-</span><span class="p">((</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">a</span> <span class="o">*</span> <span class="n">dzeta</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span> <span class="o">**</span> <span class="mf">1.5</span> <span class="o">+</span> <span class="n">b</span>
+			               <span class="o">*</span> <span class="p">(</span><span class="n">dzeta</span> <span class="o">-</span> <span class="n">c</span> <span class="o">/</span> <span class="n">d</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">((</span><span class="o">-</span><span class="n">d</span><span class="p">)</span> <span class="o">*</span> <span class="n">dzeta</span><span class="p">)</span>
+			               <span class="o">+</span> <span class="p">(</span><span class="n">b</span> <span class="o">*</span> <span class="n">c</span><span class="o">/</span><span class="n">d</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
 		<span class="k">except</span> <span class="ne">ArithmeticError</span><span class="p">:</span>
-			<span class="k">raise</span> <span class="ne">ArithmeticError</span><span class="p">(</span>
-				<span class="s2">&quot;Stability coefficient for heat transfer for stable conditions has not been calculated&quot;</span><span class="p">)</span>
+			<span class="k">raise</span> <span class="ne">ArithmeticError</span><span class="p">(</span><span class="s2">&quot;Stability coefficient for heat transfer &quot;</span>
+			                      <span class="s2">&quot;for stable conditions has not been &quot;</span>
+			                      <span class="s2">&quot;calculated&quot;</span><span class="p">)</span>
 
 		<span class="k">try</span><span class="p">:</span>
 			<span class="n">psi_h_unstab</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">((</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">X</span> <span class="o">**</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span>
@@ -2046,6 +2098,12 @@
 <span class="sd">		:return ra: Aerodynamic resistance for heat and momentum</span>
 <span class="sd">					transfer (s.m-1) calculated according to Thom (1975)</span>
 <span class="sd">		:rtype ra: numpy.ndarray</span>
+
+<span class="sd">		\n</span>
+<span class="sd">		**References**\n</span>
+<span class="sd">		*Thom, A.S., 1975. Momentum, mass and heat exchange of plant</span>
+<span class="sd">		communities, in: Monteith, J.L. (Ed.), Vegetation and the Atmosphere,</span>
+<span class="sd">		Vol. 1 Principles. Academic Press, London, pp. 57–110.*</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 
 		<span class="k">try</span><span class="p">:</span>

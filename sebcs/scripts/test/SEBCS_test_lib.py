@@ -4,7 +4,7 @@
 # Imports
 import numpy as np
 import matplotlib.pyplot as plt
-from sebcs.scripts.SEBCSlib import MeteoFeatures, HeatFluxes, WindStability, VegIndices
+from sebcs.scripts.SEBCS_lib import MeteoFeatures, HeatFluxes, WindStability, VegIndices
 
 
 if __name__ == "__main__":
