@@ -8,7 +8,7 @@
 #
 #                                -------------------
 #          begin                :
-#          date                 :
+#          date                 : 191108
 #          git sha              : $Format:%H$
 #          copyright            : (C) 2014-2019 Jakub Brom
 #          email                : jbrom@zf.jcu.cz
@@ -54,19 +54,6 @@ mf = MeteoFeatures()
 sr = SolarRadBalance()
 vi = VegIndices()
 ws = WindStability()
-
-def smaz(x, y):
-	"""
-	tuhle funkci smaz
-
-	:param x: Parametr x
-	:param y: Parametr y
-
-	:return: A tohle je parametr z
-	"""
-
-	z = x + y
-	return z
 
 class SEBCS_SA:
 	""" SEBCS_SA is class for calculation surface energy balance
@@ -438,7 +425,7 @@ class SEBCS_SA:
 		self.dataExport(self.output_list, self.output_folder, self.output_driver, self.gtransf, self.srs, self.EPSG, self.out_file_name, self.multiband, self.mask)
 
 	
-	def rasterToArray(self, layer):
+	OKdef rasterToArray(self, layer):
 		"""Conversion of raster layer to numpy array.
 		:param layer: Path to raster layer.
 		:type layer: str
@@ -458,7 +445,7 @@ class SEBCS_SA:
 			return in_layer
 
 
-	def lyrsExtent(self):
+	OKdef lyrsExtent(self):
 		"""Check differences between size of the input layers.
 		"""
 		
@@ -473,7 +460,7 @@ class SEBCS_SA:
 			raise Exception("Selected layers differ in spatial extent (number of columns or rows).")
 
 	
-	def vegIndices(self, bandRed, bandNIR, bandSWIR1 = None): 
+	OKdef vegIndices(self, bandRed, bandNIR, bandSWIR1 = None):
 		"""Vegetation indices calculation.
 		:param bandRed: Reflectance in red spectral region.
 		:type bandRed: numpy.ndarray
@@ -530,7 +517,8 @@ class SEBCS_SA:
 		return ndvi, msavi, ndmi, Fc
 	
 				
-	def surfaceTemperature(self, tir_band, emissivity = None, emis_rule = "No"):
+	OKdef surfaceTemperature(self, tir_band, emissivity = None, emis_rule = 
+"No"):
 		"""Correction of surface temperature on emissivity.
 		:param tir_band: Layer of surface temperature (grades of C).
 		:type tir_band: numpy.ndarray
@@ -565,7 +553,7 @@ class SEBCS_SA:
 		return ts
 				
 			
-	def albedoCalc(self, sat_type, band_red, band_nir, 
+	OKdef albedoCalc(self, sat_type, band_red, band_nir,
 			band_blue = None, band_green = None, band_sw1 = None, band_sw2 = None,
 			ndvi = None, msavi = None):
 				
@@ -586,7 +574,7 @@ class SEBCS_SA:
 		return albedo
 
 
-	def longWaveRad(self, e_Z, ta, ts, emissivity):
+	OKdef longWaveRad(self, e_Z, ta, ts, emissivity):
 		"""Calculation of long wave radiation downward and upward
 		fluxes.
 		
@@ -613,7 +601,7 @@ class SEBCS_SA:
 		return RL_in, RL_out
 		
 
-	def heatFluxes(self, ta_Z, ts_C, ts_K, Rn_G, albedo, ndvi, method = "aero",
+	OKdef heatFluxes(self, ta, ts, Rn, G, albedo, ndvi, method = "aero",
 					U = None, canopy = None, h_min = None, h_max = None, msavi = None, ro = None, 
 					Z = 200.0, Z_st = 10.0, cp = 1012.0):
 						
@@ -639,24 +627,24 @@ class SEBCS_SA:
 				Z_d_z0m = seb.ln_z_d_z0(Z_d, z0m)
 				Z_d_z0h = seb.ln_z_d_z0(Z_d, z0h)
 				U_Z = seb.windSpeedZ(U, Z, Z_st)
-				psi_m, psi_h, frict = seb.stabCoef(U_Z, ta_Z, ts_C, Z_d, Z_d_z0m, Z_d_z0h)
+				psi_m, psi_h, frict = seb.stabCoef(U_Z, ta, ts, Z_d, Z_d_z0m, Z_d_z0h)
 				ra = seb.raThom(U_Z, psi_m, psi_h, Z_d_z0m, Z_d_z0h)
-				Tmax = seb.maxT(Rn_G, ra, ta_Z, ro, cp)
-				L_dry = seb.dryL(frict, ro, ta_Z, Rn_G, cp)
+				Tmax = seb.maxT(Rn_G, ra, ta, ro, cp)
+				L_dry = seb.dryL(frict, ro, ta, Rn_G, cp)
 				FL = seb.functFL(L_dry, frict, ra)
-				dT_dry = seb.dTdry(FL, ts_K)
-				dT_b = seb.coef_b(Tmax, ta_Z, dT_dry)
-				dT_a = seb.coef_a(ta_Z, dT_b)
-				dT = seb.dT(ts_K, dT_a, dT_b)
+				dT_dry = seb.dTdry(FL, ts)
+				dT_b = seb.coef_b(Tmax, ta, dT_dry)
+				dT_a = seb.coef_a(ta, dT_b)
+				dT = seb.dT(ts, dT_a, dT_b)
 			
 				H = seb.fluxHAer(ra, ro, dT, cp)
 				LE = seb.fluxLE(Rn_G, H)
 				EF = seb.aeroEF(LE, Rn_G)
 		else:
-			EF = seb.gradEF(ts_C, ta_Z)
+			EF = seb.gradEF(ts, ta)
 			LE = seb.gradLE(EF, Rn_G)
 			H = seb.gradH(LE, Rn_G)
-			ra = seb.raGrad(H, ro, ts_C, ta_Z, cp)
+			ra = seb.raGrad(H, ro, ts, ta, cp)
 			frict = np.zeros(ra.shape)
 # 	except:
 # 			raise Exception("Heat fluxes has not been calculated.")

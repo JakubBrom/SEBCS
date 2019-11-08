@@ -9,36 +9,38 @@ from sebcs.scripts.SEBCS_lib import MeteoFeatures, HeatFluxes, WindStability, Ve
 
 if __name__ == "__main__":
 	met = MeteoFeatures()
+	vi = VegIndices()
 	ht = HeatFluxes()
 	win = WindStability()
-	vi = VegIndices()
 
 	# Data
 	ta_2m = np.linspace(20.0, 25.0, 100)
 	ts = np.linspace(20.0, 35.0, 100)
 	Rn = np.linspace(500.0, 500.0, 100)
 	G = np.linspace(50.0, 50.0, 100)
-	U = np.linspace(2.0, 2.0, 100)
+	U = np.linspace(4.0, 4.0, 100)
 	DMT = np.linspace(500.0, 500.0, 1)
 	albedo = np.linspace(0.18, 0.18, 1)
-	ndvi = np.linspace(0.9, 0.9, 1)
-	savi = np.linspace(0.5, 0.5, 1)
-	h_eff = np.linspace(1.2, 1.2, 1)
+	# ndvi = np.linspace(0.9, 0.9, 1)
+	# savi = np.linspace(0.5, 0.5, 1)
+	h_eff = np.linspace(1.2, 1.2, 100)
+	LAI = np.linspace(4.0, 4.0, 100)
 
-	h_effect = np.array((0.18, 0.45, 1.06, 0.76, 11.52, 0.31, 24.56, 0.32))
-	red_band = np.array((0.09, 0.01, 0.02, 0.07, 0.02, 0.08, 0.01, 0.06))
-	nir_band = np.array((0.53, 0.15, 0.29, 0.53, 0.22, 0.52, 0.13, 0.53))
-	alb = np.array((0.23, 0.06, 0.12, 0.22, 0.09, 0.22, 0.05, 0.22))
-	savi = vi.viSAVI(red_band, nir_band, 0.5)
-	ndvi = vi.viNDVI(red_band, nir_band)
-
-	LAI = vi.LAI(red_band, nir_band, 1)
-	LAI2 = vi.LAI(red_band, nir_band, 2)
-	LAI3 = vi.LAI(red_band, nir_band, 3)
-	LAI4 = vi.LAI(red_band, nir_band, 4)
-	LAI5 = vi.LAI(red_band, nir_band, 5)
-	LAI6 = vi.LAI(red_band, nir_band, 6)
-	LAI7 = vi.LAI(red_band, nir_band, 7)
+	# h_effect = np.array((0.18, 0.45, 1.06, 0.76, 11.52, 0.31, 24.56, 0.32))
+	# red_band = np.array((0.09, 0.01, 0.02, 0.07, 0.02, 0.08, 0.01, 0.06))
+	# nir_band = np.array((0.53, 0.15, 0.29, 0.53, 0.22, 0.52, 0.13, 0.53))
+	# alb = np.array((0.23, 0.06, 0.12, 0.22, 0.09, 0.22, 0.05, 0.22))
+	# savi = vi.viSAVI(red_band, nir_band, 0.5)
+	# ndvi = vi.viNDVI(red_band, nir_band)
+	# zerodisp = win.zeroPlaneDis(h_effect)
+	#
+	# LAI = vi.LAI(red_band, nir_band, 1)
+	# LAI2 = vi.LAI(red_band, nir_band, 2)
+	# LAI3 = vi.LAI(red_band, nir_band, 3)
+	# LAI4 = vi.LAI(red_band, nir_band, 4)
+	# LAI5 = vi.LAI(red_band, nir_band, 5)
+	# LAI6 = vi.LAI(red_band, nir_band, 6)
+	# LAI7 = vi.LAI(red_band, nir_band, 7)
 
 
 	# Konstanty
@@ -92,13 +94,21 @@ if __name__ == "__main__":
 
 	# plt.scatter(savi, h_effect)
 
-	plt.scatter(savi, LAI)
-	plt.scatter(savi, LAI2)
+	# plt.scatter(savi, LAI)
+	# plt.scatter(savi, LAI2)
 	# plt.scatter(savi, LAI3)
 	# plt.scatter(savi, LAI4)
 	# plt.scatter(savi, LAI5)
 	# plt.scatter(savi, LAI6)
-	plt.scatter(savi, LAI7)
+	# plt.scatter(savi, LAI7)
 	# plt.plot(ts, H2)
 	# plt.plot(ts, ra3)
+	# plt.show()
+
+	ra_aer = ht.heatFluxes(Rn, G, ts, ta_2m, "aero", Uz=U, h_eff=h_eff, LAI=LAI)
+	ra_grad = ht.heatFluxes(Rn, G, ts, ta_2m, "grad", Uz=U, h_eff=h_eff,
+	                        LAI=LAI)
+
+	plt.plot(ts-ta_2m, ra_aer)
+	plt.plot(ts-ta_2m, ra_grad)
 	plt.show()

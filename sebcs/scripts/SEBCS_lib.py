@@ -1,3 +1,32 @@
+#  /***************************************************************************
+#  SEBCS_lib.py
+#
+#  Collection of functions for energy balance and its components calculation.
+#
+#                                -------------------
+#          begin                : 14-03-01
+#          date                 : 19-11-08
+#          git sha              : $Format:%H$
+#          copyright            : (C) 2014-2019 Jakub Brom
+#          email                : jbrom@zf.jcu.cz
+#
+#  ***************************************************************************/
+#  /***************************************************************************
+#
+#  This program is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License  as published  by
+#  the Free Software Foundation, either version 3 of the License, or
+#  any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#  You should have received a copy of the GNU General Public License along
+#  with this program.  If not, see <https://www.gnu.org/licenses/>.
+#
+#   ***************************************************************************/
+
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
@@ -6,12 +35,6 @@
 #
 # Collection of functions for energy balance and its components calculation.
 #
-#                              -------------------
-#        begin                : 14-03-01
-#        date                 : 19-10-04
-#        git sha              : $Format:%H$
-#        copyright            : (C) 2014-2019 Jakub Brom
-#        email                : jbrom@zf.jcu.cz
 #
 # ***************************************************************************/
 # /***************************************************************************
@@ -211,373 +234,62 @@ class GeoIO:
 				except IOError:
 					raise Exception("Raster file {} has not been created.".format(names[i] + suffix))
 
+	def rasterToArray(self, layer):
+		"""Conversion of raster layer to numpy array.
 
-# noinspection PyMethodMayBeStatic
-class SolarRadBalance:
-	"""
-	Class contains functions for calculation of solar radiation balance
-	and topographic features: incident radiation in dependence on surface
-	geometry, slope of terrain, aspect of terrain, albedo, longwave radiation
-	fluxes and atmospheric emissivity, shortwave radiation reflectance
-	and total net radiation
-	"""
+		:param layer: Path to raster layer.
+		:type layer: str
 
-	def __init__(self):
+		:return: raster file converted to numpy array
+		:rtype: numpy.ndarray
+		"""
+
+		lyr_name = os.path.split(layer)[1]
+
+		try:
+			if layer is not None:
+				new_array = gdal.Dataset.ReadAsArray(gdal.Open(layer)).astype(
+					np.float32)
+				new_array = np.nan_to_num(new_array)
+			else:
+				new_array = None
+
+			return new_array
+
+		except IOError:
+			warnings.warn("Layer {lr} has not been readed. No data will be "
+			              "used instead".format(lr = lyr_name), stacklevel=3)
+			new_array = None
+
+			return new_array
+
+	def lyrsExtent(self, in_lyrs_list):
+		"""
+		Check differences between size of the input layers. Function compares
+		rasters only on basis of number of columns and rows.
+
+		:param in_lyrs_list: List of layers (Numpy 2D arrays).
+		:type in_lyrs_list: list
+
+		:return: True
+		"""
+		# TODO: Solution of different spatial extent of rasters...
+
+		in_lyrs_list_true = [i for i in in_lyrs_list if
+		                     i is not None]  # List of input layers without
+		# empty (None)
+
+		len_list = []
+
+		for i in in_lyrs_list_true:
+			len_list.append(len(i))
+
+		if max(len_list) != min(len_list):
+			raise ValueError(
+				"Selected layers differ in spatial extent (number of columns "
+				"or rows).")
+
 		return
-
-	def slopeAspect(self, DMT, x_size, y_size):
-		"""
-		Slope and aspect of terrain (DMT) in degrees.
-
-		:param DMT: Digital model of terrain (m a.s.l.)
-		:type DMT: numpy.ndarray
-		:param x_size: Size of pixel in x axis (m)
-		:type x_size: float
-		:param y_size: Size of pixel in y axis (m)
-		:type y_size: float
-
-		:return: Slope of the terrain :math:`(\SI{}\degree)`
-		:rtype: numpy.ndarray
-		:return: Aspect of the terrain :math:`(\SI{}\degree)`
-		:rtype: numpy.ndarray
-		"""
-
-		try:
-			x, y = np.gradient(DMT)
-			slope = np.arctan(np.sqrt((x / x_size) ** 2.0 + (y / y_size) **
-			                          2.0)) * 180 / np.pi
-			aspect = 270 + np.arctan(x / y) * 180 / np.pi
-			aspect = np.where(y > 0, aspect, aspect - 180)
-
-			# Replacing nan values to 0 and inf to value
-			slope = np.nan_to_num(slope)
-			aspect = np.nan_to_num(aspect)
-			del x
-			del y
-		except ArithmeticError:
-			raise ArithmeticError("Slope and aspect has not been calculated.")
-
-		return slope, aspect
-
-	def solarInTopo(self, Rs_in, slope, aspect, latitude, longitude,
-	                date_acq, time_acq):
-
-		"""Calculation of incident shortwave solar radiation flux
-		according to the solar geometry, position (latitude
-		and longitude) and shape of surface (slope and orientation).
-		Flux of the solar energy :math:`(W.m^{-2})` is calculated on basis
-		of the measured global radiation using pyranometer (incomming
-		global radiation). Diffuse part of radiation is not separated
-		in calculation.
-		
-		:param Rs_in: Global radiation measured by pyranometer\
-		:math:`(W.m^{-2})`.
-		:type Rs_in: float
-		:param slope: Slope of the terrain :math:`(\SI{}\degree)`.
-		:type slope: numpy.ndarray
-		:param aspect: Orientation of the terrain :math:`(\SI{}\degree)`.
-		:type aspect: numpy.ndarray
-		:param latitude: Mean latitude of the data in decimal degrees
-		:type latitude: float
-		:param longitude: Mean longitude of the data in decimal degrees
-		:type longitude: float
-		:param date_acq: Date of data acquisition in iso format ('YYYY-mm-dd')
-		:type date_acq: datetime.date
-		:param time_acq: Time in GMT in datetime.time format ('HH:MM:SS.SS')
-		:type time_acq: datetime.time
-		
-		:returns: Incident shortwave radiation :math:`(W.m^{-2})` corrected\
-		on the terrain and solar geometry.
-		:rtype: numpy.ndarray
-		"""
-
-		# Date conversions
-		try:
-			dat = datetime.strptime(str(date_acq), "%Y-%m-%d")  # conversion of iso date to datetime.date
-			t = datetime.strptime(str(time_acq), "%H:%M:%S.%f")  # conversion of iso time to datetime.time
-			dec_t = float(t.hour) + float(t.minute) / 60.0 + float(t.second) / 3600  # decimal time
-			N = dat.strftime("%j")  # day of the year
-		except ArithmeticError:
-			raise ArithmeticError("Date transformation has not been done.")
-
-		# Solar radiation geometry calculation
-		try:
-			solar_time = dec_t + longitude / 360.0 * 24.0  # solar time
-			hs = (12.0 - float(solar_time)) * 15.0  # local solar hour angle (°)
-			ds = 23.45 * math.sin(360.0 * (284.0 + float(N)) / 365.0 * math.pi / 180.0)  # solar declination (°)
-			ds_rad = math.radians(ds)  # solar declination (rad.)
-			L_rad = math.radians(latitude)  # latitude (rad.)
-			hs_rad = math.radians(hs)  # local solar hour angle (rad.)
-
-			sin_alpha = (math.sin(L_rad) * math.sin(ds_rad) + math.cos(L_rad)
-			             * math.cos(ds_rad) * math.cos(hs_rad))  # sin of solar height angle
-
-			if sin_alpha < 0.0:
-				sin_alpha = 0.0
-
-			slope_rad = np.radians(slope)
-			asp_rad = np.radians((aspect - 180) * (-1))  # aspect transformation
-
-			cosi = (np.sin(ds_rad) * (np.sin(L_rad) * np.cos(slope_rad)
-			                          - np.cos(L_rad) * np.sin(slope_rad) * np.cos(asp_rad))
-			        + np.cos(ds_rad) * np.cos(hs_rad) * (np.cos(L_rad)
-			                                             * np.cos(slope_rad) + np.sin(L_rad) * np.sin(slope_rad)
-			                                             * np.cos(asp_rad)) + np.cos(ds_rad) * np.sin(slope_rad)
-			        * np.sin(asp_rad) * np.sin(hs_rad))
-		except ArithmeticError:
-			raise ArithmeticError("Solar geometry corrections have not been "
-			                      "done.")
-
-		# Direct radiation intensity correction on DEM
-		try:
-			Is = float(Rs_in) / sin_alpha  # radiation perpendicular to solar beam angle
-			Rs_in_corr = Is * cosi  # radiation corrected on solar and terrain geometry
-		except ArithmeticError:
-			raise ArithmeticError("Radiation intensity correction on DEM has "
-			                      "not been done.")
-
-		return Rs_in_corr
-
-	def atmEmissivity(self, e_Z, ta):
-		"""
-		Atmospheric emissivity calculated according to Idso (see
-		Brutsaert 1982).
-
-		:param e_Z: Atmospheric water vapour pressure (kPa)
-		:type e_Z: numpy.ndarray, float
-		:param ta: Air temperature :math:`(\SI{}\degreeCelsius)`
-		:type ta: numpy.ndarray, float
-
-		:return: Air emissivity (rel.)
-		:rtype: numpy.ndarray, float
-		"""
-
-		try:
-			emis_a = 1.24 * (e_Z * 10.0 / (ta + 273.16)) ** (1.0 / 7.0)
-		except ArithmeticError:
-			raise ArithmeticError("Air emissivity has not been calculated.")
-
-		return emis_a
-
-	def downRL(self, ta, emis_a):
-		"""
-		Funtion calculates downward flux of longwave radiation :math:`(W.m^{
-		-2})`
-
-		:param ta: Air temperature :math:`(\SI{}\degreeCelsius)`
-		:type ta: numpy.ndarray, float
-		:param emis_a: Air emissivity (rel.)
-		:type emis_a: numpy.ndarray, float
-
-		:return RL_in: Downward flux of longwave radiation :math:`(W.m^{-2})`
-		:rtype RL_in: numpy.ndarray, float
-		"""
-
-		try:
-			RL_in = emis_a * 5.6703 * 10.0 ** (-8.0) * (ta + 273.16) ** 4
-		except ArithmeticError:
-			raise ArithmeticError("Downward longwave radiation flux has not "
-			                      "been calculated.")
-
-		return RL_in
-
-	def outRL(self, ts, emiss):
-		"""
-		Upward flux of longwave radiation :math:`(W.m^{-2})`
-
-		:param ts: Surface temperature :math:`(\SI{}\degreeCelsius)`
-		:type ts: numpy.ndarray
-		:param emiss: Surface emissivity (rel.)
-		:type emiss: numpy.ndarray
-
-		:returns: Upward flux of longwave radiation :math:`(W.m^{-2})`
-		:rtype: numpy.ndarray
-		"""
-
-		try:
-			RL_out = emiss * 5.6703 * 10.0 ** (-8.0) * (ts + 273.16) ** 4
-
-		except ArithmeticError:
-			raise ArithmeticError("Upward longwave radiation flux has not "
-			                      "been calculated.")
-
-		return RL_out
-
-	def albedoBrom(self, ndvi, msavi, c_a=0.08611, c_b=0.894716, c_c=5.558657,
-	               c_d=-0.11829, c_e=-1.9818, c_f=-4.50339, c_g=-11.4625,
-	               c_h=7.461454, c_i=5.299396, c_j=4.76657, c_k=-2.3127, c_l=-3.42739):
-		"""
-		Albedo (rel.) calculated according to Duffková and Brom et al. (2012)
-
-		:param ndvi: Normalized Difference Vegetation Index (-)
-		:type ndvi: numpy.array
-		:param msavi: Modified Soil Adjusted Vegetation Index (-) according\
-		to Gao et al. 1996.
-		:param c_a: constant. Default a = 0.08611
-		:type c_a: float
-		:param c_b: constant. Default a = 0.894716
-		:type c_b: float
-		:param c_c: constant. Default a = 5.558657
-		:type c_c: float
-		:param c_d: constant. Default a = -0.11829
-		:type c_d: float
-		:param c_e: constant. Default a = -1.9818
-		:type c_e: float
-		:param c_f: constant. Default a = -4.50339
-		:type c_f: float
-		:param c_g: constant. Default a = -11.4625
-		:type c_g: float
-		:param c_h: constant. Default a = 7.461454
-		:type c_h: float
-		:param c_i: constant. Default a = 5.299396
-		:type c_i: float
-		:param c_j: constant. Default a = 4.76657
-		:type c_j: float
-		:param c_k: constant. Default a = -2.3127
-		:type c_k: float
-		:param c_l: constant. Default a = -3.42739
-		:type c_l: float
-
-		:returns: Albedo (rel.)
-		:rtype: numpy.ndarray
-		"""
-
-		try:
-			albedo = (c_a + c_b * msavi + c_c * msavi ** 2 + c_d * ndvi + c_e
-			          * msavi ** 3 + c_f * msavi * ndvi + c_g * msavi ** 2
-			          * ndvi + c_h * msavi * ndvi ** 2 + c_i * msavi ** 2
-			          * ndvi ** 2 + c_j * msavi ** 3 * ndvi + c_k * msavi ** 3
-			          * ndvi ** 2 + c_l * msavi * ndvi ** 3)
-
-		except ArithmeticError:
-			raise ArithmeticError("Albedo has not been calculated.")
-
-		return albedo
-
-	def albedoLandsat(self, blue, green, red, nir, swir1, swir2, sat_type):
-		"""
-		Albedo (rel.) calculated for Landsat satellite sensors. Albedo
-		for Landsat 4 TM, 5 TM and Landsat 7 ETM+ is calculated
-		according to Tasumi et al. (2008). Albedo for Landsat 8 OLI/TIRS
-		is calculated according to Olmeo et al. (2017). Albedo is computed
-		with spectral reflectance bands on relative scale (0 to 1).\n
-		Note: This algorithm might be used with another data from different
-		devices, however a comparable spectral data (bands) should be used.
-
-		:param blue: Blue band (rel.)
-		:type blue: numpy.ndarray
-		:param green: Green band (rel.)
-		:type green: numpy.ndarray
-		:param red: Red band (rel.)
-		:type red: numpy.ndarray
-		:param nir: NIR band (rel.)
-		:type nir: numpy.ndarray
-		:param swir1: SWIR1 band on ca 1.61 :math:`\mu m` (rel.)
-		:type swir1: numpy.ndarray
-		:param swir2: SWIR2 band on ca 2.2 :math:`\mu m` (rel.)
-		:type swir2: numpy.ndarray
-		:param sat_type: Type of Landsat satellite: \n\n
-				- L5 - Landsat 4 TM, 5 TM or Landsat 7 ETM+\n
-				- L8 - Landsat 8 OLI/TIRS
-		:type sat_type: str
-
-		:return: Albedo (rel.)
-		:rtype: numpy.ndarray
-
-		\n
-		**References:**\n
-		*G.F. Olmedo, S. Ortega-Farias, D. Fonseca-Luengo,
-		D. de la Fuente-Saiz, F.F. Peñailillo 2018: Water: actual
-		evapotranspiration with energy balance models. R Package
-		Version 0.6 (2017)*\n
-		*Tasumi, M., Allen, R.G., Trezza, R., 2008. At-Surface Reflectance
-		and Albedo from Satellite for Operational Calculation of Land
-		Surface Energy Balance. Journal of Hydrologic Engineering 13, 51–63.*
-		https://doi.org/10.1061/(ASCE)1084-0699(2008)13:2(51).
-		"""
-
-		# Constants
-		bands = [blue, green, red, nir, swir1, swir2]
-		if sat_type == "L8":
-			wb = (0.246, 0.146, 0.191, 0.304, 0.105, 0.008)  # Constants for
-		# L8 according to Olmeo et. al 2017: (G.F. Olmedo, S. Ortega-Farias,
-		# D. Fonseca-Luengo, D. de la Fuente-Saiz, F.F. Peñailillo
-		# Water: actual evapotranspiration with energy balance models
-		# R Package Version 0.6 (2017))
-
-		else:
-			wb = (0.254, 0.149, 0.147, 0.311, 0.103, 0.036)  # Constants
-		# according to Tasumi et al. 2008: Tasumi, M., Allen, R.G., Trezza,
-		# R.,  2008. At-Surface Reflectance and Albedo from Satellite
-		# for Operational Calculation of Land Surface Energy Balance.
-		# Journal of Hydrologic Engineering 13, 51–63.
-		# https://doi.org/10.1061/(ASCE)1084-0699(2008)13:2(51)
-
-		# Computing of broadband albedo
-		try:
-			alfa_list = []
-			for i in range(0, len(bands)):
-				alfa_band = bands[i] * wb[i]
-				alfa_list.append(alfa_band)
-				del alfa_band
-
-			albedo = np.zeros(alfa_list[0].shape)
-			i = 0
-			while i != len(alfa_list):
-				albedo = albedo + alfa_list[i]
-				i = i + 1
-			del alfa_list
-		except ArithmeticError:
-			raise ArithmeticError("Albedo has not been calculated.")
-
-		return albedo
-
-	def reflectRs(self, Rs_in_corr, albedo):
-		"""
-		Amount of shortwave radiation reflected from surface :math:`(W.m^{-2})`
-
-		:param Rs_in_corr: Incomming global radiation corrected on DEM\
-		:math:`(W.m^{-2})`
-		:type Rs_in_corr: numpy.ndarray
-		:param albedo: Surface albedo (rel.)
-		:type albedo: numpy.ndarray
-		:return: Amount of reflected global radiation :math:`(W.m^{-2})`
-		:rtype: numpy.ndarray
-		"""
-		try:
-			Rs_out = Rs_in_corr * albedo
-		except ArithmeticError:
-			raise ArithmeticError("Amount of reflected shortwave radiation "
-			                      "has not been calculated.")
-
-		return Rs_out
-
-	def netRad(self, Rs_in_corr, Rs_out, RL_in, RL_out):
-		"""
-		Total net radiation.
-
-		:param Rs_in_corr: Incomming global (shortwave) radiation\
-		:math:`(W.m^{-2})`
-		:type Rs_in_corr: numpy.ndarray
-		:param Rs_out: Outgoing (reflected) shortwave radiation\
-		:math:`(W.m^{-2})`
-		:type Rs_out: numpy.ndarray
-		:param RL_in: Incomming (downward) longwave radiation :math:`(W.m^{-2})`
-		:type RL_in: numpy.ndarray
-		:param RL_out: Outgoing (upward) longwave radiation :math:`(W.m^{-2})`
-		:type RL_out: numpy.ndarray
-
-		:return: Total net radiation flux :math:`(W.m^{-2})`
-		:rtype: numpy.ndarray
-		"""
-
-		try:
-			Rn = Rs_in_corr - Rs_out + RL_in - RL_out
-		except ArithmeticError:
-			raise ArithmeticError("Total net radiation has not been "
-			                      "calculated.")
-
-		return Rn
 
 
 # noinspection PyMethodMayBeStatic,PyUnusedLocal,SpellCheckingInspection,SpellCheckingInspection
@@ -853,9 +565,758 @@ class VegIndices:
 
 		return LAI
 
+	def vegHeight(self, h_min, h_max, msavi=None):
+		"""
+		Height of effective vegetation cover (m) derived from MSAVI index
+		according to Gao et al. (2011).
+
+		:param h_min: Maximal height of vegetation cover (m)
+		:type h_max: numpy.ndarray
+		:param h_max: Minimal height of vegetation cover (m)
+		:type h_min: numpy.ndarray
+		:param msavi: Modified Soil Adjusted Vegetation Index (MSAVI)
+		:type msavi: numpy.ndarray
+
+		:return: Effective vegetation cover height (m)
+		:rtype: numpy.ndarray
+
+		\n
+		**References**\n
+		*Gao, Z.Q., Liu, C.S., Gao, W., Chang, N.-B., 2011. A coupled remote
+		sensing and the Surface Energy Balance with Topography Algorithm
+		(SEBTA) to estimate actual evapotranspiration over heterogeneous
+		terrain. Hydrol. Earth Syst. Sci. 15, 119–139.
+		https://doi.org/10.5194/hess-15-119-2011*
+		"""
+
+		try:
+			minmsavi = np.min(msavi[msavi != 0])
+			maxmsavi = np.max(msavi)
+			h_eff = h_min + (msavi - minmsavi) / (minmsavi - maxmsavi) * (h_min - h_max)
+
+			return h_eff
+
+		except ArithmeticError:
+			raise ArithmeticError("Vegetation height has not been calculated.")
+
+
+# noinspection PyMethodMayBeStatic
+class SolarRadBalance(VegIndices):
+	"""
+	Class contains functions for calculation of solar radiation balance
+	and topographic features: incident radiation in dependence on surface
+	geometry, slope of terrain, aspect of terrain, albedo, longwave radiation
+	fluxes and atmospheric emissivity, shortwave radiation reflectance
+	and total net radiation
+	"""
+
+	def slopeAspect(self, DMT, x_size, y_size):
+		"""
+		Slope and aspect of terrain (DMT) in degrees.
+
+		:param DMT: Digital model of terrain (m a.s.l.)
+		:type DMT: numpy.ndarray
+		:param x_size: Size of pixel in x axis (m)
+		:type x_size: float
+		:param y_size: Size of pixel in y axis (m)
+		:type y_size: float
+
+		:return: Slope of the terrain :math:`(\SI{}\degree)`
+		:rtype: numpy.ndarray
+		:return: Aspect of the terrain :math:`(\SI{}\degree)`
+		:rtype: numpy.ndarray
+		"""
+
+		try:
+			x, y = np.gradient(DMT)
+			slope = np.arctan(np.sqrt((x / x_size) ** 2.0 + (y / y_size) **
+			                          2.0)) * 180 / np.pi
+			aspect = 270 + np.arctan(x / y) * 180 / np.pi
+			aspect = np.where(y > 0, aspect, aspect - 180)
+
+			# Replacing nan values to 0 and inf to value
+			slope = np.nan_to_num(slope)
+			aspect = np.nan_to_num(aspect)
+			del x
+			del y
+		except ArithmeticError:
+			raise ArithmeticError("Slope and aspect has not been calculated.")
+
+		return slope, aspect
+
+	def solarInTopo(self, Rs_in, slope, aspect, latitude, longitude,
+	                date_acq, time_acq):
+
+		"""Calculation of incident shortwave solar radiation flux
+		according to the solar geometry, position (latitude
+		and longitude) and shape of surface (slope and orientation).
+		Flux of the solar energy :math:`(W.m^{-2})` is calculated on basis
+		of the measured global radiation using pyranometer (incomming
+		global radiation). Diffuse part of radiation is not separated
+		in calculation.
+
+		:param Rs_in: Global radiation measured by pyranometer\
+		:math:`(W.m^{-2})`.
+		:type Rs_in: float
+		:param slope: Slope of the terrain :math:`(\SI{}\degree)`.
+		:type slope: numpy.ndarray
+		:param aspect: Orientation of the terrain :math:`(\SI{}\degree)`.
+		:type aspect: numpy.ndarray
+		:param latitude: Mean latitude of the data in decimal degrees
+		:type latitude: float
+		:param longitude: Mean longitude of the data in decimal degrees
+		:type longitude: float
+		:param date_acq: Date of data acquisition in iso format ('YYYY-mm-dd')
+		:type date_acq: datetime.date
+		:param time_acq: Time in GMT in datetime.time format ('HH:MM:SS.SS')
+		:type time_acq: datetime.time
+
+		:returns: Incident shortwave radiation :math:`(W.m^{-2})` corrected\
+		on the terrain and solar geometry.
+		:rtype: numpy.ndarray
+		"""
+
+		# Date conversions
+		try:
+			dat = datetime.strptime(str(date_acq),
+			                        "%Y-%m-%d")  # conversion of iso date to datetime.date
+			t = datetime.strptime(str(time_acq),
+			                      "%H:%M:%S.%f")  # conversion of iso time to datetime.time
+			dec_t = float(t.hour) + float(t.minute) / 60.0 + float(
+				t.second) / 3600  # decimal time
+			N = dat.strftime("%j")  # day of the year
+		except ArithmeticError:
+			raise ArithmeticError("Date transformation has not been done.")
+
+		# Solar radiation geometry calculation
+		try:
+			solar_time = dec_t + longitude / 360.0 * 24.0  # solar time
+			hs = (12.0 - float(solar_time)) * 15.0  # local solar hour angle (°)
+			ds = 23.45 * math.sin(360.0 * (284.0 + float(
+				N)) / 365.0 * math.pi / 180.0)  # solar declination (°)
+			ds_rad = math.radians(ds)  # solar declination (rad.)
+			L_rad = math.radians(latitude)  # latitude (rad.)
+			hs_rad = math.radians(hs)  # local solar hour angle (rad.)
+
+			sin_alpha = (math.sin(L_rad) * math.sin(ds_rad) + math.cos(L_rad)
+			             * math.cos(ds_rad) * math.cos(
+						hs_rad))  # sin of solar height angle
+
+			if sin_alpha < 0.0:
+				sin_alpha = 0.0
+
+			slope_rad = np.radians(slope)
+			asp_rad = np.radians((aspect - 180) * (-1))  # aspect transformation
+
+			cosi = (np.sin(ds_rad) * (np.sin(L_rad) * np.cos(slope_rad)
+			                          - np.cos(L_rad) * np.sin(
+						slope_rad) * np.cos(asp_rad))
+			        + np.cos(ds_rad) * np.cos(hs_rad) * (np.cos(L_rad)
+			                                             * np.cos(
+								slope_rad) + np.sin(L_rad) * np.sin(slope_rad)
+			                                             * np.cos(
+								asp_rad)) + np.cos(ds_rad) * np.sin(slope_rad)
+			        * np.sin(asp_rad) * np.sin(hs_rad))
+		except ArithmeticError:
+			raise ArithmeticError("Solar geometry corrections have not been "
+			                      "done.")
+
+		# Direct radiation intensity correction on DEM
+		try:
+			Is = float(
+				Rs_in) / sin_alpha  # radiation perpendicular to solar beam angle
+			Rs_in_corr = Is * cosi  # radiation corrected on solar and terrain geometry
+		except ArithmeticError:
+			raise ArithmeticError("Radiation intensity correction on DEM has "
+			                      "not been done.")
+
+		return Rs_in_corr
+
+	def atmEmissivity(self, e_Z, ta):
+		"""
+		Atmospheric emissivity calculated according to Idso (see
+		Brutsaert 1982).
+
+		:param e_Z: Atmospheric water vapour pressure (kPa)
+		:type e_Z: numpy.ndarray, float
+		:param ta: Air temperature :math:`(\SI{}\degreeCelsius)`
+		:type ta: numpy.ndarray, float
+
+		:return: Air emissivity (rel.)
+		:rtype: numpy.ndarray, float
+		"""
+
+		try:
+			emis_a = 1.24 * (e_Z * 10.0 / (ta + 273.16)) ** (1.0 / 7.0)
+		except ArithmeticError:
+			raise ArithmeticError("Air emissivity has not been calculated.")
+
+		return emis_a
+
+	def downRL(self, ta, emis_a):
+		"""
+		Funtion calculates downward flux of longwave radiation :math:`(W.m^{
+		-2})`
+
+		:param ta: Air temperature :math:`(\SI{}\degreeCelsius)`
+		:type ta: numpy.ndarray, float
+		:param emis_a: Air emissivity (rel.)
+		:type emis_a: numpy.ndarray, float
+
+		:return RL_in: Downward flux of longwave radiation :math:`(W.m^{-2})`
+		:rtype RL_in: numpy.ndarray, float
+		"""
+
+		try:
+			RL_in = emis_a * 5.6703 * 10.0 ** (-8.0) * (ta + 273.16) ** 4
+		except ArithmeticError:
+			raise ArithmeticError("Downward longwave radiation flux has not "
+			                      "been calculated.")
+
+		return RL_in
+
+	def outRL(self, ts, emiss):
+		"""
+		Upward flux of longwave radiation :math:`(W.m^{-2})`
+
+		:param ts: Surface temperature :math:`(\SI{}\degreeCelsius)`
+		:type ts: numpy.ndarray
+		:param emiss: Surface emissivity (rel.)
+		:type emiss: numpy.ndarray
+
+		:returns: Upward flux of longwave radiation :math:`(W.m^{-2})`
+		:rtype: numpy.ndarray
+		"""
+
+		try:
+			RL_out = emiss * 5.6703 * 10.0 ** (-8.0) * (ts + 273.16) ** 4
+
+		except ArithmeticError:
+			raise ArithmeticError("Upward longwave radiation flux has not "
+			                      "been calculated.")
+
+		return RL_out
+
+	def albedoBrom(self, ndvi, msavi, c_a=0.08611, c_b=0.894716, c_c=5.558657,
+	               c_d=-0.11829, c_e=-1.9818, c_f=-4.50339, c_g=-11.4625,
+	               c_h=7.461454, c_i=5.299396, c_j=4.76657, c_k=-2.3127,
+	               c_l=-3.42739):
+		"""
+		Albedo (rel.) calculated according to Duffková and Brom et al. (2012)
+
+		:param ndvi: Normalized Difference Vegetation Index (-)
+		:type ndvi: numpy.array
+		:param msavi: Modified Soil Adjusted Vegetation Index (-) according\
+		to Gao et al. 1996.
+		:param c_a: constant. Default a = 0.08611
+		:type c_a: float
+		:param c_b: constant. Default a = 0.894716
+		:type c_b: float
+		:param c_c: constant. Default a = 5.558657
+		:type c_c: float
+		:param c_d: constant. Default a = -0.11829
+		:type c_d: float
+		:param c_e: constant. Default a = -1.9818
+		:type c_e: float
+		:param c_f: constant. Default a = -4.50339
+		:type c_f: float
+		:param c_g: constant. Default a = -11.4625
+		:type c_g: float
+		:param c_h: constant. Default a = 7.461454
+		:type c_h: float
+		:param c_i: constant. Default a = 5.299396
+		:type c_i: float
+		:param c_j: constant. Default a = 4.76657
+		:type c_j: float
+		:param c_k: constant. Default a = -2.3127
+		:type c_k: float
+		:param c_l: constant. Default a = -3.42739
+		:type c_l: float
+
+		:returns: Albedo (rel.)
+		:rtype: numpy.ndarray
+
+		\n
+		**References:**\n
+		*Duffková, R., Brom, J., Žížala, D., Zemek, F., Procházka, J.,
+		Nováková, E., Zajíček, A., Kvítek, T., 2012. Určení infiltračních
+		oblastí pomocí vodního stresu vegetace na základě dálkového průzkumu
+		Země a pozemních měření. Certifikovaná metodika. VÚMOP, v.v.i., Praha.*
+		"""
+
+		try:
+			albedo = (c_a + c_b * msavi + c_c * msavi ** 2 + c_d * ndvi + c_e
+			          * msavi ** 3 + c_f * msavi * ndvi + c_g * msavi ** 2
+			          * ndvi + c_h * msavi * ndvi ** 2 + c_i * msavi ** 2
+			          * ndvi ** 2 + c_j * msavi ** 3 * ndvi + c_k * msavi ** 3
+			          * ndvi ** 2 + c_l * msavi * ndvi ** 3)
+
+		except ArithmeticError:
+			raise ArithmeticError("Albedo has not been calculated.")
+
+		return albedo
+
+	def albedoLandsat(self, blue, green, red, nir, swir1, swir2, sat_type="L8"):
+		"""
+		Albedo (rel.) calculated for Landsat satellite sensors. Albedo
+		for Landsat 4 TM, 5 TM and Landsat 7 ETM+ is calculated
+		according to Tasumi et al. (2008). Albedo for Landsat 8 OLI/TIRS
+		is calculated according to Olmeo et al. (2017). Albedo is computed
+		with spectral reflectance bands on relative scale (0 to 1).\n
+		Note: This algorithm might be used with another data from different
+		devices, however a comparable spectral data (bands) should be used.
+
+		:param blue: Blue band (rel.)
+		:type blue: numpy.ndarray
+		:param green: Green band (rel.)
+		:type green: numpy.ndarray
+		:param red: Red band (rel.)
+		:type red: numpy.ndarray
+		:param nir: NIR band (rel.)
+		:type nir: numpy.ndarray
+		:param swir1: SWIR1 band on ca 1.61 :math:`\mu m` (rel.)
+		:type swir1: numpy.ndarray
+		:param swir2: SWIR2 band on ca 2.2 :math:`\mu m` (rel.)
+		:type swir2: numpy.ndarray
+		:param sat_type: Type of Landsat satellite: \n\n
+				- L5 - Landsat 4 TM, 5 TM or Landsat 7 ETM+\n
+				- L8 - Landsat 8 OLI/TIRS
+		:type sat_type: str
+
+		:return: Albedo (rel.)
+		:rtype: numpy.ndarray
+
+		\n
+		**References:**\n
+		*G.F. Olmedo, S. Ortega-Farias, D. Fonseca-Luengo,
+		D. de la Fuente-Saiz, F.F. Peñailillo 2018: Water: actual
+		evapotranspiration with energy balance models. R Package
+		Version 0.6 (2017)*\n
+		*Tasumi, M., Allen, R.G., Trezza, R., 2008. At-Surface Reflectance
+		and Albedo from Satellite for Operational Calculation of Land
+		Surface Energy Balance. Journal of Hydrologic Engineering 13, 51–63.*
+		https://doi.org/10.1061/(ASCE)1084-0699(2008)13:2(51).
+		"""
+
+		# Constants
+		bands = [blue, green, red, nir, swir1, swir2]
+		if sat_type == "L8":
+			wb = (0.246, 0.146, 0.191, 0.304, 0.105, 0.008)  # Constants for
+		# L8 according to Olmeo et. al 2017: (G.F. Olmedo, S. Ortega-Farias,
+		# D. Fonseca-Luengo, D. de la Fuente-Saiz, F.F. Peñailillo
+		# Water: actual evapotranspiration with energy balance models
+		# R Package Version 0.6 (2017))
+
+		else:
+			wb = (0.254, 0.149, 0.147, 0.311, 0.103, 0.036)  # Constants
+		# according to Tasumi et al. 2008: Tasumi, M., Allen, R.G., Trezza,
+		# R.,  2008. At-Surface Reflectance and Albedo from Satellite
+		# for Operational Calculation of Land Surface Energy Balance.
+		# Journal of Hydrologic Engineering 13, 51–63.
+		# https://doi.org/10.1061/(ASCE)1084-0699(2008)13:2(51)
+
+		# Computing of broadband albedo
+		try:
+			alfa_list = []
+			for i in range(0, len(bands)):
+				alfa_band = bands[i] * wb[i]
+				alfa_list.append(alfa_band)
+				del alfa_band
+
+			albedo = np.zeros(alfa_list[0].shape)
+			i = 0
+			while i != len(alfa_list):
+				albedo = albedo + alfa_list[i]
+				i = i + 1
+			del alfa_list
+		except ArithmeticError:
+			raise ArithmeticError("Albedo has not been calculated.")
+
+		return albedo
+
+	def albedo(self, band_red, band_nir, sat_type="L8", band_blue=None,
+	           band_green=None, band_sw1=None, band_sw2=None):
+		"""
+		Calculation of Albedo according to data type (satellite data type)
+		or data availability. Albedo can be calculated using Landsat data 
+		or using any data including RED and NIR band. For the Landsat 8 data 
+		Olmedo method is used, for tle Landsat 4, 5 and 7 Tasumi approach is 
+		used. If only RED and NIR bands are available, Brom method is used.
+		
+		:param band_red: Red band (rel.)
+		:type band_red: numpy.ndarray
+		:param band_nir: NIR band (rel.)
+		:type band_nir: numpy.ndarray
+		:param sat_type: Type of Landsat satellite: \n\n
+				- L5 - Landsat 4 TM, 5 TM or Landsat 7 ETM+\n
+				- L8 - Landsat 8 OLI/TIRS
+		:type sat_type: str
+		:param band_blue: Blue band (rel.)
+		:type band_blue: numpy.ndarray
+		:param band_green: Green band (rel.)
+		:type band_green: numpy.ndarray
+		:param band_sw1: SWIR1 band on ca 1.61 :math:`\mu m` (rel.)
+		:type band_sw1: numpy.ndarray
+		:param band_sw2: SWIR2 band on ca 2.2 :math:`\mu m` (rel.)
+		:type band_sw2: numpy.ndarray
+
+		:return: Albedo (rel.)
+		:rtype: numpy.ndarray
+		
+		\n
+		**References:**\n
+		*G.F. Olmedo, S. Ortega-Farias, D. Fonseca-Luengo,
+		D. de la Fuente-Saiz, F.F. Peñailillo 2018: Water: actual
+		evapotranspiration with energy balance models. R Package
+		Version 0.6 (2017)*\n
+		*Tasumi, M., Allen, R.G., Trezza, R., 2008. At-Surface Reflectance
+		and Albedo from Satellite for Operational Calculation of Land
+		Surface Energy Balance. Journal of Hydrologic Engineering 13, 51–63.
+		https://doi.org/10.1061/(ASCE)1084-0699(2008)13:2(51).*\n
+		*Duffková, R., Brom, J., Žížala, D., Zemek, F., Procházka, J.,
+		Nováková, E., Zajíček, A., Kvítek, T., 2012. Určení infiltračních
+		oblastí pomocí vodního stresu vegetace na základě dálkového průzkumu
+		Země a pozemních měření. Certifikovaná metodika. VÚMOP, v.v.i., Praha.*
+		"""
+
+		try:
+			if sat_type == "other" or band_blue is None or band_green is None\
+					or band_sw1 is None or band_sw2 is None:
+				ndvi = self.viNDVI(band_red, band_nir)
+				msavi = self.viMSAVI(band_red, band_nir)
+				albedo = self.albedoBrom(ndvi, msavi)
+
+			else:
+				albedo = self.albedoLandsat(band_blue, band_green, band_red,
+				                          band_nir, band_sw1, band_sw2,
+				                          sat_type)
+		except ArithmeticError:
+			raise ArithmeticError("Albedo has not been calculated.")
+
+		return albedo
+
+	def reflectRs(self, Rs_in_corr, albedo):
+		"""
+		Amount of shortwave radiation reflected from surface :math:`(W.m^{-2})`
+
+		:param Rs_in_corr: Incomming global radiation corrected on DEM\
+		:math:`(W.m^{-2})`
+		:type Rs_in_corr: numpy.ndarray
+		:param albedo: Surface albedo (rel.)
+		:type albedo: numpy.ndarray
+		:return: Amount of reflected global radiation :math:`(W.m^{-2})`
+		:rtype: numpy.ndarray
+		"""
+		try:
+			Rs_out = Rs_in_corr * albedo
+		except ArithmeticError:
+			raise ArithmeticError("Amount of reflected shortwave radiation "
+			                      "has not been calculated.")
+
+		return Rs_out
+
+	def netRad(self, Rs_in_corr, Rs_out, RL_in, RL_out):
+		"""
+		Total net radiation.
+
+		:param Rs_in_corr: Incomming global (shortwave) radiation\
+		:math:`(W.m^{-2})`
+		:type Rs_in_corr: numpy.ndarray
+		:param Rs_out: Outgoing (reflected) shortwave radiation\
+		:math:`(W.m^{-2})`
+		:type Rs_out: numpy.ndarray
+		:param RL_in: Incomming (downward) longwave radiation :math:`(W.m^{-2})`
+		:type RL_in: numpy.ndarray
+		:param RL_out: Outgoing (upward) longwave radiation :math:`(W.m^{-2})`
+		:type RL_out: numpy.ndarray
+
+		:return: Total net radiation flux :math:`(W.m^{-2})`
+		:rtype: numpy.ndarray
+		"""
+
+		try:
+			Rn = Rs_in_corr - Rs_out + RL_in - RL_out
+		except ArithmeticError:
+			raise ArithmeticError("Total net radiation has not been "
+			                      "calculated.")
+
+		return Rn
+
+
+# noinspection PyMethodMayBeStatic
+class MeteoFeatures:
+	"""
+	Calculation of basic meteorological features and miscellaneous
+	variables.
+	"""
+
+	def __init__(self):
+		return
+
+	def airTemp(self, ta_st, DMT, z_st=2.0, adiabatic=0.0065):
+		"""
+		Air temperature, recalculated on height Z (m) from data measured in
+		height Z_st (m).
+
+		:param DMT: Digital elevation model (m)
+		:type DMT: numpy.ndarray, float
+		:param ta_st: Air temperature measured at height z_st\
+		:math:`(\SI{}\degreeCelsius)`
+		:type ta_st: numpy.ndarray, float
+		:param z_st: Height of air temperature measurement on meteo station (m)
+		:type z_st: float
+		:param adiabatic: Adiabatic lapse rate :math:`(\SI{}\degreeCelsius)`
+		:type adiabatic: float
+
+		:return: Air temperature, recalculated on height Z (m) from data\
+		measured in	height Z_st (m)
+		:rtype: numpy.ndarray, float
+		"""
+
+		try:
+			ta = ta_st - (DMT - float(z_st)) * adiabatic  # air temperature in C
+		except ArithmeticError:
+			raise ArithmeticError("Air temperature at blending height has not "
+			                      "been calculated.")
+
+		return ta
+
+	def surfaceTemperature(self, tir_band, emissivity=1.0, emis_rule="No"):
+		"""Correction of surface temperature on emissivity.
+		:param tir_band: Layer of surface temperature :math:`(\SI{
+		}\degreeCelsius)`.
+		:type tir_band: numpy.ndarray
+		:param emissivity: Layer of emissivity (rel.).
+		:type emissivity: numpy.ndarray
+		:param emis_rule: Setting if the correction will be done or not.
+			No is default.
+		:type emis_rule: str
+
+		:return: Layer of corrected surface temperature :math:`(\SI{
+		}\degreeCelsius)`.
+		:rtype: numpy.ndarray
+		"""
+		try:
+			if emis_rule is not "No":
+				ts = ((tir_band + 273.16) / emissivity ** 0.25) - 273.16
+			else:
+				ts = tir_band
+		except ValueError:
+			raise ValueError("Surface temperature has not been calculated.")
+
+		return ts
+
+	def airPress(self, ta, DMT, Z=200.0, P0=101.325, adiabatic=0.0065):
+		"""
+		Atmospheric air pressure at level Z (kPa)
+
+		:param ta: Air temperature :math:`(\SI{}\degreeCelsius)`
+		:type ta: numpy.ndarray, float
+		:param DMT: Digital elevation model or altitude (m)
+		:type DMT: numpy.ndarray, float
+		:param Z: Height of measurement above surface (m)
+		:type Z: float
+		:param P0: Sea level air pressure (kPa)
+		:type P0: float
+		:param adiabatic: Adiabatic lapse rate :math:`(\SI{}\degreeCelsius)`
+		:type adiabatic: float
+
+		:return: Air pressure at level Z (kPa)
+		:rtype: numpy.ndarray, float
+		"""
+
+		try:
+			airP = P0 * ((ta + 273.15) / (ta + 273.15 + adiabatic * (DMT +
+			                                                         Z))) ** 5.257
+
+		except ArithmeticError:
+			raise ArithmeticError("Air pressure has not been calculated.")
+
+		return airP
+
+	def satVapourPress(self, ta):
+		"""
+		Saturated water vapour pressure (kPa) calculated using Magnus-Tetens
+		equation.
+
+		:param ta: Air temperature :math:`(\SI{}\degreeCelsius)`
+		:type ta: numpy.ndarray, float
+
+		:return: Saturated water vapour pressure (kPa)
+		:rtype: numpy.ndarray, float
+		"""
+
+		try:
+			E_sat = 0.61121 * np.exp(17.502 * ta / (240.97 + ta))
+		except ArithmeticError:
+			raise ArithmeticError("Saturated water vapour pressure has not "
+			                      "been calculated.")
+
+		return E_sat
+
+	def vapourPress(self, E_sat, Rh):
+		"""
+		Water vapour pressure in air (kPa).
+
+		:param E_sat: Saturated water vapour pressure (kPa)
+		:type E_sat: numpy.ndarray, float
+		:param Rh: Relative humidity of air (%)
+		:type Rh: numpy.ndarray, float
+
+		:return: Water vapour pressure in air (kPa)
+		:rtype: numpy.ndarray, float
+		"""
+
+		try:
+			e_abs = E_sat * Rh / 100.0
+		except ArithmeticError:
+			raise ArithmeticError("Water vapour pressure has not been "
+			                      "calculated")
+
+		return e_abs
+
+	def vpd(self, E_sat, e_abs):
+		"""
+		Water vapour pressure deficit (kPa).
+
+		:param E_sat: Saturated water vapour pressure (kPa)
+		:type E_sat: numpy.array, float
+		:param e_abs: Water vapour pressure in air (kPa)
+		:type e_abs: numpy.array, float
+
+		:return: Water vapour pressure deficit (kPa)
+		:rtype: numpy.ndarray, float
+		"""
+
+		try:
+			VPD = E_sat - e_abs
+		except ArithmeticError:
+			raise ArithmeticError("Water vapour pressure deficit has not "
+			                      "been calculated.")
+
+		return VPD
+
+	def airDensity(self, ta):
+		"""
+		Volumetric dry air density :math:`(kg.m^{-3})`.
+
+		:param ta: Air temperature :math:`(\SI{}\degreeCelsius)`
+		:type ta: numpy.ndarray, float
+
+		:return: Volumetric dry air density :math:`(kg.m^{-3})`
+		:rtype: numpy.ndarray, float
+		"""
+
+		try:
+			rho = 353.4 / (ta + 273.15)
+		except ArithmeticError:
+			raise ArithmeticError("Volumetric dry air density has not been "
+			                      "calculated")
+
+		return rho
+
+	def latent(self, ta):
+		"""
+		Latent heat for the water vapour exchange :math:`(J.g^{-1})`.
+
+		:param ta: Air temperature :math:`(\SI{}\degreeCelsius)`
+		:type ta: numpy.ndarray, float
+
+		:return: Latent heat for the water vapour exchange :math:`(J.g^{-1})`
+		:rtype: numpy.ndarray, float
+		"""
+
+		try:
+			latent = 2501 - 2.3723 * ta
+		except ArithmeticError:
+			raise ArithmeticError("Latent heat has not been calculated.")
+
+		return latent
+
+	def gamma(self, airP, latent, cp=1012.0):
+		"""
+		Psychrometric constant :math:`(kPa.K^{-1})`.
+
+		:param airP: Atmospheric pressure (kPa)
+		:type airP: numpy.ndarray, float
+		:param latent: Latent heat for water vapour exchange :math:`(J.g^{-1})`
+		:param cp: Thermal heat capacity of dry air :math:`(K.kg^{-1}.K^{-1})`
+		:type cp: float
+
+		:return: Psychrometric constant :math:`(kPa.K^{-1})`
+		:rtype: numpy.ndarray, float
+		"""
+
+		try:
+			gamma = cp * airP / (latent * 0.622) * 0.001
+		except ArithmeticError:
+			raise ArithmeticError("Psychrometric constant has not been "
+			                      "calculated.")
+
+		return gamma
+
+	def delta(self, ts, ta):
+		"""
+		Slope of water vapour pressure gradient to temperature gradient - delta
+		function :math:`(kPa.K^{-1})`. Calculation according to Jackson et
+		al. (1998).
+
+		:param ts: Surface temperature :math:`(\SI{}\degreeCelsius)`
+		:type ts: numpy.ndarray
+		:param ta: Air temperature :math:`(\SI{}\degreeCelsius)`
+		:type ta: numpy.ndarray, float
+
+		:return: Slope of water vapour pressure gradient to temperature\
+		gradient - delta function :math:`(kPa.K^{-1})`
+		:rtype: numpy.ndarray
+		"""
+
+		try:
+			T = (ts + ta) / 2
+			delta = (
+						        45.03 + 3.014 * T + 0.05345 * T ** 2 + 0.00224 * T ** 3) * 0.001
+			del T
+		except ArithmeticError:
+			raise ArithmeticError("Delta has not been calculated.")
+
+		return delta
+
+	def emissivity(self, Fc, red, ndvi):
+		"""
+		Surface emissivity calculated according to Sobrino et al. (2004) NDVI
+		Treshold Method.
+
+		:param Fc: Fractional vegetation cover index (unitless)
+		:type Fc: numpy.ndarray
+		:param red: Spectral reflectance in RED region (rel.)
+		:type red: numpy.ndarray
+		:param ndvi: Spectral vegetation index NDVI (unitless)
+		:type ndvi: numpy.ndarray
+
+		:return: Surface emissivity (rel.)
+		:rtype: numpy.ndarray
+		"""
+
+		try:
+			emiss = 0.004 * Fc + 0.986
+			emiss = np.where(ndvi < 0.2, 1 - red,
+			                 emiss)  # replacement of emissivity values for NDVI
+			# < 0.2 by values from red band
+
+			emiss = np.where(ndvi > 0.5, 0.99, emiss)  # replacement of
+			# emissivity values for NDVI > 0.5 by 0.99
+
+			emiss[emiss > 1] = 0.99  # replacement of values > 1 by 0.99
+			emiss[emiss < 0.8] = 0.8  # replacement values < 0.8 by 0.8
+
+		except ArithmeticError:
+			raise ArithmeticError("Surface emissivity has not been calculated.")
+
+		return emiss
+
 
 # noinspection PyMethodMayBeStatic,PyUnusedLocal
-class HeatFluxes:
+class HeatFluxes(MeteoFeatures):
 	"""
 	Calculation of heat fluxes and heat balance features from spectral
 	and thermal spatial data and meteorological measurements. The class
@@ -866,10 +1327,7 @@ class HeatFluxes:
 	method is included. 
 	"""
 
-	def __init__(self):
-		return
-
-	def fluxLE_p(self, Rn, G, delta, VPD, ra, gamma, rho, cp):
+	def fluxLE_p(self, Rn, G, delta, VPD, ra, gamma, rho, cp=1012.0):
 		"""
 		Latent heat flux for potential evapotranspiration according to
 		Penman (1948) :math:`(W.m^{-2})`.
@@ -1098,6 +1556,168 @@ class HeatFluxes:
 
 		return EF
 
+	def heatFluxes(self, Rn, G, ts, ta, method="aero", Uz=None, h_eff=None,
+	               LAI=None, z0m=None, z0h=None, rho=None, Z=200.0, cp=1012,
+	               L=-10000.0, n_iter=10, a=1.0, b=0.667, c=5.0, d=0.35,
+	               kappa=0.41, gravit=9.81):
+		"""
+
+		:param Rn: Total net radiation :math:`(W.m^{-2})`
+		:type Rn: numpy.ndarray
+		:param G: Ground heat flux :math:`(W.m^{-2})`
+		:type G: numpy.ndarray
+		:param ts: Surface temperature :math:`(\SI{}\degreeCelsius)`
+		:type ts: numpy.ndarray
+		:param ta: Air temperature :math:`(\SI{}\degreeCelsius)`
+		:type ta: numpy.ndarray, float
+		:param method: Method of heat fluxes calculation: \n\n
+				- aero - Aerodynamic method based on  calculation
+				of ra using approach proposed by Thom (1975) \n
+				- SEBAL - SEBAL method proposed by Bastiaanssen et al. (1998) \n
+				- grad - Gradient method proposed by Suleiman and Crago (2004)
+		:type method: str
+		:param Uz: Wind speed measured on meteostation at level Z_st (m/s).
+		:type Uz: float, numpy.ndarray
+		:param h_eff: Effective height of vegetation cover
+		:type h_eff: numpy.ndarray, float
+		:param LAI: Leaf area index :math:`(m^{2}.m^{-2})`
+		:param z0m: Aerodynamic roughness of the surface for momentum
+		transfer (m)
+		:type z0m: numpy.ndarray
+		:param z0h: Aerodynamic roughness of the surface for heat
+		transfer (m)
+		:param rho: Volumetric dry air density :math:`(kg.m^{-3})`
+		:type rho: numpy.ndarray, float
+		:param Z: Blending height (m)
+		:type Z: float
+		:param cp: Thermal heat capacity of dry air :math:`(K.kg^{-1}.K^{-1})`
+		:type cp: float
+		:param L: Initial Monin-Obukhov lenght (m).
+		:type L: float
+		:param n_iter: Number of iteration in stability coefficient calculation.
+		:type n_iter: int
+		:param a: Constant for stability parameters calculation (Beljaars and
+		Holtslag, 1991)
+		:type a: float
+		:param b: Constant for stability parameters calculation (Beljaars and
+		Holtslag, 1991)
+		:type b: float
+		:param c: Constant for stability parameters calculation (Beljaars and
+		Holtslag, 1991)
+		:type c: float
+		:param d: Constant for stability parameters calculation (Beljaars and
+		Holtslag, 1991)
+		:type d: float
+		:param kappa: von Karman constant. Default 0.41
+		:type kappa: float
+		:param gravit: Gravitation forcing (m/s2). Default 9.81
+		:type gravit: float
+
+		:returns: Sensible heat flux :math:`(W.m^{-2})`
+		:rtype: numpy.ndarray
+		:returns: Latent heat flux :math:`(W.m^{-2})`
+		:rtype: numpy.ndarray
+		:returns: Evaporative fraction (rel.)
+		:rtype: numpy.ndarray
+		:returns: Aerodynamic resistance for heat and momentum transfer :math:`(
+		s.m^{-1})`
+		:rtype: numpy.ndarray
+		:returns: Friction velocity :math:`(m.s^{-1})`
+
+		\n
+		**References**\n
+		*Bastiaanssen, W.G.M., Menenti, M., Feddes, R.A., Holtslag, A.A.M.,
+		1998. A remote sensing surface energy balance algorithm for land (
+		SEBAL). 1. Formulation. Journal of Hydrology 212–213, 198–212.
+		https://doi.org/10.1016/S0022-1694(98)00253-4*\n
+		*Beljaars, A.C.M., Holtslag, A.A.M., 1991. Flux Parameterizationover
+		Land Surfaces for Atmospheric Models. Journal of Applied Meteorology
+		30, 327–341. https://doi.org/10.1175/1520-0450(
+		1991)030<0327:FPOLSF>2.0.CO;2*\n
+		*Suleiman, A., Crago, R., 2004. Hourly and Daytime Evapotranspiration
+		from Grassland Using Radiometric Surface Temperatures. Agronomy
+		Journal 96, 384–390. https://doi.org/10.2134/agronj2004.3840*\n
+		*Thom, A.S., 1975. Momentum, mass and heat exchange of plant
+		communities, in: Monteith, J.L. (Ed.), Vegetation and the Atmosphere,
+		Vol. 1 Principles. Academic Press, London, pp. 57–110.*
+		"""
+		#TODO - pokud bude u nekterych vsupu jen cislo, tak prevod na array
+		#TODO - SEBAL produkuje ra_h --> potreba pouzit ra podle Thoma pro
+		# dalsi vypocty
+
+		ignore_zero = np.seterr(all="ignore")
+
+		# Handling inputs
+		if method is "aero" or method is "SEBAL":
+			if Uz is None:
+				raise IOError("Heat fluxes have not been calculated - wind "
+							  "speed has not been setted up.")
+			else:
+				if z0m is None or z0h is None:
+					if h_eff is not None and LAI is not None:
+						try:
+							z0m = WindStability().z0m(h_eff, LAI)
+							z0h = WindStability().z0h(z0m)
+						except ArithmeticError:
+							raise ArithmeticError("Parameters of surface "
+							                      "aerodynamic roughness"
+							                      "have not been calculated.")
+					else:
+						raise IOError("Parameters of effective height of "
+									  "vegetation or leaf area index has not "
+									  "been setted up correctly")
+
+		if rho is None:
+			rho = self.airDensity(ta)
+		else:
+			raise ArithmeticError("Air density has not been "
+			                      "calculated.")
+
+		# Heat fluxes calculation
+		if method is "aero":
+			try:
+				psi_m, psi_h, frict, L = WindStability().stabCoef(Uz, ta, ts,
+				                                                  z0m, z0h, Z, L,
+				                                                  n_iter, a, b,
+				                                                  c, d, kappa,
+				                                                  gravit)
+				ra = WindStability().raThom(Uz, z0m, z0h, psi_m, psi_h, Z, kappa)
+				dT = WindStability().dT(ts, ta, Rn, G, ra, rho, cp)
+				H = self.fluxHAer(ra, rho, dT, cp)
+				LE = self.fluxLE(Rn, G, H)
+				EF = self.aeroEF(LE, Rn, G)
+
+			except ArithmeticError:
+				raise ArithmeticError("Heat fluxes for aerodynamic method "
+				                      "has not been calculated")
+
+		elif method is "SEBAL":
+			try:
+				psi_m, psi_h, frict, L = WindStability().stabCoef(Uz, ta, ts,
+				                                                  z0m, z0h, Z, L,
+				                                                  n_iter, a, b,
+				                                                  c, d, kappa,
+				                                                  gravit)
+				ra = WindStability().raThom(Uz, z0m, z0h, psi_m, psi_h, Z, kappa)
+				ra_h, H = WindStability().aeroSEBAL(Uz, ta, ts, z0m, Rn, G,
+				                                    rho, n_iter, Z, cp=cp,
+				                                    kappa=kappa)
+				LE = self.fluxLE(Rn, G, H)
+				EF = self.aeroEF(LE, Rn, G)
+
+			except ArithmeticError:
+				raise ArithmeticError("Heat fluxes for SEBAL method "
+				                      "has not been calculated")
+
+		elif method is "grad":
+			EF = self.gradEF(ts, ta)
+			LE = self.gradLE(EF, Rn, G)
+			H = self.gradH(LE, Rn, G)
+			ra = WindStability().raGrad(H, rho, ts, ta, cp)
+			frict = np.zeros_like(ra)
+
+		return H, LE, EF, ra, frict
+
 	def intensityE(self, LE, L):
 		"""Evaporation intensity in :math:`mmol.m^{-2}.s^{-1}`.
 		
@@ -1313,254 +1933,9 @@ class HeatFluxes:
 		return G
 
 
-# noinspection PyMethodMayBeStatic
-class MeteoFeatures:
-	"""
-	Calculation of basic meteorological features and miscellaneous
-	variables.
-	"""
 
-	def __init__(self):
-		return
-
-	def airTemp(self, ta_st, DMT, z_st=2.0, adiabatic=0.0065):
-		"""
-		Air temperature, recalculated on height Z (m) from data measured in
-		height Z_st (m).
-
-		:param DMT: Digital elevation model (m)
-		:type DMT: numpy.ndarray, float
-		:param ta_st: Air temperature measured at height z_st\
-		:math:`(\SI{}\degreeCelsius)`
-		:type ta_st: numpy.ndarray, float
-		:param z_st: Height of air temperature measurement on meteo station (m)
-		:type z_st: float
-		:param adiabatic: Adiabatic lapse rate :math:`(\SI{}\degreeCelsius)`
-		:type adiabatic: float
-
-		:return: Air temperature, recalculated on height Z (m) from data\
-		measured in	height Z_st (m)
-		:rtype: numpy.ndarray, float
-		"""
-
-		try:
-			ta = ta_st - (DMT - float(z_st)) * adiabatic  # air temperature in C
-		except ArithmeticError:
-			raise ArithmeticError("Air temperature at blending height has not "
-			                      "been calculated.")
-
-		return ta
-
-	def airPress(self, ta, DMT, Z=200.0, P0=101.325, adiabatic=0.0065):
-		"""
-		Atmospheric air pressure at level Z (kPa)
-
-		:param ta: Air temperature :math:`(\SI{}\degreeCelsius)`
-		:type ta: numpy.ndarray, float
-		:param DMT: Digital elevation model or altitude (m)
-		:type DMT: numpy.ndarray, float
-		:param Z: Height of measurement above surface (m)
-		:type Z: float
-		:param P0: Sea level air pressure (kPa)
-		:type P0: float
-		:param adiabatic: Adiabatic lapse rate :math:`(\SI{}\degreeCelsius)`
-		:type adiabatic: float
-
-		:return: Air pressure at level Z (kPa)
-		:rtype: numpy.ndarray, float
-		"""
-
-		try:
-			airP = P0 * ((ta + 273.15)/(ta + 273.15 + adiabatic * (DMT +
-			                                                       Z)))**5.257
-
-		except ArithmeticError:
-			raise ArithmeticError("Air pressure has not been calculated.")
-
-		return airP
-
-	def satVapourPress(self, ta):
-		"""
-		Saturated water vapour pressure (kPa) calculated using Magnus-Tetens
-		equation.
-
-		:param ta: Air temperature :math:`(\SI{}\degreeCelsius)`
-		:type ta: numpy.ndarray, float
-
-		:return: Saturated water vapour pressure (kPa)
-		:rtype: numpy.ndarray, float
-		"""
-
-		try:
-			E_sat = 0.61121 * np.exp(17.502 * ta / (240.97 + ta))
-		except ArithmeticError:
-			raise ArithmeticError("Saturated water vapour pressure has not "
-			                      "been calculated.")
-
-		return E_sat
-
-	def vapourPress(self, E_sat, Rh):
-		"""
-		Water vapour pressure in air (kPa).
-
-		:param E_sat: Saturated water vapour pressure (kPa)
-		:type E_sat: numpy.ndarray, float
-		:param Rh: Relative humidity of air (%)
-		:type Rh: numpy.ndarray, float
-
-		:return: Water vapour pressure in air (kPa)
-		:rtype: numpy.ndarray, float
-		"""
-
-		try:
-			e_abs = E_sat * Rh / 100.0
-		except ArithmeticError:
-			raise ArithmeticError("Water vapour pressure has not been "
-			                      "calculated")
-
-		return e_abs
-
-	def vpd(self, E_sat, e_abs):
-		"""
-		Water vapour pressure deficit (kPa).
-
-		:param E_sat: Saturated water vapour pressure (kPa)
-		:type E_sat: numpy.array, float
-		:param e_abs: Water vapour pressure in air (kPa)
-		:type e_abs: numpy.array, float
-
-		:return: Water vapour pressure deficit (kPa)
-		:rtype: numpy.ndarray, float
-		"""
-
-		try:
-			VPD = E_sat - e_abs
-		except ArithmeticError:
-			raise ArithmeticError("Water vapour pressure deficit has not "
-			                      "been calculated.")
-
-		return VPD
-
-	def airDensity(self, ta):
-		"""
-		Volumetric dry air density :math:`(kg.m^{-3})`.
-		
-		:param ta: Air temperature :math:`(\SI{}\degreeCelsius)`
-		:type ta: numpy.ndarray, float
-		
-		:return: Volumetric dry air density :math:`(kg.m^{-3})`
-		:rtype: numpy.ndarray, float
-		"""
-
-		try:
-			rho = 353.4 / (ta + 273.15)
-		except ArithmeticError:
-			raise ArithmeticError("Volumetric dry air density has not been "
-			                      "calculated")
-
-		return rho
-
-	def latent(self, ta):
-		"""
-		Latent heat for the water vapour exchange :math:`(J.g^{-1})`.
-
-		:param ta: Air temperature :math:`(\SI{}\degreeCelsius)`
-		:type ta: numpy.ndarray, float
-
-		:return: Latent heat for the water vapour exchange :math:`(J.g^{-1})`
-		:rtype: numpy.ndarray, float
-		"""
-
-		try:
-			latent = 2501 - 2.3723 * ta
-		except ArithmeticError:
-			raise ArithmeticError("Latent heat has not been calculated.")
-
-		return latent
-
-	def gamma(self, airP, latent, cp=1012.0):
-		"""
-		Psychrometric constant :math:`(kPa.K^{-1})`.
-
-		:param airP: Atmospheric pressure (kPa)
-		:type airP: numpy.ndarray, float
-		:param latent: Latent heat for water vapour exchange :math:`(J.g^{-1})`
-		:param cp: Thermal heat capacity of dry air :math:`(K.kg^{-1}.K^{-1})`
-		:type cp: float
-
-		:return: Psychrometric constant :math:`(kPa.K^{-1})`
-		:rtype: numpy.ndarray, float
-		"""
-
-		try:
-			gamma = cp * airP / (latent * 0.622) * 0.001
-		except ArithmeticError:
-			raise ArithmeticError("Psychrometric constant has not been "
-			                      "calculated.")
-
-		return gamma
-
-	def delta(self, ts, ta):
-		"""
-		Slope of water vapour pressure gradient to temperature gradient - delta
-		function :math:`(kPa.K^{-1})`. Calculation according to Jackson et
-		al. (1998).
-
-		:param ts: Surface temperature :math:`(\SI{}\degreeCelsius)`
-		:type ts: numpy.ndarray
-		:param ta: Air temperature :math:`(\SI{}\degreeCelsius)`
-		:type ta: numpy.ndarray, float
-
-		:return: Slope of water vapour pressure gradient to temperature\
-		gradient - delta function :math:`(kPa.K^{-1})`
-		:rtype: numpy.ndarray
-		"""
-
-		try:
-			T = (ts + ta) / 2
-			delta = (45.03 + 3.014 * T + 0.05345 * T ** 2 + 0.00224 * T ** 3) * 0.001
-			del T
-		except ArithmeticError:
-			raise ArithmeticError("Delta has not been calculated.")
-
-		return delta
-
-	def emissivity(self, Fc, red, ndvi):
-		"""
-		Surface emissivity calculated according to Sobrino et al. (2004) NDVI
-		Treshold Method.
-
-		:param Fc: Fractional vegetation cover index (unitless)
-		:type Fc: numpy.ndarray
-		:param red: Spectral reflectance in RED region (rel.)
-		:type red: numpy.ndarray
-		:param ndvi: Spectral vegetation index NDVI (unitless)
-		:type ndvi: numpy.ndarray
-
-		:return: Surface emissivity (rel.)
-		:rtype: numpy.ndarray
-		"""
-
-		try:
-			emiss = 0.004 * Fc + 0.986
-			emiss = np.where(ndvi < 0.2, 1 - red,
-			                 emiss)  # replacement of emissivity values for NDVI
-			# < 0.2 by values from red band
-
-			emiss = np.where(ndvi > 0.5, 0.99, emiss)  # replacement of
-			# emissivity values for NDVI > 0.5 by 0.99
-
-			emiss[emiss > 1] = 0.99  # replacement of values > 1 by 0.99
-			emiss[emiss < 0.8] = 0.8  # replacement values < 0.8 by 0.8
-
-		except ArithmeticError:
-			raise ArithmeticError("Surface emissivity has not been calculated.")
-
-		return emiss
-
-
-# noinspection PyMethodMayBeStatic,PyUnusedLocal
-class WindStability(MeteoFeatures, HeatFluxes, VegIndices):
+# noinspection PyUnusedLocal
+class WindStability(HeatFluxes, VegIndices):
 	"""
 	Atmospheric stability calculation. Class includes methods for calculation
 	of boundary layer stability, friction velocity and aerodynamic
@@ -1569,35 +1944,6 @@ class WindStability(MeteoFeatures, HeatFluxes, VegIndices):
 	Methods for SEBAL procedure are also used. Some another features
 	are included.
 	"""
-
-	def vegHeight(self, h_min, h_max, msavi):
-		"""
-		Height of effective vegetation cover (m) derived from MSAVI index
-		according to Gao et al. (2011).
-
-		:param h_min: Maximal height of vegetation cover (m)
-		:type h_max: numpy.ndarray
-		:param h_max: Minimal height of vegetation cover (m)
-		:type h_min: numpy.ndarray
-		:param msavi: Modified Soil Adjusted Vegetation Index (MSAVI)
-		:type msavi: numpy.ndarray
-
-		:return: Effective vegetation cover height (m)
-		:rtype: numpy.ndarray
-
-		\n
-		**References**\n
-		*Gao, Z.Q., Liu, C.S., Gao, W., Chang, N.-B., 2011. A coupled remote
-		sensing and the Surface Energy Balance with Topography Algorithm
-		(SEBTA) to estimate actual evapotranspiration over heterogeneous
-		terrain. Hydrol. Earth Syst. Sci. 15, 119–139.
-		https://doi.org/10.5194/hess-15-119-2011*
-		"""
-
-		minmsavi = np.min(msavi[msavi != 0])
-		maxmsavi = np.max(msavi)
-		h_eff = h_min + (msavi - minmsavi) / (minmsavi - maxmsavi) * (h_min - h_max)
-		return h_eff
 
 	def zeroPlaneDis(self, h_eff):
 		"""
@@ -1650,7 +1996,7 @@ class WindStability(MeteoFeatures, HeatFluxes, VegIndices):
 		"""
 
 		try:
-			z0m = np.where(h_eff <= 1.0, 0.018 * LAI, 0.123 * h_eff)
+			z0m = np.where(h_eff < 1.0, 0.018 * LAI, 0.123 * h_eff)
 			z0m = np.where(z0m < 0.005, 0.005, z0m)
 
 		except ArithmeticError:
@@ -1679,7 +2025,8 @@ class WindStability(MeteoFeatures, HeatFluxes, VegIndices):
 		z0h = 0.1 * z0m
 		return z0h
 
-	def windSpeedZ(self, U, Z=200.0, Z_st=2.0, h_st=0.12):
+	@staticmethod
+	def windSpeedZ(U, Z=200.0, Z_st=2.0, h_st=0.12):
 		"""
 		Wind speed recalculated to height Z according to logarithmic law
 		(Gao et al. 2011).
@@ -1717,7 +2064,8 @@ class WindStability(MeteoFeatures, HeatFluxes, VegIndices):
 
 		return Uz
 
-	def frictVelo(self, Uz, z0m, Z=200.0, psi_m=0, kappa=0.41):
+	@staticmethod
+	def frictVelo(Uz, z0m, Z=200.0, psi_m=0, kappa=0.41):
 		"""
 		Friction velocity of wind speed (m/s) corrected on atmospheric
 		stability.
@@ -1935,8 +2283,8 @@ class WindStability(MeteoFeatures, HeatFluxes, VegIndices):
 
 		return X
 
-	def stabCoef(self, Uz, ta, ts, z0m, z0h, Z=200, L=-10000.0, n_iter=10, a=1.0, b=0.667, c=5.0, d=0.35, kappa=0.41,
-	             gravit=9.81):
+	def stabCoef(self, Uz, ta, ts, z0m, z0h, Z=200, L=-10000.0, n_iter=10,
+	             a=1.0, b=0.667, c=5.0, d=0.35, kappa=0.41, gravit=9.81):
 		"""
 		Stability parameters calculation using iterative procedure
 		described by Itier (1980).
