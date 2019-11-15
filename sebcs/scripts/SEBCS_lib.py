@@ -1,7 +1,7 @@
 #  /***************************************************************************
 #  SEBCS_lib.py
 #
-#  Collection of functions for energy balance and its components calculation.
+#  Collection of functions for energy balance and their components calculation.
 #
 #                                -------------------
 #          begin                : 14-03-01
@@ -27,31 +27,6 @@
 #
 #   ***************************************************************************/
 
-# !/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
-# /***************************************************************************
-# SEBCS_lib.py
-#
-# Collection of functions for energy balance and its components calculation.
-#
-#
-# ***************************************************************************/
-# /***************************************************************************
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License  as published  by
-# the Free Software Foundation, either version 3 of the License, or
-# any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-# You should have received a copy of the GNU General Public License along
-# with this program.  If not, see <https://www.gnu.org/licenses/>.
-#
-# ***************************************************************************/
 
 # Imports
 
@@ -258,7 +233,7 @@ class GeoIO:
 
 		except IOError:
 			warnings.warn("Layer {lr} has not been readed. No data will be "
-			              "used instead".format(lr = lyr_name), stacklevel=3)
+			              "used instead".format(lr=lyr_name), stacklevel=3)
 			new_array = None
 
 			return new_array
@@ -988,8 +963,8 @@ class SolarRadBalance(VegIndices):
 
 			else:
 				albedo = self.albedoLandsat(band_blue, band_green, band_red,
-				                          band_nir, band_sw1, band_sw2,
-				                          sat_type)
+				                            band_nir, band_sw1, band_sw2,
+				                            sat_type)
 		except ArithmeticError:
 			raise ArithmeticError("Albedo has not been calculated.")
 
@@ -1315,7 +1290,7 @@ class MeteoFeatures:
 		return emiss
 
 
-# noinspection PyMethodMayBeStatic,PyUnusedLocal
+# noinspection PyMethodMayBeStatic,PyUnusedLocal,PyShadowingNames
 class HeatFluxes(MeteoFeatures):
 	"""
 	Calculation of heat fluxes and heat balance features from spectral
@@ -1410,6 +1385,78 @@ class HeatFluxes(MeteoFeatures):
 
 		return LE_PT
 
+	def fluxLE_ref(self, Rn, G, ta, ts, U, Rh, DMT, veg_type="short",
+	               cp = 1012.0):
+		"""
+		Latent heat flux for reference evapotranspiration according to FAO56
+		method (Allen et al. 1998, ASCE-ET 2000)
+
+		:param Rn: Rn: Total net radiation :math:`(W.m^{-2})`
+		:type Rn: numpy.ndarray, float
+		:param G: Ground heat flux :math:`(W.m^{-2})`
+		:type G: numpy.ndarray, float
+		:param ta: Air temperature measured at meteostation at approx. 2 m.
+		:math:`(\SI{}\degreeCelsius)`
+		:type ta: numpy.ndarray, float
+		:param ts: Surface temperature measured at meteostation at approx. 2 m.
+		:math:`(\SI{}\degreeCelsius)`
+		:param U: Wind speed measured at meteostation :math:`(m.s^{-1})`
+		:type U: numpy.ndarray, float
+		:param Rh: Relative humidity (%)
+		:type Rh: numpy.ndarray, float
+		:param DMT: Digital model of terrain or altitude (m a.s.l.)
+		:type DMT: numpy.ndarray, float
+		:param veg_type: Type of vegetation - "short" or "tall"
+		:type veg_type: str
+		:param cp: Thermal heat capacity of dry air :math:`(K.kg^{-1}.K^{-1})`
+		:type cp: float
+
+		:return: Latent heat flux for reference evapotranspiration.
+		:rtype: numpy.ndarray, float
+
+		\n
+		**References**\n
+		*Allen, R. et al., 1998. Crop Evapotranspiration: Guidelines for
+		Computing Crop Water Requirements. United Nations Food and
+		Agriculture Organization, Irrigation and Drainage Paper 56, Rome,
+		Italy. 300 pp.*
+		*ASCE-ET 2000: ASCE’s Standardized Reference Evapotranspiration
+		Equation. National Irrigation Symposium in Phoenix, Arizona, US.
+		"""
+
+		if veg_type is "short":
+			if Rn > 0.0:
+				cn = 37.0
+				cd = 0.24
+			else:
+				cn = 37.0
+				cd = 0.96
+		else:
+			if Rn > 0:
+				cn = 66.0
+				cd = 0.25
+			else:
+				cn = 66.0
+				cd = 1.7
+
+		delta = self.delta(ts, ta)
+		air_pressure = self.airPress(ta, DMT, 2.0)
+		latent_heat = self.latent(ta)
+		gamma = self.gamma(air_pressure, latent_heat, cp)
+		E_sat = self.satVapourPress(ta)
+		e_abs = self.vapourPress(E_sat, Rh)
+		VPD = self.vpd(E_sat, e_abs)
+
+		try:
+			LE_ref = (408.0 * delta * (Rn - G) * 0.0036) + (gamma * cn/(ta +
+			          273.15) * U * VPD)/(delta + gamma * (1 + cd * U)) * \
+			         latent_heat/3600.0
+		except ArithmeticError:
+			raise ArithmeticError("Reference evapotranspiration has not been "
+			                      "calculated.")
+
+		return LE_ref
+
 	def fluxHAer(self, ra, rho, dT, cp=1012.0):
 		"""
 		Sensible heat flux :math:`(W.m^{-2})` calculated using aerodynamic 
@@ -1432,11 +1479,11 @@ class HeatFluxes(MeteoFeatures):
 		"""
 
 		try:
-			H = rho * cp * dT / ra
+			flux_H = rho * cp * dT / ra
 		except ArithmeticError:
 			raise ArithmeticError("Sensible heat flux has not been calculated.")
 
-		return H
+		return flux_H
 
 	def gradH(self, LE, Rn, G):
 		"""
@@ -1454,13 +1501,13 @@ class HeatFluxes(MeteoFeatures):
 		"""
 
 		try:
-			H = Rn - G - LE
+			flux_H = Rn - G - LE
 		except ArithmeticError:
 			raise ArithmeticError("Sensible heat flux has not been calculated.")
 
-		return H
+		return flux_H
 
-	def fluxLE(self, Rn, G, H):
+	def fluxLE(self, Rn, G, flux_H):
 		"""
 		Latent heat flux :math:`(W.m^{-2})`
 
@@ -1468,15 +1515,15 @@ class HeatFluxes(MeteoFeatures):
 		:type Rn: numpy.ndarray
 		:param G: Ground heat flux :math:`(W.m^{-2})`
 		:type G: numpy.ndarray
-		:param H: Sensible heat flux :math:`(W.m^{-2})`
-		:type H: numpy.ndarray
+		:param flux_H: Sensible heat flux :math:`(W.m^{-2})`
+		:type flux_H: numpy.ndarray
 
 		:return: Latent heat flux :math:`(W.m^{-2})`
 		:rtype: numpy.ndarray
 		"""
 
 		try:
-			LE = Rn - G - H
+			LE = Rn - G - flux_H
 		except ArithmeticError:
 			raise ArithmeticError("Latent heat flux has not been calculated.")
 
@@ -1557,9 +1604,10 @@ class HeatFluxes(MeteoFeatures):
 		return EF
 
 	def heatFluxes(self, Rn, G, ts, ta, method="aero", Uz=None, h_eff=None,
-	               LAI=None, z0m=None, z0h=None, rho=None, Z=200.0, cp=1012,
-	               L=-10000.0, n_iter=10, a=1.0, b=0.667, c=5.0, d=0.35,
-	               kappa=0.41, gravit=9.81):
+	               LAI=None, z0m=None, z0h=None, rho=None,
+	               air_pressure=101.3, Z=200.0, cp=1012, L=-10000.0,
+	               n_iter=10, a=1.0, b=0.667, c=5.0, d=0.35, kappa=0.41,
+	               gravit=9.81):
 		"""
 
 		:param Rn: Total net radiation :math:`(W.m^{-2})`
@@ -1576,7 +1624,7 @@ class HeatFluxes(MeteoFeatures):
 				- SEBAL - SEBAL method proposed by Bastiaanssen et al. (1998) \n
 				- grad - Gradient method proposed by Suleiman and Crago (2004)
 		:type method: str
-		:param Uz: Wind speed measured on meteostation at level Z_st (m/s).
+		:param Uz: Wind speed measured on meteostation at level Z_st :math:`(m.s^{-1})`.
 		:type Uz: float, numpy.ndarray
 		:param h_eff: Effective height of vegetation cover
 		:type h_eff: numpy.ndarray, float
@@ -1588,6 +1636,8 @@ class HeatFluxes(MeteoFeatures):
 		transfer (m)
 		:param rho: Volumetric dry air density :math:`(kg.m^{-3})`
 		:type rho: numpy.ndarray, float
+		:param air_pressure: Air pressure  at level Z (kPa)
+		:type air_pressure: float, numpy.ndarray
 		:param Z: Blending height (m)
 		:type Z: float
 		:param cp: Thermal heat capacity of dry air :math:`(K.kg^{-1}.K^{-1})`
@@ -1619,6 +1669,12 @@ class HeatFluxes(MeteoFeatures):
 		:rtype: numpy.ndarray
 		:returns: Evaporative fraction (rel.)
 		:rtype: numpy.ndarray
+		:returns: Latent heat flux for equilibrium evaporation :math:`(W.m^{
+		-2})`
+		:rtype: numpy.ndarray
+		:returns: Latent heat flux for Priestley-Taylor evaporation :math:`(
+		W.m^{-2})`
+		:rtype: numpy.ndarray
 		:returns: Aerodynamic resistance for heat and momentum transfer :math:`(
 		s.m^{-1})`
 		:rtype: numpy.ndarray
@@ -1641,9 +1697,6 @@ class HeatFluxes(MeteoFeatures):
 		communities, in: Monteith, J.L. (Ed.), Vegetation and the Atmosphere,
 		Vol. 1 Principles. Academic Press, London, pp. 57–110.*
 		"""
-		#TODO - pokud bude u nekterych vsupu jen cislo, tak prevod na array
-		#TODO - SEBAL produkuje ra_h --> potreba pouzit ra podle Thoma pro
-		# dalsi vypocty
 
 		ignore_zero = np.seterr(all="ignore")
 
@@ -1651,7 +1704,7 @@ class HeatFluxes(MeteoFeatures):
 		if method is "aero" or method is "SEBAL":
 			if Uz is None:
 				raise IOError("Heat fluxes have not been calculated - wind "
-							  "speed has not been setted up.")
+				              "speed has not been setted up.")
 			else:
 				if z0m is None or z0h is None:
 					if h_eff is not None and LAI is not None:
@@ -1664,8 +1717,8 @@ class HeatFluxes(MeteoFeatures):
 							                      "have not been calculated.")
 					else:
 						raise IOError("Parameters of effective height of "
-									  "vegetation or leaf area index has not "
-									  "been setted up correctly")
+						              "vegetation or leaf area index has not "
+						              "been setted up correctly")
 
 		if rho is None:
 			rho = self.airDensity(ta)
@@ -1683,8 +1736,8 @@ class HeatFluxes(MeteoFeatures):
 				                                                  gravit)
 				ra = WindStability().raThom(Uz, z0m, z0h, psi_m, psi_h, Z, kappa)
 				dT = WindStability().dT(ts, ta, Rn, G, ra, rho, cp)
-				H = self.fluxHAer(ra, rho, dT, cp)
-				LE = self.fluxLE(Rn, G, H)
+				flux_H = self.fluxHAer(ra, rho, dT, cp)
+				LE = self.fluxLE(Rn, G, flux_H)
 				EF = self.aeroEF(LE, Rn, G)
 
 			except ArithmeticError:
@@ -1698,11 +1751,12 @@ class HeatFluxes(MeteoFeatures):
 				                                                  n_iter, a, b,
 				                                                  c, d, kappa,
 				                                                  gravit)
-				ra = WindStability().raThom(Uz, z0m, z0h, psi_m, psi_h, Z, kappa)
-				ra_h, H = WindStability().aeroSEBAL(Uz, ta, ts, z0m, Rn, G,
-				                                    rho, n_iter, Z, cp=cp,
-				                                    kappa=kappa)
-				LE = self.fluxLE(Rn, G, H)
+				ra = WindStability().raThom(Uz, z0m, z0h, psi_m, psi_h, Z,
+				                            kappa)
+				ra_h, flux_H = WindStability().aeroSEBAL(Uz, ta, ts, z0m, Rn, G,
+				                                         rho, n_iter, Z, cp=cp,
+				                                         kappa=kappa)
+				LE = self.fluxLE(Rn, G, flux_H)
 				EF = self.aeroEF(LE, Rn, G)
 
 			except ArithmeticError:
@@ -1712,11 +1766,33 @@ class HeatFluxes(MeteoFeatures):
 		elif method is "grad":
 			EF = self.gradEF(ts, ta)
 			LE = self.gradLE(EF, Rn, G)
-			H = self.gradH(LE, Rn, G)
-			ra = WindStability().raGrad(H, rho, ts, ta, cp)
+			flux_H = self.gradH(LE, Rn, G)
+			ra = WindStability().raGrad(flux_H, rho, ts, ta, cp)
 			frict = np.zeros_like(ra)
 
-		return H, LE, EF, ra, frict
+		else:
+			raise ArithmeticError("Heat fluxes have not been calculated")
+
+		# Correction of heat fluxes for case the ts-ta < 0
+		# <-- changing stability (temperature gradient inversion, stable
+		# atmosphere)
+		# <-- usually water bodies <-- values of fluxes can be recalculated
+		# according to Priestley-Taylor formula
+
+		try:
+			delta = self.delta(ts, ta)
+			latent_heat = self.latent(ta)
+			gamma = self.gamma(air_pressure, latent_heat, cp)
+			LE_eq = self.fluxLE_EQ(Rn, G, delta, gamma)
+			LE_PT = self.fluxLE_PT(LE_eq, 1.26)
+
+			LE = np.where(ts-ta < 0, LE_PT, LE)
+			flux_H = Rn - G - LE
+		except ArithmeticError:
+			warnings.warn("Correction of heat fluxes has not been done",
+			              stacklevel = 3)
+
+		return flux_H, LE, EF, LE_eq, LE_PT, ra, frict
 
 	def intensityE(self, LE, L):
 		"""Evaporation intensity in :math:`mmol.m^{-2}.s^{-1}`.
@@ -1726,9 +1802,8 @@ class HeatFluxes(MeteoFeatures):
 		:param L: Latent heat of water evaporation :math:`(J.g^{-1})`.
 		:type L: numpy.ndarray
 		
-		:returns E_int: Intensity of water evaporation\
-		:math:`(mmol.m^{-2}.s^{-1})`.
-		:rtype E_int: numpy.ndarray
+		:returns: Intensity of water evaporation :math:`(mmol.m^{-2}.s^{-1})`.
+		:rtype: numpy.ndarray
 		"""
 
 		E_int = LE / L / 18 * 1000
@@ -1787,12 +1862,12 @@ class HeatFluxes(MeteoFeatures):
 
 		return rs
 
-	def bowen(self, H, LE):
+	def bowen(self, flux_H, LE):
 		"""
 		Bowen ratio according to Bowen (1926)
 
-		:param H: Sensible heat flux :math:`(W.m^{-2})`
-		:type H: numpy.ndarray
+		:param flux_H: Sensible heat flux :math:`(W.m^{-2})`
+		:type flux_H: numpy.ndarray
 		:param LE: Latent heat flux :math:`(W.m^{-2})`
 		:type LE: numpy.ndarray
 
@@ -1803,7 +1878,7 @@ class HeatFluxes(MeteoFeatures):
 		ignore_zero = np.seterr(all="ignore")
 
 		try:
-			bowen = H / LE
+			bowen = flux_H / LE
 			bowen = np.nan_to_num(bowen)
 		except ArithmeticError:
 			raise ArithmeticError("Bowen ratio has not been calculated")
@@ -1933,8 +2008,7 @@ class HeatFluxes(MeteoFeatures):
 		return G
 
 
-
-# noinspection PyUnusedLocal
+# noinspection PyUnusedLocal,PyShadowingNames
 class WindStability(HeatFluxes, VegIndices):
 	"""
 	Atmospheric stability calculation. Class includes methods for calculation
@@ -2031,7 +2105,7 @@ class WindStability(HeatFluxes, VegIndices):
 		Wind speed recalculated to height Z according to logarithmic law
 		(Gao et al. 2011).
 
-		:param U: Wind speed measured on meteostation at level Z_st (m/s).
+		:param U: Wind speed measured on meteostation at level Z_st :math:`(m.s^{-1})`.
 		:type U: float
 		:param Z: Blending height (mixing layer height) (m).
 				  Default 200 m.
@@ -2043,7 +2117,7 @@ class WindStability(HeatFluxes, VegIndices):
 					 reference cover used for meteostations.
 		:type h_st: float
 
-		:return: Wind speed at mixinf layer (m/s)
+		:return: Wind speed at mixing layer :math:`(m.s^{-1})`
 		:rtype: float
 
 		\n
@@ -2067,10 +2141,10 @@ class WindStability(HeatFluxes, VegIndices):
 	@staticmethod
 	def frictVelo(Uz, z0m, Z=200.0, psi_m=0, kappa=0.41):
 		"""
-		Friction velocity of wind speed (m/s) corrected on atmospheric
+		Friction velocity of wind speed :math:`(m.s^{-1})` corrected on atmospheric
 		stability.
 
-		:param Uz: Wind speed at Z level (m/s)
+		:param Uz: Wind speed at Z level :math:`(m.s^{-1})`
 		:type Uz: numpy.ndarray
 		:param z0m: Surface roughness for momentum transfer (m)
 		:type z0m: numpy.ndarray, float
@@ -2083,7 +2157,7 @@ class WindStability(HeatFluxes, VegIndices):
 		:param kappa: von Karman constant. Default 0.41
 		:type kappa: float
 
-		:return: Friction velocity (m/s)
+		:return: Friction velocity :math:`(m.s^{-1})`
 		:rtype: numpy.ndarray
 		"""
 
@@ -2222,16 +2296,16 @@ class WindStability(HeatFluxes, VegIndices):
 
 		return psi_h
 
-	def lengthMO(self, frict, ts, H=None, rho=None, t_virt=None, cp=1012, kappa=0.41, gravit=9.81):
+	def lengthMO(self, frict, ts, flux_H=None, rho=None, t_virt=None, cp=1012, kappa=0.41, gravit=9.81):
 		"""
 		Monin-Obukhov length (m)
 
-		:param frict: Friction velocity (m/s)
+		:param frict: Friction velocity :math:`(m.s^{-1})`
 		:type frict: numpy.ndarray
 		:param ts: Surface temperature (C degree)
 		:type ts: numpy.ndarray
-		:param H: Sensible heat flux (W.m2)
-		:type H: numpy.ndarray
+		:param flux_H: Sensible heat flux (W.m2)
+		:type flux_H: numpy.ndarray
 		:param rho: Specific air density :math:`(g.m^{-3})`
 		:type rho: numpy.ndarray
 		:param t_virt: Virtual temperature
@@ -2250,10 +2324,10 @@ class WindStability(HeatFluxes, VegIndices):
 		ignore_zero = np.seterr(all="ignore")
 
 		try:
-			if H is None:
+			if flux_H is None:
 				L = frict ** 2.0 * (ts + 273.16) / (kappa * gravit * t_virt)
 			else:
-				L = -(frict ** 3 * (ts + 273.15) * rho * cp / (kappa * gravit * H))
+				L = -(frict ** 3 * (ts + 273.15) * rho * cp / (kappa * gravit * flux_H))
 		except ArithmeticError:
 			raise ArithmeticError("Monin-Obukhov lenght has not been calculated")
 
@@ -2289,7 +2363,7 @@ class WindStability(HeatFluxes, VegIndices):
 		Stability parameters calculation using iterative procedure
 		described by Itier (1980).
 
-		:param Uz: Wind speed at level Z (m/s)
+		:param Uz: Wind speed at level Z :math:`(m.s^{-1})`
 		:type Uz: numpy.ndarray
 		:param ta: Air temperature at Z level (K, C degrees)
 		:type ta: numpy.ndarray
@@ -2324,7 +2398,7 @@ class WindStability(HeatFluxes, VegIndices):
 		:rtype: numpy.ndarray
 		:return: Stability parameter for heat transfer (-)
 		:rtype: numpy.ndarray
-		:return: Friction velocity (m/s).
+		:return: Friction velocity :math:`(m.s^{-1})`.
 		:rtype: numpy.ndarray
 		:return: Monin-Obukhov length (m)
 		:rtype: numpy.ndarray
@@ -2370,7 +2444,7 @@ class WindStability(HeatFluxes, VegIndices):
 		Aerodynamic resistance for heat and momentum transfer (s.m-1)
 		calculated according to Thom (1975).
 
-		:param Uz: Wind speed at level Z (m/s)
+		:param Uz: Wind speed at level Z :math:`(m.s^{-1})`
 		:type Uz: numpy.ndarray
 		:param z0m: Surface roughness for momentum transfer (m)
 		:type z0m: numpy.ndarray
@@ -2442,13 +2516,13 @@ class WindStability(HeatFluxes, VegIndices):
 
 		return ra
 
-	def raGrad(self, H, rho, ts, ta, cp=1012):
+	def raGrad(self, flux_H, rho, ts, ta, cp=1012):
 		"""
 		Aerodynamic resistance for heat and momentum transfer `(s.m^{-1})`
 		calculated from conversion of sensible heat flux equation.
 
-		:param H: Sensible heat flux :math:`(W.m^{-2})`
-		:type H: numpy.ndarray
+		:param flux_H: Sensible heat flux :math:`(W.m^{-2})`
+		:type flux_H: numpy.ndarray
 		:param rho: Specific air density :math:`(g.m^{-3})`
 		:type rho: numpy.ndarray
 		:param ts: Surface temperature :math:`(\SI{}\degreeCelsius)`
@@ -2463,7 +2537,7 @@ class WindStability(HeatFluxes, VegIndices):
 		"""
 
 		try:
-			ra = rho * cp * (ts - ta) / H
+			ra = rho * cp * (ts - ta) / flux_H
 		except ArithmeticError:
 			raise ArithmeticError("Aerodynamic resistance for gradient model "
 			                      "has not been calculated")
@@ -2515,7 +2589,7 @@ class WindStability(HeatFluxes, VegIndices):
 	
 	def dryT(self, ts):
 		"""
-		Extraction of temperature for dry surface.
+		Extraction of temperature for dry surface with no evaporation.
 		
 		:param ts: Surface temperature :math:`(\SI{}\degreeCelsius)`
 		:type ts: numpy.ndarray
@@ -2625,7 +2699,7 @@ class WindStability(HeatFluxes, VegIndices):
 		Calculation of sensible heat flux and surface aerodynamic resistance
 		according to Bastiaanssen et al. (1998).
 
-		:param Uz: Wind speed at level Z (m/s)
+		:param Uz: Wind speed at level Z :math:`(m.s^{-1})`
 		:type Uz: numpy.ndarray
 		:param ta: Air temperature at blending height\
 		:math:`(\SI{}\degreeCelsius)`
@@ -2699,5 +2773,4 @@ class WindStability(HeatFluxes, VegIndices):
 			                      "heat flux has not been calculated using "
 			                      "SEBAL")
 
-		# noinspection PyUnboundLocalVariable
 		return ra, H
