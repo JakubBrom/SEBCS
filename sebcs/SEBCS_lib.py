@@ -540,7 +540,7 @@ class VegIndices:
 
 		return LAI
 
-	def vegHeight(self, h_min, h_max, msavi=None):
+	def vegHeight(self, h_min, h_max, msavi):
 		"""
 		Height of effective vegetation cover (m) derived from MSAVI index
 		according to Gao et al. (2011).
@@ -1019,7 +1019,7 @@ class SolarRadBalance(VegIndices):
 
 
 # noinspection PyMethodMayBeStatic
-class MeteoFeatures:
+class MeteoFeatures(VegIndices):
 	"""
 	Calculation of basic meteorological features and miscellaneous
 	variables.
@@ -1028,31 +1028,62 @@ class MeteoFeatures:
 	def __init__(self):
 		return
 
-	def airTemp(self, ta_st, DMT, z_st=2.0, adiabatic=0.0065):
+	def airTemp(self, ta_st, st_altitude, DMT, adiabatic=0.0065):
 		"""
-		Air temperature, recalculated on height Z (m) from data measured in
-		height Z_st (m).
+		Conversion of air temperature calculated from temperature data and
+		digital	elevation model :math:`(\SI{}\degreeCelsius)` to spatial
+		near to ground temperature or temperature at different altitude.
 
-		:param DMT: Digital elevation model (m)
+		:param ta_st: Air temperature measured on meteostation :math:`(\SI{
+		}\degreeCelsius)`
+		:type ta_st: float
+		:param st_altitude: Meteostation altitude (m a.s.l.)
+		:type st_altitude: float
+		:param DMT: Digital elevation model (m) or altitude for calculation
+		of ta value.
 		:type DMT: numpy.ndarray, float
-		:param ta_st: Air temperature measured at height z_st\
-		:math:`(\SI{}\degreeCelsius)`
-		:type ta_st: numpy.ndarray, float
-		:param z_st: Height of air temperature measurement on meteo station (m)
-		:type z_st: float
-		:param adiabatic: Adiabatic lapse rate :math:`(\SI{}\degreeCelsius)`
+		:param adiabatic: Adiabatic lapse rate :math:`(\SI{}\degreeCelsius)`.
+		Default = 0.0065 :math:`\SI{}\degreeCelsius.m^{-1}`
 		:type adiabatic: float
-
-		:return: Air temperature, recalculated on height Z (m) from data\
-		measured in	height Z_st (m)
+		:return: Spatial air temperature :math:`(\SI{}\degreeCelsius)`
 		:rtype: numpy.ndarray, float
 		"""
 
 		try:
-			ta = ta_st - (DMT - float(z_st)) * adiabatic  # air temperature in C
+			ta = ta_st - (DMT - float(st_altitude)) * float(adiabatic)
 		except ArithmeticError:
-			raise ArithmeticError("Air temperature at blending height has not "
-			                      "been calculated.")
+			raise ArithmeticError("Spatial air temperature has not been "
+			                      "calculated.")
+
+		return ta
+
+	def airTemperatureBlending(self, ta_surface, Z=200.0, Z_st=2.0,
+	                           adiabatic=0.0065):
+		"""
+		Conversion of spatial air temperature measured for near surface
+		level to level Z above the surface. This approach is usually used
+		for calculation of air temperature at blending height (mixing layer).
+
+		:param ta_surface: Spatial air temperature for near ground level (
+		Z_st; :math:`\SI{}\degreeCelsius)`
+		:type ta_surface:
+		:param Z: Height of a level which is used for calculation. Default
+		value corresponds with "blending" height or height of mixing layer.
+		Default is 200 m above surface.
+		:type Z: float
+		:param Z_st: Height of air temperature measurement (m)
+		:type Z_st: float
+		:param adiabatic: Adiabatic lapse rate :math:`(\SI{}\degreeCelsius)`.
+		Default = 0.0065 :math:`\SI{}\degreeCelsius.m^{-1}`
+		:type adiabatic: float
+		:return:
+		"""
+
+		try:
+			ta = ta_surface - (Z - Z_st) * adiabatic
+		except ArithmeticError:
+			raise ArithmeticError("Air temperature for level Z has not been "
+			                      "calculated.")
 
 		return ta
 
@@ -1256,13 +1287,11 @@ class MeteoFeatures:
 
 		return delta
 
-	def emissivity(self, Fc, red, ndvi):
+	def emissivity(self, red, ndvi):
 		"""
 		Surface emissivity calculated according to Sobrino et al. (2004) NDVI
 		Treshold Method.
 
-		:param Fc: Fractional vegetation cover index (unitless)
-		:type Fc: numpy.ndarray
 		:param red: Spectral reflectance in RED region (rel.)
 		:type red: numpy.ndarray
 		:param ndvi: Spectral vegetation index NDVI (unitless)
@@ -1273,6 +1302,7 @@ class MeteoFeatures:
 		"""
 
 		try:
+			Fc = self.fractVegCover(ndvi)
 			emiss = 0.004 * Fc + 0.986
 			emiss = np.where(ndvi < 0.2, 1 - red,
 			                 emiss)  # replacement of emissivity values for NDVI
@@ -1604,99 +1634,109 @@ class HeatFluxes(MeteoFeatures):
 		return EF
 
 	def heatFluxes(self, Rn, G, ts, ta, method="aero", Uz=None, h_eff=None,
-	               LAI=None, z0m=None, z0h=None, rho=None,
-	               air_pressure=101.3, Z=200.0, cp=1012, L=-10000.0,
-	               n_iter=10, a=1.0, b=0.667, c=5.0, d=0.35, kappa=0.41,
-	               gravit=9.81):
+	               LAI=None, z0m=None, z0h=None, rho=None, disp=None,
+	               air_pressure=101.3, Z=200.0, cp=1012, L=-10000.0, n_iter=10,
+	               a=1.0, b=0.667, c=5.0, d=0.35, kappa=0.41, gravit=9.81):
+		# noinspection SpellCheckingInspection
 		"""
+		Function provides a calculation for heat fluxes, aerodynimc
+		resistance of surface and friction velocity for three different
+		methods: \
+			1. "aero" - Aerodynamic method based on Monin-Obukhov theory \
+			2. "sebal" - Method based on SEBAL approach provided by
+			Bastiaanssen et al.
 
-		:param Rn: Total net radiation :math:`(W.m^{-2})`
-		:type Rn: numpy.ndarray
-		:param G: Ground heat flux :math:`(W.m^{-2})`
-		:type G: numpy.ndarray
-		:param ts: Surface temperature :math:`(\SI{}\degreeCelsius)`
-		:type ts: numpy.ndarray
-		:param ta: Air temperature :math:`(\SI{}\degreeCelsius)`
-		:type ta: numpy.ndarray, float
-		:param method: Method of heat fluxes calculation: \n\n
-				- aero - Aerodynamic method based on  calculation
-				of ra using approach proposed by Thom (1975) \n
-				- SEBAL - SEBAL method proposed by Bastiaanssen et al. (1998) \n
-				- grad - Gradient method proposed by Suleiman and Crago (2004)
-		:type method: str
-		:param Uz: Wind speed measured on meteostation at level Z_st :math:`(m.s^{-1})`.
-		:type Uz: float, numpy.ndarray
-		:param h_eff: Effective height of vegetation cover
-		:type h_eff: numpy.ndarray, float
-		:param LAI: Leaf area index :math:`(m^{2}.m^{-2})`
-		:param z0m: Aerodynamic roughness of the surface for momentum
-		transfer (m)
-		:type z0m: numpy.ndarray
-		:param z0h: Aerodynamic roughness of the surface for heat
-		transfer (m)
-		:param rho: Volumetric dry air density :math:`(kg.m^{-3})`
-		:type rho: numpy.ndarray, float
-		:param air_pressure: Air pressure  at level Z (kPa)
-		:type air_pressure: float, numpy.ndarray
-		:param Z: Blending height (m)
-		:type Z: float
-		:param cp: Thermal heat capacity of dry air :math:`(K.kg^{-1}.K^{-1})`
-		:type cp: float
-		:param L: Initial Monin-Obukhov lenght (m).
-		:type L: float
-		:param n_iter: Number of iteration in stability coefficient calculation.
-		:type n_iter: int
-		:param a: Constant for stability parameters calculation (Beljaars and
-		Holtslag, 1991)
-		:type a: float
-		:param b: Constant for stability parameters calculation (Beljaars and
-		Holtslag, 1991)
-		:type b: float
-		:param c: Constant for stability parameters calculation (Beljaars and
-		Holtslag, 1991)
-		:type c: float
-		:param d: Constant for stability parameters calculation (Beljaars and
-		Holtslag, 1991)
-		:type d: float
-		:param kappa: von Karman constant. Default 0.41
-		:type kappa: float
-		:param gravit: Gravitation forcing (m/s2). Default 9.81
-		:type gravit: float
+				:param disp:
+				:param Rn: Total net radiation :math:`(W.m^{-2})`
+				:type Rn: numpy.ndarray
+				:param G: Ground heat flux :math:`(W.m^{-2})`
+				:type G: numpy.ndarray
+				:param ts: Surface temperature :math:`(\SI{}\degreeCelsius)`
+				:type ts: numpy.ndarray
+				:param ta: Air temperature :math:`(\SI{}\degreeCelsius)`
+				:type ta: numpy.ndarray, float
+				:param method: Method of heat fluxes calculation: \n\n
+						- aero - Aerodynamic method based on  calculation
+						of ra using approach proposed by Thom (1975) \n
+						- SEBAL - SEBAL method proposed by Bastiaanssen et al. (1998) \n
+						- grad - Gradient method proposed by Suleiman and Crago (2004)
+				:type method: str
+				:param Uz: Wind speed measured on meteostation at level Z_st :math:`(m.s^{-1})`.
+				:type Uz: float, numpy.ndarray
+				:param h_eff: Effective height of vegetation cover
+				:type h_eff: numpy.ndarray, float
+				:param LAI: Leaf area index :math:`(m^{2}.m^{-2})`
+				:param z0m: Aerodynamic roughness of the surface for momentum
+				transfer (m)
+				:type z0m: numpy.ndarray
+				:param z0h: Aerodynamic roughness of the surface for heat
+				transfer (m)
+				:type z0h: numpy.ndarray
+				:param disp: Zero plane displacement (m)
+				:type disp: numpy.ndarray, float
+				:param rho: Volumetric dry air density :math:`(kg.m^{-3})`
+				:type rho: numpy.ndarray, float
+				:param air_pressure: Air pressure  at level Z (kPa)
+				:type air_pressure: float, numpy.ndarray
+				:param Z: Blending height (m)
+				:type Z: float
+				:param cp: Thermal heat capacity of dry air :math:`(K.kg^{-1}.K^{-1})`
+				:type cp: float
+				:param L: Initial Monin-Obukhov lenght (m).
+				:type L: float
+				:param n_iter: Number of iteration in stability coefficient calculation.
+				:type n_iter: int
+				:param a: Constant for stability parameters calculation (Beljaars and
+				Holtslag, 1991)
+				:type a: float
+				:param b: Constant for stability parameters calculation (Beljaars and
+				Holtslag, 1991)
+				:type b: float
+				:param c: Constant for stability parameters calculation (Beljaars and
+				Holtslag, 1991)
+				:type c: float
+				:param d: Constant for stability parameters calculation (Beljaars and
+				Holtslag, 1991)
+				:type d: float
+				:param kappa: von Karman constant. Default 0.41
+				:type kappa: float
+				:param gravit: Gravitation forcing (m/s2). Default 9.81
+				:type gravit: float
 
-		:returns: Sensible heat flux :math:`(W.m^{-2})`
-		:rtype: numpy.ndarray
-		:returns: Latent heat flux :math:`(W.m^{-2})`
-		:rtype: numpy.ndarray
-		:returns: Evaporative fraction (rel.)
-		:rtype: numpy.ndarray
-		:returns: Latent heat flux for equilibrium evaporation :math:`(W.m^{
-		-2})`
-		:rtype: numpy.ndarray
-		:returns: Latent heat flux for Priestley-Taylor evaporation :math:`(
-		W.m^{-2})`
-		:rtype: numpy.ndarray
-		:returns: Aerodynamic resistance for heat and momentum transfer :math:`(
-		s.m^{-1})`
-		:rtype: numpy.ndarray
-		:returns: Friction velocity :math:`(m.s^{-1})`
+				:returns: Sensible heat flux :math:`(W.m^{-2})`
+				:rtype: numpy.ndarray
+				:returns: Latent heat flux :math:`(W.m^{-2})`
+				:rtype: numpy.ndarray
+				:returns: Evaporative fraction (rel.)
+				:rtype: numpy.ndarray
+				:returns: Latent heat flux for equilibrium evaporation :math:`(W.m^{
+				-2})`
+				:rtype: numpy.ndarray
+				:returns: Latent heat flux for Priestley-Taylor evaporation :math:`(
+				W.m^{-2})`
+				:rtype: numpy.ndarray
+				:returns: Aerodynamic resistance for heat and momentum transfer :math:`(
+				s.m^{-1})`
+				:rtype: numpy.ndarray
+				:returns: Friction velocity :math:`(m.s^{-1})`
 
-		\n
-		**References**\n
-		*Bastiaanssen, W.G.M., Menenti, M., Feddes, R.A., Holtslag, A.A.M.,
-		1998. A remote sensing surface energy balance algorithm for land (
-		SEBAL). 1. Formulation. Journal of Hydrology 212–213, 198–212.
-		https://doi.org/10.1016/S0022-1694(98)00253-4*\n
-		*Beljaars, A.C.M., Holtslag, A.A.M., 1991. Flux Parameterizationover
-		Land Surfaces for Atmospheric Models. Journal of Applied Meteorology
-		30, 327–341. https://doi.org/10.1175/1520-0450(
-		1991)030<0327:FPOLSF>2.0.CO;2*\n
-		*Suleiman, A., Crago, R., 2004. Hourly and Daytime Evapotranspiration
-		from Grassland Using Radiometric Surface Temperatures. Agronomy
-		Journal 96, 384–390. https://doi.org/10.2134/agronj2004.3840*\n
-		*Thom, A.S., 1975. Momentum, mass and heat exchange of plant
-		communities, in: Monteith, J.L. (Ed.), Vegetation and the Atmosphere,
-		Vol. 1 Principles. Academic Press, London, pp. 57–110.*
-		"""
+				\n
+				**References**\n
+				*Bastiaanssen, W.G.M., Menenti, M., Feddes, R.A., Holtslag, A.A.M.,
+				1998. A remote sensing surface energy balance algorithm for land (
+				SEBAL). 1. Formulation. Journal of Hydrology 212–213, 198–212.
+				https://doi.org/10.1016/S0022-1694(98)00253-4*\n
+				*Beljaars, A.C.M., Holtslag, A.A.M., 1991. Flux Parametrization over
+				Land Surfaces for Atmospheric Models. Journal of Applied Meteorology
+				30, 327–341. https://doi.org/10.1175/1520-0450(
+				1991)030<0327:FPOLSF>2.0.CO;2*\n
+				*Suleiman, A., Crago, R., 2004. Hourly and Daytime Evapotranspiration
+				from Grassland Using Radiometric Surface Temperatures. Agronomy
+				Journal 96, 384–390. https://doi.org/10.2134/agronj2004.3840*\n
+				*Thom, A.S., 1975. Momentum, mass and heat exchange of plant
+				communities, in: Monteith, J.L. (Ed.), Vegetation and the Atmosphere,
+				Vol. 1 Principles. Academic Press, London, pp. 57–110.*
+				"""
 
 		ignore_zero = np.seterr(all="ignore")
 
@@ -1704,7 +1744,7 @@ class HeatFluxes(MeteoFeatures):
 		if method is "aero" or method is "SEBAL":
 			if Uz is None:
 				raise IOError("Heat fluxes have not been calculated - wind "
-				              "speed has not been setted up.")
+				              "speed has not been set up.")
 			else:
 				if z0m is None or z0h is None:
 					if h_eff is not None and LAI is not None:
@@ -1718,7 +1758,13 @@ class HeatFluxes(MeteoFeatures):
 					else:
 						raise IOError("Parameters of effective height of "
 						              "vegetation or leaf area index has not "
-						              "been setted up correctly")
+						              "been set up correctly")
+
+				if disp is None:
+					if h_eff is not None:
+						disp = WindStability().zeroPlaneDis(h_eff)
+					else:
+						disp = 0.0
 
 		if rho is None:
 			rho = self.airDensity(ta)
@@ -1730,15 +1776,19 @@ class HeatFluxes(MeteoFeatures):
 		if method is "aero":
 			try:
 				psi_m, psi_h, frict, L = WindStability().stabCoef(Uz, ta, ts,
-				                                                  z0m, z0h, Z, L,
-				                                                  n_iter, a, b,
-				                                                  c, d, kappa,
-				                                                  gravit)
-				ra = WindStability().raThom(Uz, z0m, z0h, psi_m, psi_h, Z, kappa)
+				                                                  z0m, z0h,
+				                                                  disp, Z, L,
+				                                                  n_iter, a,
+				                                                  b, c, d,
+				                                                  kappa, gravit)
+				ra = WindStability().raThom(Uz, z0m, z0h, disp=disp,
+				                            psi_m=psi_m, psi_h=psi_h, Z=Z,
+				                            kappa=kappa)
 				dT = WindStability().dT(ts, ta, Rn, G, ra, rho, cp)
 				flux_H = self.fluxHAer(ra, rho, dT, cp)
 				LE = self.fluxLE(Rn, G, flux_H)
 				EF = self.aeroEF(LE, Rn, G)
+				print("je to aero", flux_H)
 
 			except ArithmeticError:
 				raise ArithmeticError("Heat fluxes for aerodynamic method "
@@ -1747,17 +1797,20 @@ class HeatFluxes(MeteoFeatures):
 		elif method is "SEBAL":
 			try:
 				psi_m, psi_h, frict, L = WindStability().stabCoef(Uz, ta, ts,
-				                                                  z0m, z0h, Z, L,
-				                                                  n_iter, a, b,
-				                                                  c, d, kappa,
-				                                                  gravit)
-				ra = WindStability().raThom(Uz, z0m, z0h, psi_m, psi_h, Z,
-				                            kappa)
+				                                                  z0m,
+				                                                  z0h, disp, Z,
+				                                                  L, n_iter,
+				                                                  a, b, c, d,
+				                                                  kappa, gravit)
+				ra = WindStability().raThom(Uz, z0m, z0h, disp=disp,
+				                            psi_m=psi_m, psi_h=psi_h, Z=Z,
+				                            kappa=kappa)
 				ra_h, flux_H = WindStability().aeroSEBAL(Uz, ta, ts, z0m, Rn, G,
 				                                         rho, n_iter, Z, cp=cp,
 				                                         kappa=kappa)
 				LE = self.fluxLE(Rn, G, flux_H)
 				EF = self.aeroEF(LE, Rn, G)
+				print("je to sebal", flux_H)
 
 			except ArithmeticError:
 				raise ArithmeticError("Heat fluxes for SEBAL method "
@@ -1769,6 +1822,7 @@ class HeatFluxes(MeteoFeatures):
 			flux_H = self.gradH(LE, Rn, G)
 			ra = WindStability().raGrad(flux_H, rho, ts, ta, cp)
 			frict = np.zeros_like(ra)
+			print("je to grad", flux_H)
 
 		else:
 			raise ArithmeticError("Heat fluxes have not been calculated")
@@ -1794,19 +1848,19 @@ class HeatFluxes(MeteoFeatures):
 
 		return flux_H, LE, EF, LE_eq, LE_PT, ra, frict
 
-	def intensityE(self, LE, L):
+	def intensityE(self, LE, latent):
 		"""Evaporation intensity in :math:`mmol.m^{-2}.s^{-1}`.
 		
 		:param LE: Latent heat flux :math:`(W.m^{-2})`
 		:type LE: numpy.ndarray
-		:param L: Latent heat of water evaporation :math:`(J.g^{-1})`.
-		:type L: numpy.ndarray
+		:param latent: Latent heat of water evaporation :math:`(J.g^{-1})`.
+		:type latent: numpy.ndarray
 		
 		:returns: Intensity of water evaporation :math:`(mmol.m^{-2}.s^{-1})`.
 		:rtype: numpy.ndarray
 		"""
 
-		E_int = LE / L / 18 * 1000
+		E_int = LE / latent / 18 * 1000
 
 		return E_int
 
@@ -1979,6 +2033,7 @@ class HeatFluxes(MeteoFeatures):
 			cwsi = 1.0 - (delta + g_x) / (delta + gamma * (1.0 + rc / ra))
 
 		except ArithmeticError:
+			warnings.warn("CWSI has not been calculated", stacklevel=3)
 			if LEp is not None:
 				cwsi = np.zeros(LEp.shape)
 			else:
@@ -2019,7 +2074,8 @@ class WindStability(HeatFluxes, VegIndices):
 	are included.
 	"""
 
-	def zeroPlaneDis(self, h_eff):
+	@staticmethod
+	def zeroPlaneDis(h_eff):
 		"""
 		Zero plane displacement (m) calculated according to Thom (1975).
 
@@ -2039,7 +2095,8 @@ class WindStability(HeatFluxes, VegIndices):
 		disp = 2.0 / 3.0 * h_eff
 		return disp
 
-	def z0m(self, h_eff, LAI):
+	@staticmethod
+	def z0m(h_eff, LAI):
 		"""
 		Aerodynamic roughness of the surface for momentum transfer (m).
 		z0m is calculated according to Tasumi (2003) for vegetation cover
@@ -2078,7 +2135,8 @@ class WindStability(HeatFluxes, VegIndices):
 			                      "momentum transfer has not been calculated")
 		return z0m
 
-	def z0h(self, z0m):
+	@staticmethod
+	def z0h(z0m):
 		"""
 		Aerodynamic roughness of the surface for heat transfer (m) calculated
 		according to Thom (1975).
@@ -2100,25 +2158,30 @@ class WindStability(HeatFluxes, VegIndices):
 		return z0h
 
 	@staticmethod
-	def windSpeedZ(U, Z=200.0, Z_st=2.0, h_st=0.12):
+	def windSpeedZ(U, Z=200.0, Z_st=2.0, h_st=0.12, ws_homog=1):
 		"""
 		Wind speed recalculated to height Z according to logarithmic law
-		(Gao et al. 2011).
+		(Gao et al. 2011). The results can contain simple number, homogenous
+		or heterogenous matrix of data (Numpy array).
 
 		:param U: Wind speed measured on meteostation at level Z_st :math:`(m.s^{-1})`.
-		:type U: float
+		:type U: float, numpy.ndarray
 		:param Z: Blending height (mixing layer height) (m).
 				  Default 200 m.
 		:type Z: float
-		:param Z_st: height of wind speed measurement (m). Default 2 m.
+		:param Z_st: Height of wind speed measurement (m). Default 2 m.
 		:type Z_st: float
-		:param h_st: height of vegetation cover under meteostation (m).
+		:param h_st: Height of vegetation cover under meteostation (m).
 					 Default value is 0.12 m which corresponds with
 					 reference cover used for meteostations.
 		:type h_st: float
-
+		:param ws_homog: Indicates if the result matrix contains uniform
+		result (mean value of wind speed for the area) or if the results
+		includes heterogeneity of input data (each pixel is calculated
+		separately). 0 - homogenous, 1 - heterogenous
+		:type ws_homog: int
 		:return: Wind speed at mixing layer :math:`(m.s^{-1})`
-		:rtype: float
+		:rtype: float, numpy.ndarray
 
 		\n
 		**References**\n
@@ -2132,22 +2195,33 @@ class WindStability(HeatFluxes, VegIndices):
 		ignore_zero = np.seterr(all="ignore")
 
 		try:
-			Uz = U * np.log(Z / (0.123 * h_st)) / np.log(Z_st / (0.123 * h_st))
+			if ws_homog is 0:
+				U_float = np.mean(U)
+				Uz = U_float * np.log(Z / (0.123 * h_st)) / np.log(Z_st / (
+						0.123 * h_st))
+				if type(U) is not float:
+					Uz = np.full_like(U, Uz, float)
+			else:
+				Uz = U * np.log(Z / (0.123 * h_st)) / np.log(Z_st / (
+						0.123 * h_st))
 		except ArithmeticError:
 			raise ArithmeticError("Friction velocity has not been calculated")
 
 		return Uz
 
 	@staticmethod
-	def frictVelo(Uz, z0m, Z=200.0, psi_m=0, kappa=0.41):
+	def frictVelo(Uz, z0m, disp=0.0, Z=200.0, psi_m=0, kappa=0.41):
 		"""
 		Friction velocity of wind speed :math:`(m.s^{-1})` corrected on atmospheric
 		stability.
 
+		:param disp:
 		:param Uz: Wind speed at Z level :math:`(m.s^{-1})`
 		:type Uz: numpy.ndarray
 		:param z0m: Surface roughness for momentum transfer (m)
 		:type z0m: numpy.ndarray, float
+		:param disp: Zero plane displacement (m)
+		:type disp: numpy.ndarray, float
 		:param Z: Blending height (mixing layer height) (m).
 				  Default 200 m.
 		:type Z: float
@@ -2164,22 +2238,26 @@ class WindStability(HeatFluxes, VegIndices):
 		ignore_zero = np.seterr(all="ignore")
 
 		try:
-			frict = kappa * Uz / (np.log(Z / z0m) - psi_m)
+			frict = kappa * Uz / (np.log((Z - disp)/ z0m) - psi_m)
 		except ArithmeticError:
 			raise ArithmeticError("Friction velocity has not been calculated")
 
 		return frict
 
-	def virtTemp(self, ta, ts, z0h, Z=200, psi_h=0, kappa=0.41):
+	@staticmethod
+	def virtTemp(ta, ts, z0h, disp=0.0, Z=200, psi_h=0, kappa=0.41):
 		"""
 		Virtual temperature (K) corrected on atmospheric stability.
 
+		:param disp:
 		:param ta: Air temperature at Z level (K, C degrees)
 		:type ta: numpy.ndarray
 		:param ts: Surface temperature (K, C degrees)
 		:type ts: numpy.ndarray
 		:param z0h: Surface roughness for heat transfer (m)
 		:type z0h: numpy.ndarray
+		:param disp: Zero plane displacement (m)
+		:type disp: numpy.ndarray, float
 		:param Z: Blending height (mixing layer height) (m). Default 200 m.
 		:type Z: float
 		:param psi_h: Stability parameter for heat transfer, Default 0.
@@ -2194,13 +2272,14 @@ class WindStability(HeatFluxes, VegIndices):
 		ignore_zero = np.seterr(all="ignore")
 
 		try:
-			t_virt = kappa * (ta - ts) / (np.log(Z / z0h) - psi_h)
+			t_virt = kappa * (ta - ts) / (np.log((Z - disp) / z0h) - psi_h)
 		except ArithmeticError:
 			raise ArithmeticError("Virtual temperature has not been calculated")
 
 		return t_virt
 
-	def psiM(self, L, X, Z=200, a=1.0, b=0.667, c=5.0, d=0.35):
+	@staticmethod
+	def psiM(L, X, Z=200, a=1.0, b=0.667, c=5.0, d=0.35):
 		"""
 		Calculation of stability parameter for momentum transfer (-)
 		according to Beljaars et Holstag (1991) for stable conditions
@@ -2247,7 +2326,8 @@ class WindStability(HeatFluxes, VegIndices):
 
 		return psi_m
 
-	def psiH(self, L, X, Z=200, a=1.0, b=0.667, c=5.0, d=0.35):
+	@staticmethod
+	def psiH(L, X, Z=200, a=1.0, b=0.667, c=5.0, d=0.35):
 		"""
 		Calculation of stability parameter for heat transfer (-)
 		according to Beljaars et Holstag (1991) for stable conditions
@@ -2296,7 +2376,8 @@ class WindStability(HeatFluxes, VegIndices):
 
 		return psi_h
 
-	def lengthMO(self, frict, ts, flux_H=None, rho=None, t_virt=None, cp=1012, kappa=0.41, gravit=9.81):
+	@staticmethod
+	def lengthMO(frict, ts, flux_H=None, rho=None, t_virt=None, cp=1012, kappa=0.41, gravit=9.81):
 		"""
 		Monin-Obukhov length (m)
 
@@ -2333,7 +2414,8 @@ class WindStability(HeatFluxes, VegIndices):
 
 		return L
 
-	def coefX(self, Z, L):
+	@staticmethod
+	def coefX(Z, L):
 		"""
 		X coefficient for atmospheric stability calculation.
 
@@ -2357,12 +2439,14 @@ class WindStability(HeatFluxes, VegIndices):
 
 		return X
 
-	def stabCoef(self, Uz, ta, ts, z0m, z0h, Z=200, L=-10000.0, n_iter=10,
-	             a=1.0, b=0.667, c=5.0, d=0.35, kappa=0.41, gravit=9.81):
+	def stabCoef(self, Uz, ta, ts, z0m, z0h, disp=0, Z=200, L=-10000.0,
+	             n_iter=10, a=1.0, b=0.667, c=5.0, d=0.35, kappa=0.41,
+	             gravit=9.81):
 		"""
 		Stability parameters calculation using iterative procedure
 		described by Itier (1980).
 
+		:param disp:
 		:param Uz: Wind speed at level Z :math:`(m.s^{-1})`
 		:type Uz: numpy.ndarray
 		:param ta: Air temperature at Z level (K, C degrees)
@@ -2373,6 +2457,8 @@ class WindStability(HeatFluxes, VegIndices):
 		:type z0m: numpy.ndarray
 		:param z0h: Surface roughness for heat transfer (m)
 		:type z0h: numpy.ndarray
+		:param disp: Zero plane displacement (m)
+		:type disp: numpy.ndarray, float
 		:param Z: Blending height (mixing layer height) (m).
 				  Default 200 m.
 		:type Z: float (Numpy array)
@@ -2425,10 +2511,12 @@ class WindStability(HeatFluxes, VegIndices):
 				psi_h = self.psiH(L, X, Z, a, b, c, d)
 
 				# Friction velocity
-				frict = self.frictVelo(Uz, z0m, Z, psi_m, kappa)
+				frict = self.frictVelo(Uz, z0m, disp=disp, Z=Z, psi_m=psi_m,
+				                       kappa=kappa)
 
 				# Virtual tempetarure
-				t_virt = self.virtTemp(ta, ts, z0h, Z, psi_h, kappa)
+				t_virt = self.virtTemp(ta, ts, z0h, disp=disp, Z=Z, psi_h=psi_h,
+				                       kappa=kappa)
 
 				# Monin-Obukhov length
 				L = self.lengthMO(frict, ts, t_virt=t_virt, kappa=kappa, gravit=gravit)
@@ -2439,17 +2527,22 @@ class WindStability(HeatFluxes, VegIndices):
 
 		return psi_m, psi_h, frict, L
 
-	def raThom(self, Uz, z0m, z0h, psi_m=0.0, psi_h=0.0, Z=200.0, kappa=0.41):
+	@staticmethod
+	def raThom(Uz, z0m, z0h, disp=0.0, psi_m=0.0, psi_h=0.0, Z=200.0,
+	           kappa=0.41):
 		"""
 		Aerodynamic resistance for heat and momentum transfer (s.m-1)
 		calculated according to Thom (1975).
 
+		:param disp:
 		:param Uz: Wind speed at level Z :math:`(m.s^{-1})`
 		:type Uz: numpy.ndarray
 		:param z0m: Surface roughness for momentum transfer (m)
 		:type z0m: numpy.ndarray
 		:param z0h: Surface roughness for heat transfer (m)
 		:type z0h: numpy.ndarray
+		:param disp: Zero plane displacement (m)
+		:type disp: numpy.ndarray, float
 		:param psi_m: Stability parameter for momentum transfer (-).
 					  Default is 0.
 		:type psi_m: numpy.ndarray
@@ -2474,14 +2567,16 @@ class WindStability(HeatFluxes, VegIndices):
 		"""
 
 		try:
-			ra = (np.log(Z / z0m) - psi_m) * (np.log(Z / z0h) - psi_h) / (kappa ** 2 * Uz)
+			ra = (np.log((Z - disp)/ z0m) - psi_m) * (np.log((Z - disp)/z0h)
+			                                          - psi_h) / (kappa ** 2 * Uz)
 		except ArithmeticError:
 			raise ArithmeticError("Aerodynamic resistance has not been "
 			                      "calculated")
 
 		return ra
 
-	def raSEBAL(self, frict, psiH_z1, psiH_z2, z1=0.1, z2=2.0,
+	@staticmethod
+	def raSEBAL(frict, psiH_z1, psiH_z2, z1=0.1, z2=2.0,
 	            kappa=0.41):
 		"""
 		Calculation of surface aerodynamic resistance for heat transfer based on
@@ -2516,7 +2611,8 @@ class WindStability(HeatFluxes, VegIndices):
 
 		return ra
 
-	def raGrad(self, flux_H, rho, ts, ta, cp=1012):
+	@staticmethod
+	def raGrad(flux_H, rho, ts, ta, cp=1012):
 		"""
 		Aerodynamic resistance for heat and momentum transfer `(s.m^{-1})`
 		calculated from conversion of sensible heat flux equation.
@@ -2544,7 +2640,8 @@ class WindStability(HeatFluxes, VegIndices):
 
 		return ra
 
-	def maxT(self, Rn, G, ra, ta, rho, cp=1012.0):
+	@staticmethod
+	def maxT(Rn, G, ra, ta, rho, cp=1012.0):
 		"""
 		Maximal surface temperature calculated on physical basis (K).
 		
@@ -2569,25 +2666,27 @@ class WindStability(HeatFluxes, VegIndices):
 		
 		return t_max
 
-	def wetT(self, ta):
+	@staticmethod
+	def wetT(ta):
 		"""
 		Surface temperature for wet surface. In this case surface temperature
 		for wet surface is equal to air temperature. This statement follows 
 		from imagine that the LE = Rn - G and thus H is close to zero. \n
-		TODO: definition of surface temperature on basis of ETr calculation
-		
+
 		:param ta: Air temperature at level Z :math:`(\SI{}\degreeCelsius)`
 		:type ta: numpy.ndarray
 
 		:return: Temperature of wet surface.
 		:rtype: numpy.ndarray
 		"""
-		
+		# TODO: definition of surface temperature on basis of ETr calculation
+
 		t_wet = ta
 		
 		return t_wet
 	
-	def dryT(self, ts):
+	@staticmethod
+	def dryT(ts):
 		"""
 		Extraction of temperature for dry surface with no evaporation.
 		
@@ -2611,7 +2710,8 @@ class WindStability(HeatFluxes, VegIndices):
 		
 		return t_dry
 
-	def coef_b(self, t_dry, t_wet, t_max, ta):
+	@staticmethod
+	def coef_b(t_dry, t_wet, t_max, ta):
 		"""
 		Coefficient b calculated from temperature gradient.
 
@@ -2639,7 +2739,8 @@ class WindStability(HeatFluxes, VegIndices):
 
 		return cb
 
-	def coef_a(self, t_wet, cb):
+	@staticmethod
+	def coef_a(t_wet, cb):
 		"""
 		Coefficient a calculated from temperature gradient.
 
@@ -2746,7 +2847,7 @@ class WindStability(HeatFluxes, VegIndices):
 		# friction velocity for meteostation
 		try:
 			z0m_init = 0.12 * 0.123
-			frict = self.frictVelo(Uz, z0m_init, Z)
+			frict = self.frictVelo(Uz, z0m_init, Z=Z)
 			# ra for meteostation (neutral stab)
 			ra = self.raSEBAL(frict, psiH_z1, psiH_z2, z1, z2, kappa)
 		except ArithmeticError:
@@ -2766,7 +2867,7 @@ class WindStability(HeatFluxes, VegIndices):
 				psiM_z = self.psiM(L, X_z, Z)
 				psiH_z1 = self.psiH(L, X_z1, z1)
 				psiH_z2 = self.psiH(L, X_z2, z2)
-				frict = self.frictVelo(Uz, z0m, Z, psiM_z, kappa)
+				frict = self.frictVelo(Uz, z0m, Z=Z, psi_m=psiM_z, kappa=kappa)
 				ra = self.raSEBAL(frict, psiH_z1, psiH_z2, z1, z2, kappa)
 		except ArithmeticError:
 			raise ArithmeticError("Aerodynamic resistance and sensible latent "

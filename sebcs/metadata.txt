@@ -14,7 +14,12 @@ version=1.1.3
 author=Jakub Brom, University of South Bohemia in Ceske Budejovice, Faculty of Agriculture
 email=jbrom@zf.jcu.cz
 
-about=The SEBCS for QGIS is software enabling calculation of energy balance and crop water stress features (heat fluxes, evaporative fraction, Bowen ratio, Omega factor, CWSI etc.) from Landsat satellite data (L5 TM, L7 ETM+, L8 OLI/TIRS) and also from other devices (e.g. UAV). Calculation procedure uses approach based on modified SEBAL method and gradient approach of the energy balance characteristics calculation.
+about=The SEBCS for QGIS is software enabling calculation of energy balance and
+crop water stress features (heat fluxes, evaporative fraction, Bowen ratio,
+Omega factor, CWSI etc.) from Landsat satellite data (L5 TM, L7 ETM+, L8
+OLI/TIRS) and also from other devices (e.g. UAV). Calculation procedure uses
+approach based on Penman-Monteith method, SEBAL method and gradient approach
+of the energy balance characteristics calculation.
 
 tracker=http://bugs
 repository=http://repo
@@ -24,6 +29,8 @@ repository=http://repo
 
 ;Uncomment the following line and add your changelog:
 changelog=
+    2.0.0 : (191202)
+        - Complete
     1.1.3 : (190923)
         - Redefinition of sensible heat flux calculation. Temperature difference
          deffinition is newly defined according to SEBAL. SEBAL procedure was

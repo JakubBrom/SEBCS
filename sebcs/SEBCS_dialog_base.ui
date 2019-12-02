@@ -54,7 +54,7 @@
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <property name="tabsClosable">
       <bool>false</bool>
@@ -90,7 +90,7 @@
             <x>0</x>
             <y>0</y>
             <width>656</width>
-            <height>513</height>
+            <height>524</height>
            </rect>
           </property>
           <property name="sizePolicy">
@@ -240,6 +240,11 @@
                     </item>
                     <item>
                      <property name="text">
+                      <string>SEBAL method</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
                       <string>Gradient method</string>
                      </property>
                     </item>
@@ -305,7 +310,7 @@
                       <x>0</x>
                       <y>0</y>
                       <width>612</width>
-                      <height>356</height>
+                      <height>373</height>
                      </rect>
                     </property>
                     <layout class="QGridLayout" name="gridLayout_4">
@@ -567,7 +572,7 @@
                       <x>0</x>
                       <y>0</y>
                       <width>612</width>
-                      <height>356</height>
+                      <height>373</height>
                      </rect>
                     </property>
                     <layout class="QGridLayout" name="gridLayout_27">
@@ -673,7 +678,7 @@
                       <x>0</x>
                       <y>0</y>
                       <width>612</width>
-                      <height>356</height>
+                      <height>373</height>
                      </rect>
                     </property>
                     <property name="sizePolicy">
@@ -1036,7 +1041,7 @@
                       <x>0</x>
                       <y>0</y>
                       <width>612</width>
-                      <height>356</height>
+                      <height>373</height>
                      </rect>
                     </property>
                     <property name="sizePolicy">
@@ -1331,7 +1336,7 @@
             <x>0</x>
             <y>0</y>
             <width>656</width>
-            <height>513</height>
+            <height>524</height>
            </rect>
           </property>
           <property name="sizePolicy">
@@ -1356,122 +1361,20 @@
            </item>
            <item row="0" column="0">
             <layout class="QGridLayout" name="gridLayout_20">
-             <item row="1" column="0">
-              <spacer name="verticalSpacer_2">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeType">
-                <enum>QSizePolicy::Fixed</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>13</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item row="0" column="0">
-              <widget class="QCheckBox" name="ch_all">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
+             <item row="15" column="1">
+              <widget class="QCheckBox" name="ch_aspect">
                <property name="text">
-                <string>Select/Deselect all</string>
+                <string>Aspect (°)</string>
                </property>
                <property name="checked">
                 <bool>true</bool>
                </property>
               </widget>
              </item>
-             <item row="4" column="0">
-              <widget class="QCheckBox" name="ch_albedo">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
+             <item row="8" column="0">
+              <widget class="QCheckBox" name="ch_ts">
                <property name="text">
-                <string>Albedo (rel.)</string>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="9" column="0">
-              <widget class="QCheckBox" name="ch_emiss">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Surface emissivity (rel.)</string>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="13" column="0">
-              <widget class="QCheckBox" name="ch_sensible">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Sensible heat flux (W.m-2)</string>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="5" column="0">
-              <widget class="QCheckBox" name="ch_rl_in">
-               <property name="text">
-                <string>Incoming longwave radiation (W.m-2)</string>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="14" column="0">
-              <widget class="QCheckBox" name="ch_ground">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Ground heat flux (W.m-2)</string>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="0">
-              <widget class="QCheckBox" name="ch_rs_out">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Reflected shortwave radiation (W.m-2)</string>
+                <string>Surface temperature (°C)</string>
                </property>
                <property name="checked">
                 <bool>true</bool>
@@ -1494,16 +1397,138 @@
                </property>
               </widget>
              </item>
-             <item row="10" column="0">
-              <widget class="QCheckBox" name="ch_le">
+             <item row="5" column="1">
+              <widget class="QCheckBox" name="ch_cwsi">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>Latent heat flux (W.m-2)</string>
+                <string>CWSI (-)</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="QCheckBox" name="ch_bowen">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Bowen ratio (-)</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="1">
+              <widget class="QCheckBox" name="ch_omega">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Decoupling coefficient (rel.)</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QCheckBox" name="ch_albedo">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Albedo (rel.)</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="0">
+              <widget class="QCheckBox" name="ch_rl_in">
+               <property name="text">
+                <string>Incoming longwave radiation (W.m-2)</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="22" column="0">
+              <spacer name="verticalSpacer">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeType">
+                <enum>QSizePolicy::Fixed</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>10</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="3" column="0">
+              <widget class="QCheckBox" name="ch_rs_out">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Reflected shortwave radiation (W.m-2)</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QCheckBox" name="ch_all">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Select/Deselect all</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="11" column="0">
+              <widget class="QCheckBox" name="ch_le_pen">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Latent heat flux - Penman pot. (W.m-2)</string>
                </property>
                <property name="checked">
                 <bool>true</bool>
@@ -1536,16 +1561,32 @@
                </property>
               </widget>
              </item>
-             <item row="11" column="0">
-              <widget class="QCheckBox" name="ch_le_pen">
+             <item row="1" column="0">
+              <spacer name="verticalSpacer_2">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeType">
+                <enum>QSizePolicy::Fixed</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>13</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="10" column="0">
+              <widget class="QCheckBox" name="ch_le">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>Latent heat flux - Penman pot. (W.m-2)</string>
+                <string>Latent heat flux (W.m-2)</string>
                </property>
                <property name="checked">
                 <bool>true</bool>
@@ -1568,43 +1609,55 @@
                </property>
               </widget>
              </item>
-             <item row="8" column="0">
-              <widget class="QCheckBox" name="ch_ts">
+             <item row="13" column="0">
+              <widget class="QCheckBox" name="ch_sensible">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="text">
-                <string>Surface temperature (°C)</string>
+                <string>Sensible heat flux (W.m-2)</string>
                </property>
                <property name="checked">
                 <bool>true</bool>
                </property>
               </widget>
              </item>
-             <item row="21" column="0">
-              <spacer name="verticalSpacer">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
+             <item row="14" column="0">
+              <widget class="QCheckBox" name="ch_ground">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
                </property>
-               <property name="sizeType">
-                <enum>QSizePolicy::Fixed</enum>
+               <property name="text">
+                <string>Ground heat flux (W.m-2)</string>
                </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>10</width>
-                 <height>20</height>
-                </size>
+               <property name="checked">
+                <bool>true</bool>
                </property>
-              </spacer>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QCheckBox" name="ch_ef">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Evaporative fraction (rel.)</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
              </item>
              <item row="14" column="1">
-              <widget class="QCheckBox" name="ch_aspect">
-               <property name="text">
-                <string>Aspect (°)</string>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="13" column="1">
               <widget class="QCheckBox" name="ch_slope">
                <property name="text">
                 <string>Slope (°)</string>
@@ -1614,87 +1667,17 @@
                </property>
               </widget>
              </item>
-             <item row="12" column="1">
-              <widget class="QCheckBox" name="ch_ndmi">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
+             <item row="15" column="0">
+              <widget class="QCheckBox" name="ch_e_int">
                <property name="text">
-                <string>NDMI (-)</string>
+                <string>Evapotranspiration intensity (mmol.m-2.s-1)</string>
                </property>
                <property name="checked">
                 <bool>true</bool>
                </property>
               </widget>
              </item>
-             <item row="11" column="1">
-              <widget class="QCheckBox" name="ch_msavi">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>MSAVI (-)</string>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="10" column="1">
-              <widget class="QCheckBox" name="ch_ndvi">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>NDVI (-)</string>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="9" column="1">
-              <widget class="QCheckBox" name="ch_rc">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Resistance for water vapour transfer (s.m-1)</string>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="8" column="1">
-              <widget class="QCheckBox" name="ch_ra">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Aerodynamic surface resistance (s.m-1)</string>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="7" column="1">
+             <item row="6" column="1">
               <widget class="QCheckBox" name="ch_frict">
                <property name="enabled">
                 <bool>true</bool>
@@ -1716,8 +1699,24 @@
                </property>
               </widget>
              </item>
-             <item row="6" column="1">
-              <widget class="QCheckBox" name="ch_cwsi">
+             <item row="9" column="0">
+              <widget class="QCheckBox" name="ch_emiss">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Surface emissivity (rel.)</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="1">
+              <widget class="QCheckBox" name="ch_ra">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                  <horstretch>0</horstretch>
@@ -1725,15 +1724,15 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>CWSI (-)</string>
+                <string>Aerodynamic surface resistance (s.m-1)</string>
                </property>
                <property name="checked">
                 <bool>true</bool>
                </property>
               </widget>
              </item>
-             <item row="5" column="1">
-              <widget class="QCheckBox" name="ch_omega">
+             <item row="8" column="1">
+              <widget class="QCheckBox" name="ch_rc">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                  <horstretch>0</horstretch>
@@ -1741,15 +1740,15 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>Decoupling coefficient (rel.)</string>
+                <string>Resistance for water vapour transfer (s.m-1)</string>
                </property>
                <property name="checked">
                 <bool>true</bool>
                </property>
               </widget>
              </item>
-             <item row="4" column="1">
-              <widget class="QCheckBox" name="ch_bowen">
+             <item row="9" column="1">
+              <widget class="QCheckBox" name="ch_ndvi">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                  <horstretch>0</horstretch>
@@ -1757,15 +1756,15 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>Bowen ratio (-)</string>
+                <string>NDVI (-)</string>
                </property>
                <property name="checked">
                 <bool>true</bool>
                </property>
               </widget>
              </item>
-             <item row="3" column="1">
-              <widget class="QCheckBox" name="ch_ef">
+             <item row="10" column="1">
+              <widget class="QCheckBox" name="ch_msavi">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                  <horstretch>0</horstretch>
@@ -1773,17 +1772,43 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>Evaporative fraction (rel.)</string>
+                <string>MSAVI (-)</string>
                </property>
                <property name="checked">
                 <bool>true</bool>
                </property>
               </widget>
              </item>
-             <item row="2" column="1">
-              <widget class="QCheckBox" name="ch_e_int">
+             <item row="11" column="1">
+              <widget class="QCheckBox" name="ch_ndmi">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="text">
-                <string>Evapotranspiration intensity (mmol.m-2.s-1)</string>
+                <string>NDMI (-)</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="12" column="1">
+              <widget class="QCheckBox" name="ch_savi">
+               <property name="text">
+                <string>SAVI (-)</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="13" column="1">
+              <widget class="QCheckBox" name="ch_lai">
+               <property name="text">
+                <string>LAI (m2/m-2)</string>
                </property>
                <property name="checked">
                 <bool>true</bool>
@@ -2693,6 +2718,38 @@
     <hint type="destinationlabel">
      <x>434</x>
      <y>475</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ch_all</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ch_savi</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>199</x>
+     <y>66</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>520</x>
+     <y>389</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ch_all</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ch_lai</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>199</x>
+     <y>66</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>520</x>
+     <y>416</y>
     </hint>
    </hints>
   </connection>
