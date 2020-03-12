@@ -568,13 +568,17 @@ class SEBCS:
 		lyrs = [""]									# list of output layers names
 		lyrs_path = [""]							# list of output layers paths
 		layers = QgsProject.instance().mapLayers().values()		# nacte seznam vrstev z QGIS legendy --> vsechny, i neaktivni vrstvy
-		for i in layers:
-			if i.type() == 1:						# type 0 je vektor, type 1 je raster
-				lyr_name = i.name()					# vypise jmeno vrstvy
-				lyr_path = i.source()           	# vypise cestu k vrstve
-				lyrs.append(lyr_name)           
-				lyrs_path.append(lyr_path)
-		
+		try:
+			for i in layers:
+				if i.type() == 1:						# type 0 je vektor, type 1 je raster
+					lyr_name = i.name()					# vypise jmeno vrstvy
+					lyr_path = i.source()           	# vypise cestu k vrstve
+					lyrs.append(lyr_name)
+					lyrs_path.append(lyr_path)
+		except FileNotFoundError:
+			lyrs = [""]
+			lyrs_path = [""]
+
 		return lyrs, lyrs_path
 			
 	def reset(self):
@@ -1161,10 +1165,16 @@ class SEBCS:
 		print("meteo v pohodě")
 
 		# Wind profile
-		U = ws.windSpeedZ(U_st_lyr, self.Z, self.hwind, self.h_st)
-		z0m = ws.z0m(h_eff, self.lai)
-		z0h = ws.z0h(z0m)
-		zero_disp = ws.zeroPlaneDis(h_eff)
+		if self.rb_method is "grad":
+			U = None
+			z0m = None
+			z0h = None
+			zero_disp = None
+		else:
+			U = ws.windSpeedZ(U_st_lyr, self.Z, self.hwind, self.h_st)
+			z0m = ws.z0m(h_eff, self.lai)
+			z0h = ws.z0h(z0m)
+			zero_disp = ws.zeroPlaneDis(h_eff)
 
 		print("profily v pohodě")
 
@@ -1280,7 +1290,7 @@ class SEBCS:
 	def loadRasters(self):
 		"""Uploading of the results (calculated layers) in to the QGIS legend.
 		"""
-		
+		# TODO: upravit nacitani multiband vrstev do QGIS
 		self.out_driver, self.out_format, self.out_suffix = self.outputsFormat(self.dlg.cb_out_format)
 		
 		# List of output files paths

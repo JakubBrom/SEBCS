@@ -7,31 +7,8 @@
 #          begin                :
 #          date                 :
 #          git sha              : $Format:%H$
-#          copyright            : (C) 2014-2019 Jakub Brom
+#          copyright            : (C) 2014-2020 Jakub Brom
 #          email                : jbrom@zf.jcu.cz
-#
-#  ***************************************************************************/
-#  /***************************************************************************
-#
-#  This program is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License  as published  by
-#  the Free Software Foundation, either version 3 of the License, or
-#  any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#  You should have received a copy of the GNU General Public License along
-#  with this program.  If not, see <https://www.gnu.org/licenses/>.
-#
-#   ***************************************************************************/
-
-#  /***************************************************************************
-#  SEBCS_lib.py
-#
-#  Collection of functions for energy balance and their components calculation.
-#
 #
 #  ***************************************************************************/
 #  /***************************************************************************
@@ -251,7 +228,7 @@ class GeoIO:
 					new_array = gdal.Dataset.ReadAsArray(gdal.Open(layer)).astype(
 						np.float32)
 					new_array = np.nan_to_num(new_array)
-				except:
+				except IOError:
 					new_array = None
 			else:
 				new_array = None
@@ -447,6 +424,42 @@ class VegIndices:
 
 		return msavi
 
+	def viRDVI(self, red, nir):
+		"""
+		Renormalized Difference Vegetation Index - RDVI (Roujean and
+		Breon, 1995).
+
+		:param red: Spectral reflectance in RED region (rel.)
+		:type red: numpy.ndarray
+		:param nir: Spectral reflectance in NIR region (rel.)
+		:type nir: numpy.ndarray
+
+		:return: RDVI
+		:rtype: numpy.ndarray
+
+		\n
+		**References**\n
+		*Roujean, J.-L., Breon, F.-M., 1995. Estimating PAR absorbed
+		by vegetation from bidirectional reflectance measurements.
+		Remote Sensing of Environment 51, 375–384.
+		https://doi.org/10.1016/0034-4257(94)00114-3*
+		"""
+
+		ignore_zero = np.seterr(all="ignore")
+
+		try:
+			rdvi = (nir - red) / np.sqrt(nir + red)
+			rdvi = np.where(rdvi == np.inf, 0, rdvi)  # replacement
+			# inf values
+			# by 0
+			rdvi = np.where(rdvi == -np.inf, 0, rdvi)  # replacement
+		# -inf
+		# values by 0
+		except ArithmeticError:
+			raise ArithmeticError("RDVI has not been calculated.")
+
+		return rdvi
+
 	def fractVegCover(self, ndvi):
 		"""
 		Fractional vegetation cover layer - Fc.
@@ -523,8 +536,10 @@ class VegIndices:
 		ndvi = self.viNDVI(red, nir)
 		osavi = self.viOSAVI(red, nir)
 		msavi = self.viMSAVI(red, nir)
+		rdvi = self.viRDVI(red, nir)
 		# methods = {1:'Pôças', 2:'Bastiaanssen', 3:'Jafaar', 4:'Anderson',
-		# 5:'vineyard', 6:'Carrasco', 7:'Turner'}
+		# 5:'vineyard', 6:'Carrasco', 7:'Turner', 8:'Haboudane',
+		# 9:'Brom'}
 
 		if method is 1:     # Pôças
 			LAI = np.where(savi > 0, 11.0 * savi**3, 0)
@@ -551,16 +566,19 @@ class VegIndices:
 			LAI = 4.9 * ndvi - 0.46
 
 		elif method is 6:   # Carrasco
-			LAI = 1.2 - 3.08 * np.exp(-2013.35 * ndvi**6.41)
+			LAI = 1.2 - 3.08 * np.exp(-2013.35 * ndvi ** 6.41)
 
 		elif method is 7:   # Turner
 			LAI = 0.5724 + 0.0989 * ndvi - 0.0114 * ndvi**2 + 0.0004 * ndvi**3
 
-		# elif method is 8:
-		# 	LAI = 6.0/(1 + np.exp(-(8 * savi - 5)))
-		# 	# Method proposed by Brom (mathematical definition only,
-		# 	not tested). Good approximation with another methods (1, 2, 3) but
-		# 	this method	is very sensitive on parameters in exponent
+		elif method is 8:   # Haboudane
+			LAI = 0.0918 ** (6.0002 * rdvi)
+
+		elif method is 9:   # Brom
+			LAI = 6.0/(1 + np.exp(-(8 * savi - 5)))
+			# Method proposed by Brom (mathematical definition only,
+			# not tested). Good approximation with another methods (1, 2, 3) but
+			# this method	is very sensitive on parameters in exponent
 		else:
 			raise ArithmeticError("LAI has not been calculated.")
 
@@ -601,6 +619,23 @@ class VegIndices:
 
 		except ArithmeticError:
 			raise ArithmeticError("Vegetation height has not been calculated.")
+
+	def biomass_sat(self, ndvi):
+		"""
+		Calculation of amount of fresh biomass from satellite data. NDVI is used
+		for estimation :math:`(t.ha^{-1})`
+
+		:param ndvi: Normalized Difference Vegetation Index (NDVI).
+		:return: Amount of fresh biomass :math:`(t.ha^{-1})`
+		"""
+
+		# TODO: Velmi jednoduchý, až nereálný model. Možná by šlo použít
+		#  model uvedený v SARCA a RWC nahradit nějakým indexem, např. NDMI
+		#  nebo FMI (Foliar moisture index). Tohle bude složitějsí...
+
+		fresh_biomass = 50 * ndvi ** 2.5
+
+		return fresh_biomass
 
 
 # noinspection PyMethodMayBeStatic
@@ -1054,6 +1089,7 @@ class MeteoFeatures(VegIndices):
 	"""
 
 	def __init__(self):
+		super(MeteoFeatures, self).__init__()
 		return
 
 	def airTemp(self, ta_st, st_altitude, DMT, adiabatic=0.0065):
@@ -1444,7 +1480,7 @@ class HeatFluxes(MeteoFeatures):
 		return LE_PT
 
 	def fluxLE_ref(self, Rn, G, ta, ts, U, Rh, DMT, veg_type="short",
-	               cp = 1012.0):
+	               cp=1012.0):
 		"""
 		Latent heat flux for reference evapotranspiration according to FAO56
 		method (Allen et al. 1998, ASCE-ET 2000)
@@ -1507,8 +1543,7 @@ class HeatFluxes(MeteoFeatures):
 
 		try:
 			LE_ref = (408.0 * delta * (Rn - G) * 0.0036) + (gamma * cn/(ta +
-			          273.15) * U * VPD)/(delta + gamma * (1 + cd * U)) * \
-			         latent_heat/3600.0
+			                                                            273.15) * U * VPD)/(delta + gamma * (1 + cd * U)) * latent_heat/3600.0
 		except ArithmeticError:
 			raise ArithmeticError("Reference evapotranspiration has not been "
 			                      "calculated.")
@@ -1868,7 +1903,7 @@ class HeatFluxes(MeteoFeatures):
 			flux_H = Rn - G - LE
 		except ArithmeticError:
 			warnings.warn("Correction of heat fluxes has not been done",
-			              stacklevel = 3)
+			              stacklevel=3)
 
 		return flux_H, LE, EF, LE_eq, LE_PT, ra, frict
 
@@ -1990,6 +2025,8 @@ class HeatFluxes(MeteoFeatures):
 
 		try:
 			rcp = (E_Z_sat - e_Z) * rho * cp / (gamma * LE_p) - ra
+			# If rcp is less than 0 it is close to 0 --> rcp = 0.001
+			rcp = np.where(rcp < 0, 0, rcp)
 		except ArithmeticError:
 			raise ArithmeticError("Surface resistance for water vapour "
 			                      "transfer for potential evaporation has not "
@@ -2262,7 +2299,7 @@ class WindStability(HeatFluxes, VegIndices):
 		ignore_zero = np.seterr(all="ignore")
 
 		try:
-			frict = kappa * Uz / (np.log((Z - disp)/ z0m) - psi_m)
+			frict = kappa * Uz / (np.log((Z - disp) / z0m) - psi_m)
 		except ArithmeticError:
 			raise ArithmeticError("Friction velocity has not been calculated")
 
@@ -2591,8 +2628,8 @@ class WindStability(HeatFluxes, VegIndices):
 		"""
 
 		try:
-			ra = (np.log((Z - disp)/ z0m) - psi_m) * (np.log((Z - disp)/z0h)
-			                                          - psi_h) / (kappa ** 2 * Uz)
+			ra = (np.log((Z - disp) / z0m) - psi_m) * (np.log((Z - disp)/z0h)
+			                                           - psi_h) / (kappa ** 2 * Uz)
 		except ArithmeticError:
 			raise ArithmeticError("Aerodynamic resistance has not been "
 			                      "calculated")
