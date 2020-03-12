@@ -29,8 +29,8 @@
 # Imports
 import os
 import time
-import urllib
-import sys
+# import urllib
+# import sys
 import os.path
 import numpy as np
 
@@ -38,15 +38,15 @@ import numpy as np
 from PyQt5.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, QDate, QTime, Qt, QUrl
 from PyQt5.QtGui import QIcon, QDesktopServices
 from PyQt5.QtWidgets import QAction, QFileDialog, QProgressBar, QPushButton
-from qgis.gui import QgsMessageBar
+# from qgis.gui import QgsMessageBar
 from qgis.core import QgsProject, Qgis
-import qgis.utils as ut
+# import qgis.utils as ut
 
 # Import geolibrary
 from osgeo import gdal, osr, ogr
 
 # Initialize Qt resources from file resources.py
-from reportlab.platypus.tableofcontents import delta
+# from reportlab.platypus.tableofcontents import delta
 
 from .resources import *
 # Import the code for the dialog
@@ -1100,7 +1100,9 @@ class SEBCS:
 		self.gtransf, self.prj, self.x_size, self.y_size, self.EPSG = \
 			geo.readGeo(self.nir_path)
 
-		# Imports of inputs layers (Numpy arrays)
+		print("geotransf OK")
+
+		# Imports of inputs layers
 		blue_lyr = geo.rasterToArray(self.blue_path)
 		green_lyr = geo.rasterToArray(self.green_path)
 		red_lyr = geo.rasterToArray(self.red_path)
@@ -1117,16 +1119,20 @@ class SEBCS:
 		self.mask = geo.rasterToArray(self.mask_path)
 		albedo_lyr = geo.rasterToArray(self.albedo_path)
 
+		print("importy vrstev OK")
+
 		# Vegetation indices
 		self.ndvi = vi.viNDVI(red_lyr, self.nir_lyr)
 		self.msavi = vi.viMSAVI(red_lyr, self. nir_lyr)
 		self.ndmi = vi.viNDMI(self.nir_lyr, swir1_lyr)
 		self.savi = vi.viSAVI(red_lyr, self.nir_lyr, self.savi_L)
 		self.lai = vi.LAI(red_lyr, self.nir_lyr, self.lai_method)
-		if canopy_lyr is None:
+		if canopy_lyr is None or canopy_lyr == "":
 			h_eff = vi.vegHeight(h_min_lyr, h_max_lyr, self.msavi)
 		else:
 			h_eff = canopy_lyr
+
+		print("vegindexy OK")
 
 		# Calculate misc
 		ta = mt.airTemperatureBlending(ta_Zst_lyr,self.Z, self.hwind,
@@ -1152,11 +1158,15 @@ class SEBCS:
 		vpd = mt.vpd(Es_Z, e_Z)
 		gamma = mt.gamma(air_press, lat_heat, self.cp)
 
+		print("meteo v pohodě")
+
 		# Wind profile
 		U = ws.windSpeedZ(U_st_lyr, self.Z, self.hwind, self.h_st)
 		z0m = ws.z0m(h_eff, self.lai)
 		z0h = ws.z0h(z0m)
 		zero_disp = ws.zeroPlaneDis(h_eff)
+
+		print("profily v pohodě")
 
 		# Calculation of output variables
 		self.slope, self.aspect = sb.slopeAspect(dmt_lyr, self.x_size, self.y_size)
@@ -1175,26 +1185,35 @@ class SEBCS:
 		self.Rl_out = sb.outRL(self.ts_C, self.emiss)
 		self.Rn = sb.netRad(self.Rs_in, self.Rs_out, self.Rl_in, self.Rl_out)
 
+		print("radiace OK")
+
 		self.G = hf.groundFlux(self.ndvi, self.Rn, self.ts_C, self.albedo)
 
-		self.H, self.LE, self.EF, self.LE_PT, self.ra, self.frict = \
+		self.H, self.LE, self.EF, LE_eq, self.LE_PT, self.ra, self.frict = \
 			hf.heatFluxes(self.Rn, self.G, self.ts_C, ta, self.rb_method,
 			              U, h_eff=h_eff, LAI=self.lai, z0m=z0m, z0h=z0h,
-			              rho=rho, disp=zero_disp, air_pressure=air_press,
-			              Z=self.Z, cp=self.cp, n_iter=self.n_iter,
-			              kappa=self.kappa)
+			              rho=rho, disp=zero_disp, mask=self.mask,
+			              air_pressure=air_press, Z=self.Z, cp=self.cp,
+			              n_iter=self.n_iter, kappa=self.kappa)
+
+		print("toky OK")
+
 		self.LEp = hf.fluxLE_p(self.Rn, self.G, delta_grad, vpd, self.ra,
 		                       gamma, rho, self.cp)
 
 		self.E_int = hf.intensityE(self.LE, lat_heat)
 		self.bowen = hf.bowen(self.H, self.LE)
 		self.omega = hf.omega(self.LE, self.LEp)
-		self.rc = hf.rs(delta_grad, gamma, self.omega)
+		self.rc = hf.rs(delta_grad, gamma, self.omega, self.ra)
 		self.cwsi = hf.cwsi(self.LEp, self.ra, self.rc, Es_Z, e_Z, rho,
 		                    delta_grad, gamma, self.cp)
 
+		print("ostatni taky OK")
+
 		# Data export
 		self.dataExport()
+
+		print("export OK")
 
 	def dataExport(self):
 		"""Export output layers in to the output folder.
@@ -1242,7 +1261,7 @@ class SEBCS:
 				out_arrays[i] = np.zeros_like(self.nir_lyr)
 
 		# Mask application
-		if self.mask_path is not None:
+		if self.mask is not None:
 			for i in range(0, len(out_arrays)):
 				out_arrays[i] = out_arrays[i] * self.mask
 

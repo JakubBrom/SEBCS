@@ -1,14 +1,37 @@
 #  /***************************************************************************
 #  SEBCS_lib.py
 #
-#  Collection of functions for energy balance and their components calculation.
+#  TODO: popis
 #
 #                                -------------------
-#          begin                : 14-03-01
-#          date                 : 19-11-08
+#          begin                :
+#          date                 :
 #          git sha              : $Format:%H$
 #          copyright            : (C) 2014-2019 Jakub Brom
 #          email                : jbrom@zf.jcu.cz
+#
+#  ***************************************************************************/
+#  /***************************************************************************
+#
+#  This program is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License  as published  by
+#  the Free Software Foundation, either version 3 of the License, or
+#  any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#  You should have received a copy of the GNU General Public License along
+#  with this program.  If not, see <https://www.gnu.org/licenses/>.
+#
+#   ***************************************************************************/
+
+#  /***************************************************************************
+#  SEBCS_lib.py
+#
+#  Collection of functions for energy balance and their components calculation.
+#
 #
 #  ***************************************************************************/
 #  /***************************************************************************
@@ -209,7 +232,8 @@ class GeoIO:
 				except IOError:
 					raise Exception("Raster file {} has not been created.".format(names[i] + suffix))
 
-	def rasterToArray(self, layer):
+	@staticmethod
+	def rasterToArray(layer):
 		"""Conversion of raster layer to numpy array.
 
 		:param layer: Path to raster layer.
@@ -222,21 +246,22 @@ class GeoIO:
 		lyr_name = os.path.split(layer)[1]
 
 		try:
-			if layer is not None:
-				new_array = gdal.Dataset.ReadAsArray(gdal.Open(layer)).astype(
-					np.float32)
-				new_array = np.nan_to_num(new_array)
+			if layer is not None or layer is not "":
+				try:
+					new_array = gdal.Dataset.ReadAsArray(gdal.Open(layer)).astype(
+						np.float32)
+					new_array = np.nan_to_num(new_array)
+				except:
+					new_array = None
 			else:
 				new_array = None
-
-			return new_array
 
 		except IOError:
 			warnings.warn("Layer {lr} has not been readed. No data will be "
 			              "used instead".format(lr=lyr_name), stacklevel=3)
 			new_array = None
 
-			return new_array
+		return new_array
 
 	def lyrsExtent(self, in_lyrs_list):
 		"""
@@ -380,12 +405,15 @@ class VegIndices:
 
 		ignore_zero = np.seterr(all="ignore")  # ignoring exceptions with dividing by zero
 
-		try:
-			ndmi = (nir - swir1) / (nir + swir1)
-			ndmi[ndmi == np.inf] = 0  # replacement inf values by 0
-			ndmi[ndmi == -np.inf] = 0  # replacement -inf values by 0
-		except ArithmeticError:
-			raise ArithmeticError("NDMI has not been calculated.")
+		if swir1 is not None:
+			try:
+				ndmi = (nir - swir1) / (nir + swir1)
+				ndmi[ndmi == np.inf] = 0  # replacement inf values by 0
+				ndmi[ndmi == -np.inf] = 0  # replacement -inf values by 0
+			except ArithmeticError:
+				raise ArithmeticError("NDMI has not been calculated.")
+		else:
+			ndmi = None
 
 		return ndmi
 
@@ -1603,7 +1631,7 @@ class HeatFluxes(MeteoFeatures):
 
 		return EF
 
-	def gradEF(self, ts, ta):
+	def gradEF(self, ts, ta, mask=None):
 		"""
 		Evaporative fraction calculated from gradient method according
 		to Suleiman and Crago (2004).
@@ -1612,20 +1640,16 @@ class HeatFluxes(MeteoFeatures):
 		:type ts: numpy.ndarray
 		:param ta: Air temperature :math:`(\SI{}\degreeCelsius)`
 		:type ta: numpy.ndarray, float
+		:param mask: Mask of the area of interest. Number of rows and columns
+		should be the same.  Format (1, 0) or (1, nan).
+		:type mask: numpy.ndarray
 
 		:return: Evaporative fraction (rel.)
 		:rtype: numpy.ndarray
 		"""
 
 		try:
-			filt_ts = ndimage.median_filter(ts, 5)
-		except ArithmeticError:
-			warnings.warn("Median filter has not been used for Tmax estimation", stacklevel=3)
-			filt_ts = ts
-
-		try:
-			filt_ts = filt_ts[~np.isnan(filt_ts)]
-			t_max = np.max(filt_ts)
+			t_max = WindStability().dryT(ts, mask)
 			EF = (t_max - ts) / (t_max - ta)
 		except ArithmeticError:
 			raise ArithmeticError("Evaporative fraction has not been "
@@ -1634,7 +1658,7 @@ class HeatFluxes(MeteoFeatures):
 		return EF
 
 	def heatFluxes(self, Rn, G, ts, ta, method="aero", Uz=None, h_eff=None,
-	               LAI=None, z0m=None, z0h=None, rho=None, disp=None,
+	               LAI=None, z0m=None, z0h=None, rho=None, disp=None, mask=None,
 	               air_pressure=101.3, Z=200.0, cp=1012, L=-10000.0, n_iter=10,
 	               a=1.0, b=0.667, c=5.0, d=0.35, kappa=0.41, gravit=9.81):
 		# noinspection SpellCheckingInspection
@@ -1672,10 +1696,13 @@ class HeatFluxes(MeteoFeatures):
 				:param z0h: Aerodynamic roughness of the surface for heat
 				transfer (m)
 				:type z0h: numpy.ndarray
-				:param disp: Zero plane displacement (m)
-				:type disp: numpy.ndarray, float
 				:param rho: Volumetric dry air density :math:`(kg.m^{-3})`
 				:type rho: numpy.ndarray, float
+				:param disp: Zero plane displacement (m)
+				:type disp: numpy.ndarray, float
+				:param mask: Mask of the area of interest. Number of rows
+				and columns should be the same.  Format (1, 0) or (1, nan).
+				:type mask: numpy.ndarray
 				:param air_pressure: Air pressure  at level Z (kPa)
 				:type air_pressure: float, numpy.ndarray
 				:param Z: Blending height (m)
@@ -1765,10 +1792,10 @@ class HeatFluxes(MeteoFeatures):
 						disp = WindStability().zeroPlaneDis(h_eff)
 					else:
 						disp = 0.0
-
-		if rho is None:
-			rho = self.airDensity(ta)
-		else:
+		try:
+			if rho is None or rho is "":
+				rho = self.airDensity(ta)
+		except ArithmeticError:
 			raise ArithmeticError("Air density has not been "
 			                      "calculated.")
 
@@ -1784,11 +1811,10 @@ class HeatFluxes(MeteoFeatures):
 				ra = WindStability().raThom(Uz, z0m, z0h, disp=disp,
 				                            psi_m=psi_m, psi_h=psi_h, Z=Z,
 				                            kappa=kappa)
-				dT = WindStability().dT(ts, ta, Rn, G, ra, rho, cp)
+				dT = WindStability().dT(ts, ta, Rn, G, ra, rho, cp, mask)
 				flux_H = self.fluxHAer(ra, rho, dT, cp)
 				LE = self.fluxLE(Rn, G, flux_H)
 				EF = self.aeroEF(LE, Rn, G)
-				print("je to aero", flux_H)
 
 			except ArithmeticError:
 				raise ArithmeticError("Heat fluxes for aerodynamic method "
@@ -1807,22 +1833,20 @@ class HeatFluxes(MeteoFeatures):
 				                            kappa=kappa)
 				ra_h, flux_H = WindStability().aeroSEBAL(Uz, ta, ts, z0m, Rn, G,
 				                                         rho, n_iter, Z, cp=cp,
-				                                         kappa=kappa)
+				                                         kappa=kappa, mask=mask)
 				LE = self.fluxLE(Rn, G, flux_H)
 				EF = self.aeroEF(LE, Rn, G)
-				print("je to sebal", flux_H)
 
 			except ArithmeticError:
 				raise ArithmeticError("Heat fluxes for SEBAL method "
 				                      "has not been calculated")
 
 		elif method is "grad":
-			EF = self.gradEF(ts, ta)
+			EF = self.gradEF(ts, ta, mask)
 			LE = self.gradLE(EF, Rn, G)
 			flux_H = self.gradH(LE, Rn, G)
 			ra = WindStability().raGrad(flux_H, rho, ts, ta, cp)
 			frict = np.zeros_like(ra)
-			print("je to grad", flux_H)
 
 		else:
 			raise ArithmeticError("Heat fluxes have not been calculated")
@@ -2686,18 +2710,27 @@ class WindStability(HeatFluxes, VegIndices):
 		return t_wet
 	
 	@staticmethod
-	def dryT(ts):
+	def dryT(ts, mask=None):
 		"""
 		Extraction of temperature for dry surface with no evaporation.
 		
 		:param ts: Surface temperature :math:`(\SI{}\degreeCelsius)`
 		:type ts: numpy.ndarray
+		:param mask: Mask of the area of interest. Number of rows and columns
+		should be the same.  Format (1, 0) or (1, nan).
+		:type mask: numpy.ndarray
 		
 		:return: Temperature of dry surface derived from surface temperature \
 		layer.
-		:rtype: numpy.ndarray
+		:rtype: float
 		"""
-		
+
+		if mask is not None:
+			try:
+				ts = ts * mask
+			except ArithmeticError:
+				warnings.warn("Mask for dryT has not been used", stacklevel=3)
+
 		try:
 			filt_ts = ndimage.median_filter(ts, 5)
 		except ArithmeticError:
@@ -2706,8 +2739,8 @@ class WindStability(HeatFluxes, VegIndices):
 			filt_ts = ts
 
 		filt_ts = filt_ts[~np.isnan(filt_ts)]
-		t_dry = np.max(filt_ts)
-		
+		t_dry = float(np.max(filt_ts))
+
 		return t_dry
 
 	@staticmethod
@@ -2761,7 +2794,7 @@ class WindStability(HeatFluxes, VegIndices):
 
 		return ca
 
-	def dT(self, ts, ta, Rn, G, ra, rho, cp=1012.0):
+	def dT(self, ts, ta, Rn, G, ra, rho, cp=1012.0, mask=None):
 		"""
 		Temperature gradient calculated according to SEBAL
 		(Bastiaanssen et al. 1998).
@@ -2780,13 +2813,16 @@ class WindStability(HeatFluxes, VegIndices):
 		:type rho: numpy.ndarray
 		:param cp: Thermal heat capacity of dry air :math:`(K.kg^{-1}.K^{-1})`
 		:type cp: float
+		:param mask: Mask of the area of interest. Number of rows and columns
+		should be the same.  Format (1, 0) or (1, nan).
+		:type mask: numpy.ndarray
 		:return: Temperature difference dT calculated according to\
 		Bastiaanssen (1998)
 		:rtype: numpy.ndarray
 		"""
 				
 		t_wet = self.wetT(ta)
-		t_dry = self.dryT(ts)
+		t_dry = self.dryT(ts, mask)
 		t_max = self.maxT(Rn, G, ra, ta, rho, cp)
 		cb = self.coef_b(t_dry, t_wet, t_max, ta)
 		ca = self.coef_a(t_wet, cb)
@@ -2795,7 +2831,7 @@ class WindStability(HeatFluxes, VegIndices):
 		return dT
 
 	def aeroSEBAL(self, Uz, ta, ts, z0m, Rn, G, rho, niter=10, Z=200, z1=0.1,
-	              z2=2, cp=1012.0, kappa=0.41):
+	              z2=2, cp=1012.0, kappa=0.41, mask=None):
 		"""
 		Calculation of sensible heat flux and surface aerodynamic resistance
 		according to Bastiaanssen et al. (1998).
@@ -2827,6 +2863,9 @@ class WindStability(HeatFluxes, VegIndices):
 		:type cp: float
 		:param kappa: von Karman constant. Default 0.41
 		:type kappa: float
+		:param mask: Mask of the area of interest. Number of rows and columns
+		should be the same.  Format (1, 0) or (1, nan).
+		:type mask: numpy.ndarray
 
 		:return: Aerodynamic resistance for heat transfer :math:`(s.m^{-1})`\
 		calculated according to SEBAL (Bastiaanssen et al. 1998)
@@ -2858,7 +2897,7 @@ class WindStability(HeatFluxes, VegIndices):
 		# Iterative procedure:
 		try:
 			for i in range(niter):
-				diffT = self.dT(ts, ta, Rn, G, ra, rho, cp)
+				diffT = self.dT(ts, ta, Rn, G, ra, rho, cp, mask)
 				H = self.fluxHAer(ra, rho, diffT, cp)
 				L = self.lengthMO(frict, ts, H, rho)
 				X_z = self.coefX(Z, L)
