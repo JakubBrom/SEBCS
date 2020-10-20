@@ -18,7 +18,8 @@ repository=https://github.com/JakubBrom/SEBCS
 
 changelog=
     2.1.0 : (201020)
-        - Changes in UI
+        - Changes in UI - simplification, possible keeping the setting
+        etc.
         - Simplification of the code
         - Some bugs fixed
         - Larger changes i SEBCS_lib
