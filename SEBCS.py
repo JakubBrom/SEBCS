@@ -10,9 +10,9 @@
 							  -------------------
 		begin                : 2019-03-06
 		git sha              : $Format:%H$
-		copyright            : (C) 2019 by Jakub Brom, University of South
-							   Bohemia in Ceske Budejovice, Faculty of
-							   Agriculture
+		copyright            : (C) 2014-2020 by Jakub Brom, University
+							   of South Bohemia in Ceske Budejovice,
+							   Faculty of Agriculture
 		email                : jbrom@zf.jcu.cz
  ***************************************************************************/
 
@@ -27,34 +27,28 @@
 """
 
 # Imports
-import os
 import time
-# import urllib
-# import sys
 import os.path
 import numpy as np
 
 # Import PyQt libs
-from PyQt5.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, QDate, QTime, Qt, QUrl
-from PyQt5.QtGui import QIcon, QDesktopServices
-from PyQt5.QtWidgets import QAction, QFileDialog, QProgressBar, QPushButton
-# from qgis.gui import QgsMessageBar
-from qgis.core import QgsProject, Qgis
-# import qgis.utils as ut
+from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, \
+	Qt, QUrl, QDate, QTime
+from qgis.PyQt.QtGui import QIcon, QDesktopServices
+from qgis.PyQt.QtWidgets import QAction, QFileDialog, QComboBox, \
+	QPushButton, QProgressBar
+from qgis.core import Qgis, QgsMapLayerProxyModel
 
 # Import geolibrary
-from osgeo import gdal, osr, ogr
-
-# Initialize Qt resources from file resources.py
-# from reportlab.platypus.tableofcontents import delta
+from osgeo import ogr, osr, gdal
 
 from .resources import *
 # Import the code for the dialog
 from .SEBCS_dialog import SEBCSDialog
 
 # Import SEBCS library
-from .SEBCS_lib import GeoIO, MeteoFeatures, SolarRadBalance, VegIndices,\
-	HeatFluxes,	WindStability
+from .SEBCS_lib import GeoIO, MeteoFeatures, SolarRadBalance, \
+	VegIndices, HeatFluxes, WindStability
 
 geo = GeoIO()
 mt = MeteoFeatures()
@@ -89,17 +83,18 @@ class SEBCS:
 		if os.path.exists(locale_path):
 			self.translator = QTranslator()
 			self.translator.load(locale_path)
-
-			if qVersion() > '4.3.3':
-				QCoreApplication.installTranslator(self.translator)
+			QCoreApplication.installTranslator(self.translator)
 
 		# Declare instance attributes
 		self.actions = []
 		self.menu = self.tr(u'&SEBCS for QGIS')
+		self.toolbar = self.iface.addToolBar(u'SEBCS for QGIS')
+		self.toolbar.setObjectName(u'SEBCS for QGIS')
 
 		# Check if plugin was started the first time in current QGIS session
 		# Must be set in initGui() to survive plugin reloads
-		self.first_start = None
+		self.pluginIsActive = False
+		self.dlg = None
 
 		# Set constants
 		self.constants()
@@ -117,19 +112,19 @@ class SEBCS:
 		:rtype: QString
 		"""
 		# noinspection PyTypeChecker,PyArgumentList,PyCallByClass
-		return QCoreApplication.translate('SEBCS', message)
+		return QCoreApplication.translate('SEBCS for QGIS', message)
 
 	def add_action(
-		self,
-		icon_path,
-		text,
-		callback,
-		enabled_flag=True,
-		add_to_menu=True,
-		add_to_toolbar=True,
-		status_tip=None,
-		whats_this=None,
-		parent=None):
+			self,
+			icon_path,
+			text,
+			callback,
+			enabled_flag=True,
+			add_to_menu=True,
+			add_to_toolbar=True,
+			status_tip=None,
+			whats_this=None,
+			parent=None):
 		"""Add a toolbar icon to the toolbar.
 
 		:param icon_path: Path to the icon for this action. Can be a resource
@@ -196,17 +191,20 @@ class SEBCS:
 	def constants(self):
 		"""Constants settings."""
 
-		self.h_st = 0.12            # Height of veg. cover at meteostation (
-									# reference canopy height)
-		self.cp = 1012.0            # Thermal heat capacity of dry air
-		self.n_iter = 10            # Number of iterations for calculation of
-									# boundary layer stability
-		self.kappa = 0.41           # vonKarman constant
-		self.Z = 200.0              # blending height (mixing layer height)
-		self.adiabatic = 0.0065     # Adiabatic lapse rate
-		self.savi_L = 0.5           # L constant fo SAVI calculation
-		self.lai_method = 3         # default LAI calculation method
-		self.ref_pressure = 101.325 # Reference air pressure at sea level (kPa)
+		self.h_st = 0.12  # Height of veg. cover at meteostation (
+		# reference canopy height)
+		self.cp = 1012.0  # Thermal heat capacity of dry air
+		self.n_iter = 10  # Number of iterations for calculation of
+		# boundary layer stability
+		self.kappa = 0.41  # vonKarman constant
+		self.Z = 200.0  # blending height (mixing layer height)
+		self.adiabatic = 0.0065  # Adiabatic lapse rate
+		self.savi_L = 0.5  # L constant fo SAVI calculation
+		self.lai_method = 3  # default LAI calculation method
+		self.ref_pressure = 101.325  # Reference air pressure at sea level (kPa)
+		# Initial output folder path
+		self.out_folder_path = os.path.expanduser("~")
+		# self.out_file_name = None
 
 	def initGui(self):
 		"""Create the menu entries and toolbar icons inside the QGIS GUI."""
@@ -218,96 +216,17 @@ class SEBCS:
 			callback=self.run,
 			parent=self.iface.mainWindow())
 
-		# will be set False in run()
-		self.first_start = True
+		if not self.pluginIsActive:
+			self.pluginIsActive = True
 		# Create the dialog with elements (after translation) and keep reference
 		# Only create GUI ONCE in callback, so that it will only load when
 		# the plugin is started
-		if self.first_start == True:
-			self.first_start = False
+		if self.dlg == None:
 			self.dlg = SEBCSDialog()
 
-		# Set path to selected raster files to CBoxes - for each one
-		self.dlg.b_blue.clicked.connect(lambda: self.selectFile(self.dlg.cb_blue))
-		self.dlg.b_green.clicked.connect(lambda: self.selectFile(self.dlg.cb_green))
-		self.dlg.b_red.clicked.connect(lambda: self.selectFile(self.dlg.cb_red))
-		self.dlg.b_nir.clicked.connect(lambda: self.selectFile(self.dlg.cb_nir))
-		self.dlg.b_swir1.clicked.connect(lambda: self.selectFile(self.dlg.cb_swir1))
-		self.dlg.b_swir2.clicked.connect(lambda: self.selectFile(self.dlg.cb_swir2))
-		self.dlg.b_ts_layer.clicked.connect(lambda: self.selectFile(self.dlg.cb_ts_layer))
-		self.dlg.b_dmt.clicked.connect(lambda: self.selectFile(self.dlg.cb_dmt))
-		self.dlg.b_ta.clicked.connect(lambda: self.selectFile(self.dlg.cb_ta))
-		self.dlg.b_wind.clicked.connect(lambda: self.selectFile(self.dlg.cb_wind))
-		self.dlg.b_hmin.clicked.connect(lambda: self.selectFile(self.dlg.cb_hmin))
-		self.dlg.b_hmax.clicked.connect(lambda: self.selectFile(self.dlg.cb_hmax))
-		self.dlg.b_canopy.clicked.connect(lambda: self.selectFile(self.dlg.cb_canopy))
-		self.dlg.b_mask.clicked.connect(lambda: self.selectFile(self.dlg.cb_mask))
-		self.dlg.b_albedo.clicked.connect(lambda: self.selectFile(self.dlg.cb_albedo))
-		
-		# Set path to output folder
-		self.dlg.b_out_folder.clicked.connect(self.outFolder)
-		
-		self.out_folder_path = "/home"
-		
-		# if self.dlg.cb_methods.currentIndex() == 0:
-		self.dlg.ch_canopy.toggled.connect(lambda: self.setCboxEmpty(self.dlg.cb_hmin))
-		self.dlg.ch_canopy.toggled.connect(lambda: self.setCboxEmpty(self.dlg.cb_hmax))
-		
-		# Set canopy heigth CBox empty
-		self.dlg.ch_canopy.toggled.connect(lambda: self.setCanopyEmpty(self.dlg.cb_canopy))
-
-		# Set unchecked friction velocity if the gradient method is used
-		# self.dlg.rb_grad.toggled.connect(self.frictUncheck)
-		self.dlg.ch_all.toggled.connect(self.frictUncheck)	 
-		
-		# Set disabled multiband setting
-		self.dlg.cb_out_format.currentIndexChanged.connect(self.setMultibandDisabled)
-		
-		# Set latitude and longitude from NIR band
-		self.dlg.b_auto_latlong.clicked.connect(lambda: self.latLong())
-		
-		# Checkbox list for output layers - for testing if they are cheked or no.
-		self.out_chbox_list = [self.dlg.ch_rs_in,
-							self.dlg.ch_rs_out,
-							self.dlg.ch_albedo,
-							self.dlg.ch_rl_in,
-							self.dlg.ch_rl_out,
-							self.dlg.ch_rn,
-							self.dlg.ch_ts,
-							self.dlg.ch_emiss,
-							self.dlg.ch_le,
-							self.dlg.ch_le_pen,
-							self.dlg.ch_le_pt,
-							self.dlg.ch_sensible,
-							self.dlg.ch_ground,
-							self.dlg.ch_e_int,
-							self.dlg.ch_ef,
-							self.dlg.ch_bowen,
-							self.dlg.ch_omega,
-							self.dlg.ch_cwsi,
-							self.dlg.ch_frict,
-							self.dlg.ch_ra,
-							self.dlg.ch_rc,
-							self.dlg.ch_ndvi,
-							self.dlg.ch_msavi,
-							self.dlg.ch_ndmi,
-							self.dlg.ch_savi,
-							self.dlg.ch_lai,
-							self.dlg.ch_slope,
-							self.dlg.ch_aspect]
-							
-		# Reset content of the form
-		self.dlg.buttonBox.rejected.connect(self.reset)
-		
 		# Help
 		self.dlg.buttonBox.helpRequested.connect(self.pluginHelp)
-		
-		# GUI settings according to selected calculation method
-		self.dlg.cb_methods.currentIndexChanged.connect(self.methodsGuiSet)
-		
-		# GUI settings according to selected imaging systems
-		self.dlg.cb_systems.currentIndexChanged.connect(self.systemsGuiSet)
-		
+
 	def methodsGuiSet(self):
 		"""GUI settings according to selected calculation method"""
 
@@ -318,66 +237,66 @@ class SEBCS:
 			# set widgets disabled
 			self.dlg.ch_canopy.setChecked(False)
 			self.dlg.dsb_hwind.setDisabled(True)
-			
+
 			self.dlg.ch_frict.setDisabled(True)
 			self.dlg.ch_canopy.setDisabled(True)
-			
+
 			self.dlg.cb_wind.setDisabled(True)
 			self.dlg.cb_hmin.setDisabled(True)
 			self.dlg.cb_hmax.setDisabled(True)
 			self.dlg.cb_canopy.setDisabled(True)
-			
+
 			self.dlg.b_wind.setDisabled(True)
 			self.dlg.b_hmin.setDisabled(True)
 			self.dlg.b_hmax.setDisabled(True)
 			self.dlg.b_canopy.setDisabled(True)
-			
+
 			self.dlg.label_19.setDisabled(True)
 			self.dlg.label_20.setDisabled(True)
 			self.dlg.label_21.setDisabled(True)
 			self.dlg.label_26.setDisabled(True)
 			self.dlg.label_14.setDisabled(True)
-			
+
 			# clear widgets
 			self.dlg.dsb_hwind.setValue(0.0)
-			
+
 			self.dlg.ch_frict.setChecked(False)
-			
-			self.dlg.cb_wind.setCurrentIndex(0)
-			self.dlg.cb_hmin.setCurrentIndex(0)
-			self.dlg.cb_hmax.setCurrentIndex(0)
-			self.dlg.cb_canopy.setCurrentIndex(0)
+
+			self.setCboxEmpty(self.dlg.cb_wind)
+			self.setCboxEmpty(self.dlg.cb_hmin)
+			self.setCboxEmpty(self.dlg.cb_hmax)
+			self.setCboxEmpty(self.dlg.cb_canopy)
 		else:
 			# enabled widgets
 			self.dlg.dsb_hwind.setEnabled(True)
-			
+
 			self.dlg.ch_frict.setEnabled(True)
 			self.dlg.ch_canopy.setEnabled(True)
-			
+
 			self.dlg.cb_wind.setEnabled(True)
 			self.dlg.cb_hmin.setDisabled(True)
 			self.dlg.cb_hmax.setDisabled(True)
 			self.dlg.cb_canopy.setEnabled(True)
-			
+
 			self.dlg.b_wind.setEnabled(True)
 			self.dlg.b_hmin.setDisabled(True)
 			self.dlg.b_hmax.setDisabled(True)
 			self.dlg.b_canopy.setEnabled(True)
-			
+
 			self.dlg.label_19.setEnabled(True)
 			self.dlg.label_20.setEnabled(True)
 			self.dlg.label_21.setEnabled(True)
 			self.dlg.label_26.setEnabled(True)
 			self.dlg.label_14.setEnabled(True)
-			
+
 			self.dlg.ch_frict.setChecked(True)
 			self.dlg.ch_canopy.setChecked(True)
-			
+
 			self.dlg.dsb_hwind.setValue(10.0)
 
 	def systemsGuiSet(self):
 		"""GUI settings according to selected imaging systems"""
-		
+
 		if self.dlg.cb_systems.currentIndex() > 2:
 			# set disbaled unused widgets
 			self.dlg.cb_blue.setDisabled(True)
@@ -393,10 +312,10 @@ class SEBCS:
 			self.dlg.b_swir1.setDisabled(True)
 			self.dlg.b_swir2.setDisabled(True)
 			# set clear cboxes
-			self.dlg.cb_blue.setCurrentIndex(0)
-			self.dlg.cb_green.setCurrentIndex(0)
-			self.dlg.cb_swir1.setCurrentIndex(0)
-			self.dlg.cb_swir2.setCurrentIndex(0)
+			self.setCboxEmpty(self.dlg.cb_blue)
+			self.setCboxEmpty(self.dlg.cb_green)
+			self.setCboxEmpty(self.dlg.cb_swir1)
+			self.setCboxEmpty(self.dlg.cb_swir2)
 
 		else:
 			# set widgets enabled
@@ -415,14 +334,14 @@ class SEBCS:
 
 	def setMethod(self):
 		"""Definition of calculation method"""
-		
+
 		if self.dlg.cb_methods.currentIndex() == 0:
 			rb_method = "aero"
 		elif self.dlg.cb_methods.currentIndex() == 1:
 			rb_method = "SEBAL"
 		else:
 			rb_method = "grad"
-		
+
 		return rb_method
 
 	def unload(self):
@@ -436,172 +355,278 @@ class SEBCS:
 	def run(self):
 		"""Run method that performs all the real work"""
 
-		# List of names in QGIS legend and paths to files
-		self.lyrs, self.lyrs_path = self.addRasterLyrs()
+		# Initial setting of the UI
+		self.keepSettings()
 
-		# Adding the list of layers names to cboxes
-		self.dlg.cb_blue.addItems(self.lyrs)
-		self.dlg.cb_green.addItems(self.lyrs)
-		self.dlg.cb_red.addItems(self.lyrs)
-		self.dlg.cb_nir.addItems(self.lyrs)
-		self.dlg.cb_swir1.addItems(self.lyrs)
-		self.dlg.cb_swir2.addItems(self.lyrs)
-		self.dlg.cb_ts_layer.addItems(self.lyrs)
-		self.dlg.cb_dmt.addItems(self.lyrs)
-		self.dlg.cb_ta.addItems(self.lyrs)
-		self.dlg.cb_wind.addItems(self.lyrs)
-		self.dlg.cb_hmin.addItems(self.lyrs)
-		self.dlg.cb_hmax.addItems(self.lyrs)
-		self.dlg.cb_canopy.addItems(self.lyrs)
-		self.dlg.cb_mask.addItems(self.lyrs)
-		self.dlg.cb_albedo.addItems(self.lyrs)
-		
+		# if self.dlg.cb_methods.currentIndex() == 0:
+		self.dlg.ch_canopy.toggled.connect(
+			lambda: self.setCboxEmpty(self.dlg.cb_hmin))
+		self.dlg.ch_canopy.toggled.connect(
+			lambda: self.setCboxEmpty(self.dlg.cb_hmax))
+
+		# Set canopy height CBox empty
+		self.dlg.ch_canopy.toggled.connect(
+			lambda: self.setCanopyEmpty(self.dlg.cb_canopy))
+
+		# Set path to selected raster files to CBoxes - for each one
+		# Select raster:
+		self.dlg.cb_blue.setFilters(QgsMapLayerProxyModel.RasterLayer)
+		self.dlg.cb_green.setFilters(QgsMapLayerProxyModel.RasterLayer)
+		self.dlg.cb_red.setFilters(QgsMapLayerProxyModel.RasterLayer)
+		self.dlg.cb_nir.setFilters(QgsMapLayerProxyModel.RasterLayer)
+		self.dlg.cb_swir1.setFilters(QgsMapLayerProxyModel.RasterLayer)
+		self.dlg.cb_swir2.setFilters(QgsMapLayerProxyModel.RasterLayer)
+		self.dlg.cb_ts_layer.setFilters(
+			QgsMapLayerProxyModel.RasterLayer)
+		self.dlg.cb_dmt.setFilters(QgsMapLayerProxyModel.RasterLayer)
+		self.dlg.cb_ta.setFilters(QgsMapLayerProxyModel.RasterLayer)
+		self.dlg.cb_wind.setFilters(QgsMapLayerProxyModel.RasterLayer)
+		self.dlg.cb_hmin.setFilters(QgsMapLayerProxyModel.RasterLayer)
+		self.dlg.cb_hmax.setFilters(QgsMapLayerProxyModel.RasterLayer)
+		self.dlg.cb_canopy.setFilters(QgsMapLayerProxyModel.RasterLayer)
+		self.dlg.cb_mask.setFilters(QgsMapLayerProxyModel.RasterLayer)
+		self.dlg.cb_albedo.setFilters(QgsMapLayerProxyModel.RasterLayer)
+
+		# Set path to selected raster files to CBoxes
+		self.dlg.b_blue.clicked.connect(lambda:
+										self.selectFile(
+											self.dlg.cb_blue))
+		self.dlg.b_green.clicked.connect(lambda:
+										 self.selectFile(
+											 self.dlg.cb_green))
+		self.dlg.b_red.clicked.connect(lambda:
+									   self.selectFile(self.dlg.cb_red))
+		self.dlg.b_nir.clicked.connect(lambda:
+									   self.selectFile(self.dlg.cb_nir))
+		self.dlg.b_swir1.clicked.connect(lambda:
+										 self.selectFile(
+											 self.dlg.cb_swir1))
+		self.dlg.b_swir2.clicked.connect(lambda:
+										 self.selectFile(
+											 self.dlg.cb_swir2))
+		self.dlg.b_ts_layer.clicked.connect(lambda:
+											self.selectFile(
+												self.dlg.cb_ts_layer))
+		self.dlg.b_dmt.clicked.connect(lambda:
+									   self.selectFile(self.dlg.cb_dmt))
+		self.dlg.b_ta.clicked.connect(lambda:
+									  self.selectFile(self.dlg.cb_ta))
+		self.dlg.b_wind.clicked.connect(lambda:
+										self.selectFile(
+											self.dlg.cb_wind))
+		self.dlg.b_hmin.clicked.connect(lambda:
+										self.selectFile(
+											self.dlg.cb_hmin))
+		self.dlg.b_hmax.clicked.connect(lambda:
+										self.selectFile(
+											self.dlg.cb_hmax))
+		self.dlg.b_canopy.clicked.connect(lambda:
+										  self.selectFile(
+											  self.dlg.cb_canopy))
+		self.dlg.b_mask.clicked.connect(lambda:
+										self.selectFile(
+											self.dlg.cb_mask))
+		self.dlg.b_albedo.clicked.connect(lambda:
+										  self.selectFile(
+											  self.dlg.cb_albedo))
+
+		# Outputs
+		self.dlg.ch_multi.toggled.connect(lambda:
+										  self.dlg.out_folder.setFilePath(
+											  ""))
+		self.dlg.ch_multi.toggled.connect(lambda:
+										  self.dlg.out_multifile.setFilePath(
+											  ""))
+
+		# Set unchecked friction velocity if the gradient method is used
+		# self.dlg.rb_grad.toggled.connect(self.frictUncheck)
+		self.dlg.ch_all.toggled.connect(self.frictUncheck)
+
+		# Set latitude and longitude from NIR band
+		self.dlg.b_auto_latlong.clicked.connect(lambda: self.latLong())
+
+		# Checkbox list for output layers - for testing if they are cheked or no.
+		self.out_chbox_list = [self.dlg.ch_rs_in,
+							   self.dlg.ch_rs_out,
+							   self.dlg.ch_albedo,
+							   self.dlg.ch_rl_in,
+							   self.dlg.ch_rl_out,
+							   self.dlg.ch_rn,
+							   self.dlg.ch_ts,
+							   self.dlg.ch_emiss,
+							   self.dlg.ch_le,
+							   self.dlg.ch_le_pen,
+							   self.dlg.ch_le_pt,
+							   self.dlg.ch_sensible,
+							   self.dlg.ch_ground,
+							   self.dlg.ch_e_int,
+							   self.dlg.ch_ef,
+							   self.dlg.ch_bowen,
+							   self.dlg.ch_omega,
+							   self.dlg.ch_cwsi,
+							   self.dlg.ch_frict,
+							   self.dlg.ch_ra,
+							   self.dlg.ch_rc,
+							   self.dlg.ch_ndvi,
+							   self.dlg.ch_msavi,
+							   self.dlg.ch_ndmi,
+							   self.dlg.ch_savi,
+							   self.dlg.ch_lai,
+							   self.dlg.ch_slope,
+							   self.dlg.ch_aspect]
+
+		# Reset content of the form
+		self.dlg.buttonBox.rejected.connect(lambda: self.keepSettings())
+
+		# # Help
+		# self.dlg.buttonBox.helpRequested.connect(self.pluginHelp)
+
+		# GUI settings according to selected calculation method
+		self.dlg.cb_methods.currentIndexChanged.connect(
+			self.methodsGuiSet)
+
+		# GUI settings according to selected imaging systems
+		self.dlg.cb_systems.currentIndexChanged.connect(
+			self.systemsGuiSet)
+
 		# Set current date and time
 		self.dlg.dateEdit.setDate(QDate.currentDate())
 		self.dlg.timeEdit.setTime(QTime.currentTime())
-		
-		self.dlg.show()
-		
-		# Run the dialog event loop
-		result = self.dlg.exec_()
-		# See if OK was pressed
-		if result:
-			
-			try:
-				# Setting of the inputs
-				self.setInputs()
 
-				# Condition - calculation according to the output path 
-				if self.out_folder_path != None and self.out_folder_path != "":
-					
-					# Creating of log file
-					self.settingsLog()
-					
-					# Check the completness of the form filling
-					ch_form = self.checkForm()
-									
-					# Check for differences in layers spatial extent
-					lyr_ext = self.lyrsExtent()
-	
-					# Condition - testing of the for fullness and layers extent
-					if lyr_ext == True and ch_form == True:
-						# Start progress bar
-						self.progbar()
-						
-						# Run SEBCS calculation
-						self.WT = WorkingThread(self.calculate)
-						self.WT.taskFinished.connect(self.onFinished)
-						
-						self.onStart()
-						
-					else:
-						#self.iface.messageBar().pushMessage("Error", "Ooops, an error has occur during calculation...", level = QgsMessageBar.CRITICAL)	
-						self.reset()
-						
-				else:
-					self.iface.messageBar().pushMessage(self.tr("Warning"), self.tr("No output path has been selected. Try it again."), level = Qgis.Warning)
-					self.reset()
-					
-			except:
-				self.iface.messageBar().pushMessage("Error", "Ooops, an error has occur during calculation...", level = Qgis.Critical)
-				self.reset()
+		self.dlg.show()
+
+		# Exec calculation
+		result = self.dlg.exec_()
+
+		if result:
+			self.resultsRun()
+			self.keepSettings()
+
+	def resultsRun(self):
+		"""Running the calculation"""
+
+		# Variable definition
+		lyr_ext = None
+		ch_form = None
+
+		# Setting of the inputs
+		try:
+			self.setInputs()
+
+		except IOError:
+			self.iface.messageBar().pushMessage("Error",
+												"Ooops, data has "
+												"not been readed...",
+												level=Qgis.Critical)
+
+		# Check conditions and write log
+		try:
+
+			self.settingsLog()
+
+			# Check the completness of the form filling
+			ch_form = self.checkForm()
+
+			# Check for differences in layers spatial extent
+			lyr_ext = self.lyrsExtent()
+
+		except IOError:
+			self.iface.messageBar().pushMessage("Error",
+												"Ooops, some error "
+												"in data sets...",
+												level=Qgis.Critical)
+
+		if lyr_ext == True and ch_form == True:
+			# Start progress bar
+			self.progbar()
+
+			# Run SEBCS calculation
+			self.WT = WorkingThread(self.calculate)
+			self.WT.taskFinished.connect(self.onFinished)
+
+			self.onStart()
+
+		else:
+			self.iface.messageBar().pushMessage("Error", "Ooops, "
+					"an error occured during calculation...",
+												level=Qgis.Critical)
+
+	def keepSettings(self):
+		"""Keep settings from previous session of calculation"""
+
+		if self.dlg.ch_keep.isChecked():
+			pass
+		else:
+			self.reset()
 
 	def pluginHelp(self):
 		"""Open the help file.
 		"""
-		self.help_file = os.path.join(self.plugin_dir, "help", "build", "html", "index.html")
+		self.help_file = os.path.join(self.plugin_dir, "help", "build",
+									  "html", "index.html")
 		try:
-			#if sys.platform == 'linux2':
 			QDesktopServices.openUrl(QUrl(self.help_file))
-			#else:
-			#	os.startfile(self.help_file)			
-		except:
+		except IOError:
 			self.iface.messageBar().pushMessage(self.tr("Help error"),
-								self.tr("Ooops, an error occured during help file opening..."),
-								level =  Qgis.Warning, duration = 5)
-		
+												self.tr(
+													"Ooops, an error occured during help "
+													"file opening..."),
+												level=Qgis.Warning,
+												duration=5)
+
 	def selectFile(self, comboBox):
 		"""
 		Opening the raster layer file and adding the path to the combobox
 		on end of the list with comboBox items.
-		
+
 		:param comboBox: Qt combobox.
 		:type comboBox: QComboBox
 		"""
 
-		ind = comboBox.count()
-		
-		if len(self.lyrs) != ind:
-			comboBox.removeItem(ind - 1)
-		else:
-			pass
-		
 		try:
 			rast_path = QFileDialog.getOpenFileName(None,
-								self.tr("Select file"), self.out_folder_path,
-								"Images (*.*);; GeoTIFF (*.tif);; Idrisi Raster (*.rst);; Erdas Imagine (*.img);; GDAL Virtual (*.vrt);; ENVI (*.hdr)")
-			self.out_folder_path, filename = os.path.split(rast_path)
-						
-			comboBox.addItem(str(rast_path))
-			comboBox.setCurrentIndex(len(self.lyrs))
-		except:
-			self.iface.messageBar().pushMessage(self.tr("Path error"),
-								self.tr("Selected path contains probably "
-								        "diacritics or spaces. Try it again."),
-								level =  Qgis.Warning)
-			comboBox.setCurrentIndex(0)
+													self.tr(
+														"Select file"),
+													self.out_folder_path,
+													"Images (*.*);; "
+													"GeoTIFF (*.tif);; "
+													"Idrisi Raster (*.rst);; "
+													"Erdas Imagine (*.img);; "
+													"GDAL Virtual (*.vrt);; "
+													"ENVI (*.hdr)")
 
-	def pathToLyr(self, comboBox):
-		"""Path to layer"""
-		c_ind = comboBox.currentIndex()
-		if c_ind > len(self.lyrs) - 1:
-			lyr_path = comboBox.currentText()
-		else:
-			lyr_path = self.lyrs_path[c_ind]
-			
-		return lyr_path
-			
-	def addRasterLyrs(self):
-		"""Insert list of rasters from QGIS layers panel to the combobox item list.
-		The first value is empty ("")."""
-		
-		lyrs = [""]									# list of output layers names
-		lyrs_path = [""]							# list of output layers paths
-		layers = QgsProject.instance().mapLayers().values()		# nacte seznam vrstev z QGIS legendy --> vsechny, i neaktivni vrstvy
-		try:
-			for i in layers:
-				if i.type() == 1:						# type 0 je vektor, type 1 je raster
-					lyr_name = i.name()					# vypise jmeno vrstvy
-					lyr_path = i.source()           	# vypise cestu k vrstve
-					lyrs.append(lyr_name)
-					lyrs_path.append(lyr_path)
+			comboBox.setAdditionalItems([rast_path[0]])
+			ind = comboBox.count() - 1
+			comboBox.setCurrentIndex(ind)
+
 		except FileNotFoundError:
-			lyrs = [""]
-			lyrs_path = [""]
+			self.iface.messageBar().pushMessage(self.tr("Path error"),
+												self.tr(
+													"Selected file has not "
+													"been found."),
+												level=Qgis.Warning)
 
-		return lyrs, lyrs_path
-			
 	def reset(self):
 		"""Clear all fields and set original settings"""
-		
-		self.dlg.cb_blue.clear()
-		self.dlg.cb_green.clear()
-		self.dlg.cb_red.clear()
-		self.dlg.cb_nir.clear()
-		self.dlg.cb_swir1.clear()
-		self.dlg.cb_swir2.clear()
-		self.dlg.cb_ts_layer.clear()
-		self.dlg.cb_dmt.clear()
-		self.dlg.cb_ta.clear()
-		self.dlg.cb_wind.clear()
-		self.dlg.cb_hmin.clear()
-		self.dlg.cb_hmax.clear()
-		self.dlg.cb_canopy.clear()
-		self.dlg.cb_mask.clear()
-		self.dlg.cb_albedo.clear()
+
+		self.setCboxEmpty(self.dlg.cb_blue)
+		self.setCboxEmpty(self.dlg.cb_green)
+		self.setCboxEmpty(self.dlg.cb_red)
+		self.setCboxEmpty(self.dlg.cb_nir)
+		self.setCboxEmpty(self.dlg.cb_swir1)
+		self.setCboxEmpty(self.dlg.cb_swir2)
+		self.setCboxEmpty(self.dlg.cb_ts_layer)
+		self.setCboxEmpty(self.dlg.cb_dmt)
+		self.setCboxEmpty(self.dlg.cb_ta)
+		self.setCboxEmpty(self.dlg.cb_wind)
+		self.setCboxEmpty(self.dlg.cb_hmin)
+		self.setCboxEmpty(self.dlg.cb_hmax)
+		self.setCboxEmpty(self.dlg.cb_canopy)
+		self.setCboxEmpty(self.dlg.cb_mask)
+		self.setCboxEmpty(self.dlg.cb_albedo)
 		self.dlg.cb_methods.setCurrentIndex(0)
-		self.dlg.cb_systems.setCurrentIndex(0)
-		
+		self.dlg.cb_systems.setCurrentIndex(2)
+
 		self.dlg.dsb_global.setValue(0.0)
 		self.dlg.dsb_humid.setValue(0.0)
 		self.dlg.dsb_hwind.setValue(10.0)
@@ -609,343 +634,367 @@ class SEBCS:
 		self.dlg.dsb_long.setValue(0.0)
 		self.dlg.dateEdit.clear()
 		self.dlg.timeEdit.clear()
-		
-		self.dlg.le_out_folder.clear()					
-		
-		self.dlg.ch_all.setChecked(True)				# clear selection for output files - set all button
-		for i in self.out_chbox_list:					# clear all outputs
+
+		self.dlg.out_folder.setFilePath("")
+		self.dlg.out_multifile.setFilePath("")
+
+		# Set checkbox list for outputs
+		self.out_chbox_list = [self.dlg.ch_rs_in,
+							   self.dlg.ch_rs_out,
+							   self.dlg.ch_albedo,
+							   self.dlg.ch_rl_in,
+							   self.dlg.ch_rl_out,
+							   self.dlg.ch_rn,
+							   self.dlg.ch_ts,
+							   self.dlg.ch_emiss,
+							   self.dlg.ch_le,
+							   self.dlg.ch_le_pen,
+							   self.dlg.ch_le_pt,
+							   self.dlg.ch_sensible,
+							   self.dlg.ch_ground,
+							   self.dlg.ch_e_int,
+							   self.dlg.ch_ef,
+							   self.dlg.ch_bowen,
+							   self.dlg.ch_omega,
+							   self.dlg.ch_cwsi,
+							   self.dlg.ch_frict,
+							   self.dlg.ch_ra,
+							   self.dlg.ch_rc,
+							   self.dlg.ch_ndvi,
+							   self.dlg.ch_msavi,
+							   self.dlg.ch_ndmi,
+							   self.dlg.ch_savi,
+							   self.dlg.ch_lai,
+							   self.dlg.ch_slope,
+							   self.dlg.ch_aspect]
+
+		self.dlg.ch_all.setChecked(
+			True)  # clear selection for output files - set all button
+		for i in self.out_chbox_list:  # clear all outputs
 			i.setChecked(True)
-		
-		self.dlg.cb_out_format.setCurrentIndex(3)		# setting of GTiff as primary output type
-		
+
 	def setCboxEmpty(self, comboBox):
 		"""Setting of empty value (text) in comboBoxes"""
-		comboBox.setCurrentIndex(0)
-		
-	def outFolder(self):
-		self.dlg.le_out_folder.clear()
-		try:
-			self.out_folder_path = QFileDialog.getExistingDirectory(None, 
-												self.tr("Select output folder"),
-												self.out_folder_path)
-			self.dlg.le_out_folder.setText(str(self.out_folder_path))
-			
-		except:
-			self.iface.messageBar().pushMessage(self.tr("Path error"),
-										self.tr("Selected path contains probably diacritics or spaces. Try it again."), 
-										level =  Qgis.Warning)
-	
-	def getOutputName(self):
-		"""Selection of the multiband or singleband output and multiband
-		 output layer name.
-		"""
-		
-		if self.dlg.ch_multi.isChecked():
-			multiband = True
-			out_file_name = self.dlg.le_out_name.text()
-		else:
-			multiband = False
-			out_file_name = None
-			
-		return multiband, out_file_name
-	
-	def setMultibandDisabled(self):
-		""" Set disabled multiband output for RST otput format.
-		"""
-		
-		cur_ind = self.dlg.cb_out_format.currentIndex()
-		if cur_ind == 2:
-			self.dlg.ch_multi.setChecked(False)
-			self.dlg.ch_multi.setDisabled(True)
-		else:
-			self.dlg.ch_multi.setEnabled(True)
+
+		comboBox.setAdditionalItems([""])
+		ind = comboBox.count() - 1
+		comboBox.setCurrentIndex(ind)
 
 	def frictUncheck(self):
 		"""Set unchecked friction velocity if the gradient method is used.
 		"""
-	
+
 		if self.dlg.cb_methods.currentIndex() == 1:
 			self.dlg.ch_frict.setChecked(False)
 			if self.dlg.ch_all.isChecked():
 				self.dlg.ch_frict.setChecked(False)
-			
+
 	def setCanopyEmpty(self, comboBox):
 		if self.dlg.ch_canopy.isChecked():
 			pass
 		else:
-			comboBox.setCurrentIndex(0)
-	
+			self.setCboxEmpty(comboBox)
+
 	def latLong(self):
 		"""Automatic setting of the lyrs coordinates according to the
 		projection of NIR band in to the form."""
-		
+
 		self.nir_path = self.pathToLyr(self.dlg.cb_nir)
-		
+
 		if self.nir_path == "":
 			self.iface.messageBar().pushMessage(self.tr("Info"),
-							self.tr("Select the NIR band first. Try it again."),
-							level =  Qgis.Warning)
+												self.tr(
+													"Select the NIR band first. Try it again."),
+												level=Qgis.Warning)
 		else:
 			try:
 				ds = gdal.Open(self.nir_path)
 				gtransf = ds.GetGeoTransform()
-				leftCornerX = gtransf[0] 						# X position of left corner of the layer
-				leftCornerY = gtransf[3]						# Y position of left corner of the layer
-				xSize = gtransf[1]								# pixel X size
-				ySize = gtransf[5]								# pixel Y size
-				cols = ds.RasterXSize							# No. of columns
-				rows = ds.RasterYSize							# No. of rows
-				
-				pointX = leftCornerX + (xSize*cols)/2			# X position of the middle of the layer
-				pointY = leftCornerY + (ySize*rows)/2			# Y position of the middle of the layer
-				
+				leftCornerX = gtransf[
+					0]  # X position of left corner of the layer
+				leftCornerY = gtransf[
+					3]  # Y position of left corner of the layer
+				xSize = gtransf[1]  # pixel X size
+				ySize = gtransf[5]  # pixel Y size
+				cols = ds.RasterXSize  # No. of columns
+				rows = ds.RasterYSize  # No. of rows
+
+				pointX = leftCornerX + (
+						xSize * cols) / 2  # X position of the middle of the layer
+				pointY = leftCornerY + (
+						ySize * rows) / 2  # Y position of the middle of the layer
+
 				prj = ds.GetProjection()
-				
+
 				ds = None
-								
+
 				# Spatial Reference System
-				srs=osr.SpatialReference(wkt=prj)
+				srs = osr.SpatialReference(wkt=prj)
 				inputEPSG = None
 				if srs.IsProjected:
 					inputEPSG = int(srs.GetAttrValue("authority", 1))
-				
-				outputEPSG = int(4326)				# WGS84
-				
+
+				outputEPSG = int(4326)  # WGS84
+
 				# create a geometry from coordinates
 				point = ogr.Geometry(ogr.wkbPoint)
 				point.AddPoint(pointX, pointY)
-				
+
 				# create coordinate transformation
 				inSpatialRef = osr.SpatialReference()
 				inSpatialRef.ImportFromEPSG(inputEPSG)
-				
+
 				outSpatialRef = osr.SpatialReference()
 				outSpatialRef.ImportFromEPSG(outputEPSG)
-				
-				coordTransform = osr.CoordinateTransformation(inSpatialRef, outSpatialRef)
-				
+
+				coordTransform = osr.CoordinateTransformation(
+					inSpatialRef, outSpatialRef)
+
 				# transform point
 				point.Transform(coordTransform)
-				
+
 				# Coords in EPSG 4326
 				self.long_dec = point.GetX()
 				self.lat_dec = point.GetY()
-				
-				# Insert coords into the form		
+
+				# Insert coords into the form
 				self.dlg.dsb_lat.setValue(self.lat_dec)
 				self.dlg.dsb_long.setValue(self.long_dec)
-			
-			except:
-				self.iface.messageBar().pushMessage(self.tr("Info"), 
-										self.tr("Selected NIR band has probably no spatial reference. Set the spatial reference manually."),
-										level =  Qgis.Warning)
-		
+
+			except Exception:
+				self.iface.messageBar().pushMessage(self.tr("Info"),
+													self.tr(
+														"Selected NIR band has probably no spatial reference. Set the spatial reference manually."),
+													level=Qgis.Warning)
+
 	def lyrsExtent(self):
-		"""Check differences between number of columns and rows in the input 
+		"""Check differences between number of columns and rows in the input
 		rasters
 		"""
-		# TODO: zmenit na selekci plochy bez prekryvu...
+		# TODO: use overlap_clip...
 
-		self.in_lyrs_list_true = [i for i in self.in_lyrs_list if i != None and i != ""]	# List of input rasters without empty paths
-		 
-		lcols = []									# No. of columns in the layers
-		lrows = []									# No. of rows in the layers
+		self.in_lyrs_list_true = [i for i in self.in_lyrs_list if
+								  i != None and i != ""]  # List of input rasters without empty paths
+
+		lcols = []  # No. of columns in the layers
+		lrows = []  # No. of rows in the layers
 
 		for i in self.in_lyrs_list_true:
 			ds = gdal.Open(i)
-			cols = ds.RasterXSize					# No. of columns
-			rows = ds.RasterYSize					# No. of rows
+			cols = ds.RasterXSize  # No. of columns
+			rows = ds.RasterYSize  # No. of rows
 			ds = None
 			lcols.append(cols)
 			lrows.append(rows)
-		
+
 		try:
 			if max(lcols) > min(lcols) and max(lrows) > min(lrows):
-				self.iface.messageBar().pushMessage(self.tr("Warning"), 
-										self.tr("Selected raster layers "
-										        "differ in spatial extent ( "
-										        "different number of columns "
-										        "or rows). Please, try it again."),
-										level =  Qgis.Warning)
+				self.iface.messageBar().pushMessage(self.tr("Warning"),
+													self.tr(
+														"Selected raster layers "
+														"differ in spatial extent ( "
+														"different number of columns "
+														"or rows). Please, try it again."),
+													level=Qgis.Warning)
 				return False
-			
+
 			else:
 				return True
-		
-		except:
-			self.iface.messageBar().pushMessage(self.tr("Warning"), 
-										self.tr("No raster layers has been probably selected. Please, try it again."),
-										level =  Qgis.Warning)
+
+		except FileExistsError:
+			self.iface.messageBar().pushMessage(self.tr("Warning"),
+												self.tr(
+													"No raster layers has been probably selected. Please, try it again."),
+												level=Qgis.Warning)
 			return False
-	
+
 	def checkForm(self):
-		"""Check the completness of the input SEBCS form filling, 
+		"""Check the completness of the input SEBCS form filling,
 		i.e. if the required items are set.
 		"""
 		check_state = True
-		
-		if self.red_path == None or self.red_path == "":
-			self.iface.messageBar().pushMessage(self.tr("Warning"), 
-								self.tr("Red band has not been selected. Please, try it again."),
-								level =  Qgis.Warning)
-			check_state = False
-			
-		if self.nir_path == None or self.nir_path == "":
+
+		if self.red_path is None or self.red_path == "":
 			self.iface.messageBar().pushMessage(self.tr("Warning"),
-								self.tr("NIR band has not been selected. Please, try it again."),
-								level =  Qgis.Warning)
+												self.tr(
+													"Red band has not been selected. Please, try it again."),
+												level=Qgis.Warning)
 			check_state = False
-			
-		if self.thermal_path == None or self.thermal_path == "":
-			self.iface.messageBar().pushMessage(self.tr("Warning"), 
-								self.tr("Thermal layer has not been selected. Please, try it again."),
-								level =  Qgis.Warning)
-			check_state = False
-			
-		if self.dmt_path == None or self.dmt_path == "":
+
+		if self.nir_path is None or self.nir_path == "":
 			self.iface.messageBar().pushMessage(self.tr("Warning"),
-								self.tr("DMT layer has not been selected. Please, try it again."),
-								level =  Qgis.Warning)
+												self.tr(
+													"NIR band has not been selected. Please, try it again."),
+												level=Qgis.Warning)
 			check_state = False
-			
-		if self.ta_path == None or self.ta_path == "":
-			self.iface.messageBar().pushMessage(self.tr("Warning"), 
-								self.tr("Air temperature layer has not been selected. Please, try it again."), 
-								level =  Qgis.Warning)
+
+		if self.thermal_path is None or self.thermal_path == "":
+			self.iface.messageBar().pushMessage(self.tr("Warning"),
+												self.tr(
+													"Thermal layer has not been selected. Please, try it again."),
+												level=Qgis.Warning)
 			check_state = False
-			
+
+		if self.dmt_path is None or self.dmt_path == "":
+			self.iface.messageBar().pushMessage(self.tr("Warning"),
+												self.tr(
+													"DMT layer has not been selected. Please, try it again."),
+												level=Qgis.Warning)
+			check_state = False
+
+		if self.ta_path is None or self.ta_path == "":
+			self.iface.messageBar().pushMessage(self.tr("Warning"),
+												self.tr(
+													"Air temperature layer has not been selected. Please, try it again."),
+												level=Qgis.Warning)
+			check_state = False
+
 		if self.rb_method == "aero":
-			if self.wind_path == None or self.wind_path == "":
-				self.iface.messageBar().pushMessage(self.tr("Warning"), 
-								self.tr("Wind speed layer has not been selected. Please, try it again."),
-								level =  Qgis.Warning)
+			if self.wind_path is None or self.wind_path == "":
+				self.iface.messageBar().pushMessage(self.tr("Warning"),
+													self.tr(
+														"Wind speed layer has not been selected. Please, try it again."),
+													level=Qgis.Warning)
 				check_state = False
-			
+
 			if self.canopy_path is None or self.canopy_path == "":
-				if self.hmin_path == None or self.hmin_path == "":
-					self.iface.messageBar().pushMessage(self.tr("Warning"), 
-									self.tr("Layer of minimal canopy height has not been selected. Please, try it again."), 
-									level =  Qgis.Warning)
+				if self.hmin_path is None or self.hmin_path == "":
+					self.iface.messageBar().pushMessage(
+						self.tr("Warning"),
+						self.tr(
+							"Layer of minimal canopy height has not been selected. Please, try it again."),
+						level=Qgis.Warning)
 					check_state = False
-					
-				if self.hmax_path == None or self.hmax_path == "":
-					self.iface.messageBar().pushMessage(self.tr("Warning"), 
-									self.tr("Layer of maximal canopy height has not been selected. Please, try it again."), 
-									level =  Qgis.Warning)
+
+				if self.hmax_path is None or self.hmax_path == "":
+					self.iface.messageBar().pushMessage(
+						self.tr("Warning"),
+						self.tr(
+							"Layer of maximal canopy height has not been selected. Please, try it again."),
+						level=Qgis.Warning)
 					check_state = False
-			
-			if self.hmin_path == None or self.hmin_path == "" or self.hmax_path == None or self.hmax_path == "":
+
+			if self.hmin_path is None or self.hmin_path == "" or \
+					self.hmax_path == None or self.hmax_path == "":
 				if self.canopy_path is None or self.canopy_path == "":
-					self.iface.messageBar().pushMessage(self.tr("Warning"), 
-									self.tr("Layer of canopy height has not been selected. Please, try it again."), 
-									level =  Qgis.Warning)
+					self.iface.messageBar().pushMessage(
+						self.tr("Warning"),
+						self.tr(
+							"Layer of canopy height has not been selected. Please, try it again."),
+						level=Qgis.Warning)
 					check_state = False
-				
+
 		if len(self.out_lyrs_descr) == 0:
-			self.iface.messageBar().pushMessage(self.tr("Warning"), 
-								self.tr("No output layers have been selected. Try it again."),
-								level = Qgis.Warning)
+			self.iface.messageBar().pushMessage(self.tr("Warning"),
+												self.tr(
+													"No output layers have been selected. Try it again."),
+												level=Qgis.Warning)
 			check_state = False
-			
-		if self.out_folder_path == None or self.out_folder_path == "":
-			self.iface.messageBar().pushMessage(self.tr("Warning"), 
-								self.tr("No output path has been selected. Try it again."),
-								level = Qgis.Warning)
+
+		if self.out_folder_path is None or self.out_folder_path == "":
+			self.iface.messageBar().pushMessage(self.tr("Warning"),
+												self.tr(
+													"No output path has been selected. Try it again."),
+												level=Qgis.Warning)
 			check_state = False
-			
+
 		return check_state
-		
+
 	def outputsList(self):
 		"""Creation of output layers names list for the log.
 		"""
-		self.out_lyrs_list = []					# Boolean list for output lyrs --> receiving function should have correct order
-		self.out_lyrs_descr = []				# List of names for selected variables
-		self.out_lyrs_fnames = []				# List of names for selected output files
-		
+		self.out_lyrs_list = []  # Boolean list for output lyrs --> receiving function should have correct order
+		self.out_lyrs_descr = []  # List of names for selected variables
+		self.out_lyrs_fnames = []  # List of names for selected output files
+
 		# Names of all the output variables
-		self.out_names_all = [self.tr("Incoming shortwave radiation (W.m-2)"),
-							self.tr("Reflected shortwave radiation (W.m-2)"),
-							self.tr("Albedo (rel.)"),
-							self.tr("Incoming longwave radiation (W.m-2)"),
-							self.tr("Reflected longwave radiation (W.m-2)"),
-							self.tr("Total net radiation (W.m-2)"),
-							self.tr("Surface temperature (Degree C)"),
-							self.tr("Surface emissivity (rel.)"),
-							self.tr("Latent heat flux (W.m-2)"),
-							self.tr("Latent heat flux - Penman pot. (W.m-2)"),
-							self.tr("Latent heat flux - Priestley-Taylor (W.m-2)"),
-							self.tr("Sensible heat flux (W.m-2)"),
-							self.tr("Ground heat flux (W.m-2)"),
-							self.tr("Evapotranspiration intensity (mmol.m-2.s-1)"),
-							self.tr("Evaporative fraction (rel.)"),
-							self.tr("Bowen ratio (-)"),
-							self.tr("Decoupling coefficient (rel.)"),
-							self.tr("CWSI (-)"),
-							self.tr("Friction velocity (m.s-1)"),
-							self.tr("Aerodynamic surface resistance (s.m-1)"),
-							self.tr("Resistance for water vapour transfer (s.m-1)"),
-							self.tr("NDVI (-)"),
-							self.tr("MSAVI (-)"),
-							self.tr("NDMI (-)"),
-							self.tr("SAVI (-)"),
-							self.tr("LAI (m2/m-2)"),
-							self.tr("Slope (Degree)"),
-							self.tr("Aspect (Degree)")]
-									
+		self.out_names_all = [
+			self.tr("Incoming shortwave radiation (W.m-2)"),
+			self.tr("Reflected shortwave radiation (W.m-2)"),
+			self.tr("Albedo (rel.)"),
+			self.tr("Incoming longwave radiation (W.m-2)"),
+			self.tr("Reflected longwave radiation (W.m-2)"),
+			self.tr("Total net radiation (W.m-2)"),
+			self.tr("Surface temperature (Degree C)"),
+			self.tr("Surface emissivity (rel.)"),
+			self.tr("Latent heat flux (W.m-2)"),
+			self.tr("Latent heat flux - Penman pot. (W.m-2)"),
+			self.tr("Latent heat flux - Priestley-Taylor (W.m-2)"),
+			self.tr("Sensible heat flux (W.m-2)"),
+			self.tr("Ground heat flux (W.m-2)"),
+			self.tr("Evapotranspiration intensity (mmol.m-2.s-1)"),
+			self.tr("Evaporative fraction (rel.)"),
+			self.tr("Bowen ratio (-)"),
+			self.tr("Decoupling coefficient (rel.)"),
+			self.tr("CWSI (-)"),
+			self.tr("Friction velocity (m.s-1)"),
+			self.tr("Aerodynamic surface resistance (s.m-1)"),
+			self.tr("Resistance for water vapour transfer (s.m-1)"),
+			self.tr("NDVI (-)"),
+			self.tr("MSAVI (-)"),
+			self.tr("NDMI (-)"),
+			self.tr("SAVI (-)"),
+			self.tr("LAI (m2/m-2)"),
+			self.tr("Slope (Degree)"),
+			self.tr("Aspect (Degree)")]
+
 		self.out_fnames_all = ["Rs_in", "Rs_out", "albedo", "RL_in",
-		                       "RL_emit", "Rn", "Ts", "emis", "LE", "LEp",
-		                       "LE_PT", "H", "G", "E_int", "EF", "Bowen",
-		                       "omega", "CWSI", "frict_U", "ra", "rc",
-		                       "NDVI", "MSAVI", "NDMI", "SAVI", "LAI",
-		                       "slope", "aspect"]
-									
+							   "RL_emit", "Rn", "Ts", "emis", "LE",
+							   "LEp",
+							   "LE_PT", "H", "G", "E_int", "EF",
+							   "Bowen",
+							   "omega", "CWSI", "frict_U", "ra", "rc",
+							   "NDVI", "MSAVI", "NDMI", "SAVI", "LAI",
+							   "slope", "aspect"]
+
 		# Loop for creation boolean list of output lyrs
 		for i in self.out_chbox_list:
 			if i.isChecked():
 				self.out_lyrs_list.append(True)
 			else:
 				self.out_lyrs_list.append(False)
-				
+
 		# Loop for creation list of selected variables description
 		i = 0
 		for j in self.out_names_all:
 			if self.out_lyrs_list[i] == True:
 				self.out_lyrs_descr.append(self.out_names_all[i])
 			i = i + 1
-		
+
 		# Loop for creation list of selected output file names
 		i = 0
 		for j in self.out_fnames_all:
 			if self.out_lyrs_list[i] == True:
 				self.out_lyrs_fnames.append(self.out_fnames_all[i])
 			i = i + 1
-	
-		return self.out_lyrs_descr, self.out_lyrs_fnames		
-		
-	def outputsFormat(self, comboBox):
-		"""Returns the driver code, output format description (used 
+
+		return self.out_lyrs_descr, self.out_lyrs_fnames
+
+	def outputsFormat(self):
+		"""Returns the driver code, output format description (used
 		in the log file) and suffix for the output file/s.
 		"""
-		
-		driver_list = ["ENVI", "HFA", "RST","GTiff"]		# GDAL driver for output files
-		
-		out_formats = ["ENVI (*.hdr)", 						# Names of output format
-					   "Erdas Imagine (*.img)",
-					   "Idrisi Raster (*.RST)",
-					   "TIFF/BigTIFF/GeoTIFF (*.tif)"]
-		
-		out_suffixes = ["", ".img", ".rst", ".tif"]			# Suffixes of output names
-		
-		form_ind = comboBox.currentIndex()
+
+		driver_list = ["GTiff", "ENVI", "HFA"]
+
+		out_formats = ["GeoTIFF (*.tif)",
+					   "ENVI .hdr Labelled",
+					   "Erdas Imagine Images (*.img)"
+					   ]
+
+		out_suffixes = [".tif", "", ".img"]  # Suffixes of output
+		# name --> for ENVI is empty suffix
+
+		current_filter = self.dlg.out_multifile.selectedFilter()
+		form_ind = out_formats.index(current_filter)
 		driver = driver_list[form_ind]
-		out_form = out_formats[form_ind]
 		out_suffix = out_suffixes[form_ind]
-		
-		return driver, out_form, out_suffix
-				
+
+		return driver, current_filter, out_suffix
+
 	def imagerySystemType(self):
 		"""Definition of calculation method"""
-		
+
 		if self.dlg.cb_systems.currentIndex() == 0:
 			rb_sat = "L5"
 		elif self.dlg.cb_systems.currentIndex() == 1:
@@ -956,82 +1005,115 @@ class SEBCS:
 			rb_sat = "other"
 		else:
 			rb_sat = "other"
-		
+
 		return rb_sat
-		
+
 	def settingsLog(self):
 		"""Creating log of settings."""
-		
+
 		# List of inputs
 		inputs = [self.tr("Method of computing: ") + self.rb_method,
-				self.tr("Satellite type: ") + self.rb_sat,
-				"",
-				self.tr("Raster layers"),
-				self.tr("Blue band: ") + self.blue_path,
-				self.tr("Green band: ") + self.green_path,
-				self.tr("Red band: ") + self.red_path,
-				self.tr("NIR band: ") + self.nir_path,
-				self.tr("SWIR1 band: ") + self.swir1_path,
-				self.tr("SWIR2 band: ") + self.swir1_path,
-				self.tr("Thermal layer: ") + self.thermal_path,			
-				self.tr("DMT_path: ") + self.dmt_path,
-				self.tr("Air temperature layer: ") + self.ta_path,
-				self.tr("Wind speed: ") + self.wind_path,
-				self.tr("Min. height of vegetation cover: ") + self.hmin_path,
-				self.tr("Max. height of vegetation cover: ") + self.hmax_path,
-				self.tr("Canopy heigth") + self.canopy_path,
-				self.tr("Mask: ") + self.mask_path,
-				self.tr("Albedo: ") + self.albedo_path,
-				"",
-				self.tr("Emissivity setting: ") + self.emis_rule,
-				"",
-				self.tr("Values"),						
-				self.tr("Global radiation: ") + str(self.glob_rad),
-				self.tr("Rel. humidity: ") + str(self.humid),
-				self.tr("Height of wind speed measurement: ") + str(self.hwind),
-				"",
-				self.tr("Date and time of data acquisition"),
-				self.tr("Date: ") + self.acq_date.strftime("%x"),
-				self.tr("Time GMT: ") + self.acq_time.strftime("%X"),
-				"",
-				self.tr("Latitude and longitude of the area"),
-				self.tr("Latitude: ") + str(self.latitude),
-				self.tr("Longitude: ") + str(self.longitude),
-				"",			
-				self.tr("Output folder: ") + self.out_folder_path,
-				self.tr("Output format: ") + self.out_format]
-		
+				  self.tr("Satellite type: ") + self.rb_sat,
+				  "",
+				  self.tr("Raster layers"),
+				  self.tr("Blue band: ") + str(self.blue_path),
+				  self.tr("Green band: ") + str(self.green_path),
+				  self.tr("Red band: ") + str(self.red_path),
+				  self.tr("NIR band: ") + str(self.nir_path),
+				  self.tr("SWIR1 band: ") + str(self.swir1_path),
+				  self.tr("SWIR2 band: ") + str(self.swir1_path),
+				  self.tr("Thermal layer: ") + str(self.thermal_path),
+				  self.tr("DMT_path: ") + str(self.dmt_path),
+				  self.tr("Air temperature layer: ") + str(
+					  self.ta_path),
+				  self.tr("Wind speed: ") + str(self.wind_path),
+				  self.tr(
+					  "Min. height of vegetation cover: ") +
+				  str(self.hmin_path),
+				  self.tr(
+					  "Max. height of vegetation cover: ") +
+				  str(self.hmax_path),
+				  self.tr("Canopy heigth") + str(self.canopy_path),
+				  self.tr("Mask: ") + str(self.mask_path),
+				  self.tr("Albedo: ") + str(self.albedo_path),
+				  "",
+				  self.tr("Values"),
+				  self.tr("Global radiation: ") + str(self.glob_rad),
+				  self.tr("Rel. humidity: ") + str(self.humid),
+				  self.tr("Height of wind speed measurement: ") + str(
+					  self.hwind),
+				  "",
+				  self.tr("Date and time of data acquisition"),
+				  self.tr("Date: ") + self.acq_date.strftime("%x"),
+				  self.tr("Time GMT: ") + self.acq_time.strftime("%X"),
+				  "",
+				  self.tr("Latitude and longitude of the area"),
+				  self.tr("Latitude: ") + str(self.latitude),
+				  self.tr("Longitude: ") + str(self.longitude),
+				  "",
+				  self.tr("Output folder: ") + str(
+					  self.out_folder_path),
+				  self.tr("Output format: ") + str(self.out_format)
+				  ]
+
 		# Log file path
-		self.log_file = os.path.join(self.out_folder_path, "SEBCS_settings_log.txt")
-		
+		self.log_file = os.path.join(self.out_folder_path,
+									 "SEBCS_settings_log.txt")
+
 		in_export = open(self.log_file, "w")
-		
+
 		# Writing inputs
-		in_export.write(self.tr("List of input variables") + os.linesep + os.linesep)
+		in_export.write(self.tr(
+			"List of input variables") + os.linesep + os.linesep)
 		for i in inputs:
 			in_export.write(i + os.linesep)
-		
+
 		if self.multiband == True:
-			in_export.write(self.tr("Output file is multiband") + os.linesep)
-			in_export.write(self.tr("Output file name: ") + self.out_file_name + os.linesep)
-		
-		# Writing outputs	
-		in_export.write(os.linesep + self.tr("List of output variables") + os.linesep)
+			in_export.write(
+				self.tr("Output file is multiband") + os.linesep)
+			in_export.write(self.tr(
+				"Output file name: ") + self.out_file_name + os.linesep)
+
+		# Writing outputs
+		in_export.write(os.linesep + self.tr(
+			"List of output variables") + os.linesep)
 		for i in self.out_lyrs_descr:
 			in_export.write(i + os.linesep)
-		
+
 		# Writing time of calculation
 		calc_time = time.strftime("%x %X")
-		in_export.write(os.linesep + self.tr("Calculation has been done: ") + str(calc_time)) 
-		
+		in_export.write(
+			os.linesep + self.tr("Calculation has been done: ") + str(
+				calc_time))
+
 		in_export.close()
-	
+
+	def pathToLyr(self, comboBox):
+		"""Get path to input file from combobox"""
+
+		try:
+			get_index = comboBox.currentIndex()
+			get_path = comboBox.layer(get_index).source()
+		except Exception:
+			get_path = comboBox.currentText()
+
+		# if get_path is None or get_path == "":
+		# 	self.iface.messageBar().pushMessage(
+		# 		self.tr("Path error"),
+		# 		self.tr("Path to file has not been selected"),
+		# 		level=Qgis.Warning)
+		# 	sys.tracebacklimit = None
+		# 	raise FileNotFoundError(
+		# 		self.tr("Path to file has not been selected"))
+
+		return get_path
+
 	def setInputs(self):
 		# Calculation method
-		self.rb_method = self.setMethod() 
-		
+		self.rb_method = self.setMethod()
+
 		# Satellite type
-		self.rb_sat = self.imagerySystemType() 
+		self.rb_sat = self.imagerySystemType()
 
 		# Paths to selected files
 		self.blue_path = self.pathToLyr(self.dlg.cb_blue)
@@ -1065,37 +1147,45 @@ class SEBCS:
 							 self.hmax_path,
 							 self.canopy_path,
 							 self.mask_path,
-							 self.albedo_path]	
-		
+							 self.albedo_path]
+
 		# Values
-		self.emis_rule = self.dlg.cb_emiss.currentText()
-		self.glob_rad = self.dlg.dsb_global.value()			# float
-		self.humid = self.dlg.dsb_humid.value()				# float
-		self.hwind = self.dlg.dsb_hwind.value()				# float, heigth of wind speed measurement
-					
+		self.glob_rad = self.dlg.dsb_global.value()  # float
+		self.humid = self.dlg.dsb_humid.value()  # float
+		self.hwind = self.dlg.dsb_hwind.value()  # float, heigth of wind speed measurement
+
 		# Date and Time
-		self.acq_date_qdat = self.dlg.dateEdit.date()			# QDat format
-		self.acq_date = self.acq_date_qdat.toPyDate()			# datetime.date format
-		
-		self.acq_time_qtime = self.dlg.timeEdit.time()			# QTime format
-		self.acq_time = self.acq_time_qtime.toPyTime()			# datetime format
-		
+		self.acq_date_qdat = self.dlg.dateEdit.date()  # QDat format
+		self.acq_date = self.acq_date_qdat.toPyDate()  # datetime.date format
+
+		self.acq_time_qtime = self.dlg.timeEdit.time()  # QTime format
+		self.acq_time = self.acq_time_qtime.toPyTime()  # datetime format
+
 		# Lat and Long
 		self.latitude = self.dlg.dsb_lat.value()
 		self.longitude = self.dlg.dsb_long.value()
-		
-		# Output folder --> path from lineEdit
-		self.out_folder_path = self.dlg.le_out_folder.text()
-		
-		# Output name and multiband setting
-		self.multiband, self.out_file_name = self.getOutputName()
+
+		# Output folder and/or output file path
+		if self.dlg.ch_multi.isChecked() == True:
+			self.multiband = True
+			self.out_file_name = self.dlg.out_multifile.filePath()
+			self.out_folder_path = os.path.dirname(self.out_file_name)
+			self.out_driver, self.out_format, self.out_suffix = \
+				self.outputsFormat()
+
+		else:
+			self.out_folder_path = self.dlg.out_folder.filePath()
+			self.multiband = False
+			self.out_file_name = None
+			self.out_driver = "GTiff"
+			self.out_format = "GeoTIFF (*.tif)"
+			self.out_suffix = ".tif"
 
 		# Set lists of description (out_lyrs_descr) and names (self.out_lyrs_fnames)
-		# of the output layers		
+		# of the output layers
 		self.out_lyrs_descr, self.out_lyrs_fnames = self.outputsList()
-	
+
 		# Set output format
-		self.out_driver, self.out_format, self.out_suffix = self.outputsFormat(self.dlg.cb_out_format)
 
 	def calculate(self):
 		"""Calculate all the variables"""
@@ -1127,24 +1217,26 @@ class SEBCS:
 
 		# Vegetation indices
 		self.ndvi = vi.viNDVI(red_lyr, self.nir_lyr)
-		self.msavi = vi.viMSAVI(red_lyr, self. nir_lyr)
+		self.msavi = vi.viMSAVI(red_lyr, self.nir_lyr)
 		self.ndmi = vi.viNDMI(self.nir_lyr, swir1_lyr)
 		self.savi = vi.viSAVI(red_lyr, self.nir_lyr, self.savi_L)
 		self.lai = vi.LAI(red_lyr, self.nir_lyr, self.lai_method)
-		if canopy_lyr is None or canopy_lyr == "":
-			h_eff = vi.vegHeight(h_min_lyr, h_max_lyr, self.msavi)
+		if self.rb_method != "grad":
+			if canopy_lyr is None or canopy_lyr == "":
+				h_eff = vi.vegHeight(h_min_lyr, h_max_lyr, self.msavi)
+			else:
+				h_eff = canopy_lyr
 		else:
-			h_eff = canopy_lyr
+			h_eff = None
 
 		print("vegindexy OK")
 
 		# Calculate misc
-		ta = mt.airTemperatureBlending(ta_Zst_lyr,self.Z, self.hwind,
-		                               self.adiabatic) # ta at level Z
+		ta = mt.airTemperatureBlending(ta_Zst_lyr, self.Z, self.hwind,
+									   self.adiabatic)  # ta at level Z
 
 		self.emiss = mt.emissivity(red_lyr, self.ndvi)
-		self.ts_C = mt.surfaceTemperature(t_surf_uncorr_lyr, self.emiss,
-		                                  self.emis_rule)
+		self.ts_C = mt.surfaceTemperature(t_surf_uncorr_lyr, self.emiss)
 
 		# for measurement height
 		E_sat = mt.satVapourPress(ta_Zst_lyr)
@@ -1153,10 +1245,11 @@ class SEBCS:
 
 		# for Z height
 		Es_Z = mt.satVapourPress(ta)
-		e_Z = mt.vapourPress(Es_Z,self.humid)
-		rho = mt.airDensity(ta)     # rho for level Z
-		air_press = mt.airPress(ta, dmt_lyr, Z=self.Z, P0=self.ref_pressure,
-		                        adiabatic=self.adiabatic)
+		e_Z = mt.vapourPress(Es_Z, self.humid)
+		rho = mt.airDensity(ta)  # rho for level Z
+		air_press = mt.airPress(ta, dmt_lyr, Z=self.Z,
+								P0=self.ref_pressure,
+								adiabatic=self.adiabatic)
 		lat_heat = mt.latent(ta)
 		delta_grad = mt.delta(self.ts_C, ta)
 		vpd = mt.vpd(Es_Z, e_Z)
@@ -1179,44 +1272,52 @@ class SEBCS:
 		print("profily v pohodě")
 
 		# Calculation of output variables
-		self.slope, self.aspect = sb.slopeAspect(dmt_lyr, self.x_size, self.y_size)
-		self.Rs_in = sb.solarInTopo(self.glob_rad, self.slope, self.aspect,
-		                            self.latitude, self. longitude,
-		                            self.acq_date, self.acq_time)
+		self.slope, self.aspect = sb.slopeAspect(dmt_lyr, self.x_size,
+												 self.y_size)
+		self.Rs_in = sb.solarInTopo(self.glob_rad, self.slope,
+									self.aspect,
+									self.latitude, self.longitude,
+									self.acq_date, self.acq_time)
 		if albedo_lyr is not None:
 			self.albedo = albedo_lyr
 		else:
 			self.albedo = sb.albedo(red_lyr, self.nir_lyr, self.rb_sat,
-			                        blue_lyr, green_lyr, swir1_lyr, swir2_lyr)
+									blue_lyr, green_lyr, swir1_lyr,
+									swir2_lyr)
 
 		self.Rs_out = sb.reflectRs(self.Rs_in, self.albedo)
 
 		self.Rl_in = sb.downRL(ta_Zst_lyr, emis_a)
 		self.Rl_out = sb.outRL(self.ts_C, self.emiss)
-		self.Rn = sb.netRad(self.Rs_in, self.Rs_out, self.Rl_in, self.Rl_out)
+		self.Rn = sb.netRad(self.Rs_in, self.Rs_out, self.Rl_in,
+							self.Rl_out)
 
 		print("radiace OK")
 
-		self.G = hf.groundFlux(self.ndvi, self.Rn, self.ts_C, self.albedo)
+		self.G = hf.groundFlux(self.ndvi, self.Rn, self.ts_C,
+							   self.albedo)
 
 		self.H, self.LE, self.EF, LE_eq, self.LE_PT, self.ra, self.frict = \
-			hf.heatFluxes(self.Rn, self.G, self.ts_C, ta, self.rb_method,
-			              U, h_eff=h_eff, LAI=self.lai, z0m=z0m, z0h=z0h,
-			              rho=rho, disp=zero_disp, mask=self.mask,
-			              air_pressure=air_press, Z=self.Z, cp=self.cp,
-			              n_iter=self.n_iter, kappa=self.kappa)
+			hf.heatFluxes(self.Rn, self.G, self.ts_C, ta,
+						  self.rb_method,
+						  U, h_eff=h_eff, LAI=self.lai, z0m=z0m,
+						  z0h=z0h,
+						  rho=rho, disp=zero_disp, mask=self.mask,
+						  air_pressure=air_press, Z=self.Z, cp=self.cp,
+						  n_iter=self.n_iter, kappa=self.kappa)
 
 		print("toky OK")
 
-		self.LEp = hf.fluxLE_p(self.Rn, self.G, delta_grad, vpd, self.ra,
-		                       gamma, rho, self.cp)
+		self.LEp = hf.fluxLE_p(self.Rn, self.G, delta_grad, vpd,
+							   self.ra,
+							   gamma, rho, self.cp)
 
 		self.E_int = hf.intensityE(self.LE, lat_heat)
 		self.bowen = hf.bowen(self.H, self.LE)
 		self.omega = hf.omega(self.LE, self.LEp)
 		self.rc = hf.rs(delta_grad, gamma, self.omega, self.ra)
 		self.cwsi = hf.cwsi(self.LEp, self.ra, self.rc, Es_Z, e_Z, rho,
-		                    delta_grad, gamma, self.cp)
+							delta_grad, gamma, self.cp)
 
 		print("ostatni taky OK")
 
@@ -1229,35 +1330,35 @@ class SEBCS:
 		"""Export output layers in to the output folder.
 		"""
 		# Dict for all layers - pairs of names and arrays
-		out_lyrs_all = {"Rs_in":self.Rs_in,
-						 "Rs_out":self.Rs_out,
-						 "albedo":self.albedo,
-						 "RL_in":self.Rl_in,
-						 "RL_emit":self.Rl_out,
-						 "Rn":self.Rn,
-						 "Ts":self.ts_C,
-						 "emis":self.emiss,
-						 "LE":self.LE,
-						 "LEp":self.LEp,
-						 "LE_PT":self.LE_PT,
-						 "H":self.H,
-						 "G":self.G,
-						 "E_int":self.E_int,
-						 "EF":self.EF,
-						 "Bowen":self.bowen,
-						 "omega":self.omega,
-						 "CWSI":self.cwsi,
-						 "frict_U":self.frict,
-						 "ra":self.ra,
-						 "rc":self.rc,
-						 "NDVI":self.ndvi,
-						 "MSAVI":self.msavi,
-						 "NDMI":self.ndmi,
-						 "SAVI":self.savi,
-						 "LAI":self.lai,
-						 "slope":self.slope,
-						 "aspect":self.aspect
-						 }
+		out_lyrs_all = {"Rs_in": self.Rs_in,
+						"Rs_out": self.Rs_out,
+						"albedo": self.albedo,
+						"RL_in": self.Rl_in,
+						"RL_emit": self.Rl_out,
+						"Rn": self.Rn,
+						"Ts": self.ts_C,
+						"emis": self.emiss,
+						"LE": self.LE,
+						"LEp": self.LEp,
+						"LE_PT": self.LE_PT,
+						"H": self.H,
+						"G": self.G,
+						"E_int": self.E_int,
+						"EF": self.EF,
+						"Bowen": self.bowen,
+						"omega": self.omega,
+						"CWSI": self.cwsi,
+						"frict_U": self.frict,
+						"ra": self.ra,
+						"rc": self.rc,
+						"NDVI": self.ndvi,
+						"MSAVI": self.msavi,
+						"NDMI": self.ndmi,
+						"SAVI": self.savi,
+						"LAI": self.lai,
+						"slope": self.slope,
+						"aspect": self.aspect
+						}
 
 		# Create list of arrays corresponding to list of output layer names (
 		# in self.out_lyrs_fnames)
@@ -1278,42 +1379,68 @@ class SEBCS:
 		# Replace nan and inf values in output lyrs by zero.
 		for i in range(0, len(out_arrays)):
 			out_arrays[i] = np.nan_to_num(out_arrays[i])
-			out_arrays[i] = np.where(out_arrays[i] == np.isnan, 0.0, out_arrays[i])
-			out_arrays[i] = np.where(out_arrays[i] == -np.inf, 0.0, out_arrays[i])
-			out_arrays[i] = np.where(out_arrays[i] == np.inf, 0.0, out_arrays[i])
+			out_arrays[i] = np.where(out_arrays[i] == np.isnan, 0.0,
+									 out_arrays[i])
+			out_arrays[i] = np.where(out_arrays[i] == -np.inf, 0.0,
+									 out_arrays[i])
+			out_arrays[i] = np.where(out_arrays[i] == np.inf, 0.0,
+									 out_arrays[i])
 
 		# Export data
 		geo.arrayToRast(out_arrays, self.out_lyrs_fnames, self.prj,
-		                self.gtransf, self.EPSG, self.out_folder_path,
-		                self.out_driver, self.out_file_name, self.multiband)
+						self.gtransf, self.EPSG, self.out_folder_path,
+						self.out_driver, self.out_file_name,
+						self.multiband)
 
 	def loadRasters(self):
-		"""Uploading of the results (calculated layers) in to the QGIS legend.
+		"""Uploading of the results (calculated layers) in to the
+		QGIS legend.
 		"""
-		# TODO: upravit nacitani multiband vrstev do QGIS
-		self.out_driver, self.out_format, self.out_suffix = self.outputsFormat(self.dlg.cb_out_format)
-		
-		# List of output files paths
-		for i in range(0, len(self.out_lyrs_fnames)):
+
+		# Variables definition
+		out_name = ""
+
+		if self.multiband == False:
+			# All calculated layers
+			for i in range(0, len(self.out_lyrs_fnames)):
+				try:
+					out_file = os.path.join(self.out_folder_path,
+											self.out_lyrs_fnames[
+												i] + self.out_suffix)  # construction of the path to the resulted layer
+					self.iface.addRasterLayer(out_file,
+											  self.out_lyrs_fnames[i])
+				except FileExistsError:
+					self.iface.messageBar().pushMessage("Info",
+														self.tr("File " +
+																self.out_lyrs_fnames[
+																	i] + " has not been uploaded in to QGIS."),
+														level=Qgis.Warning)
+		else:
+			# Multiband file
 			try:
-				out_file = os.path.join(self.out_folder_path, 
-										self.out_lyrs_fnames[i] + self.out_suffix)		# construction of the path to the resulted layer
-				self.iface.addRasterLayer(out_file, self.out_lyrs_fnames[i])									# opening the resulted layer
-			except:
+				out_name = os.path.basename(self.out_file_name).split(".")[0]
+				self.iface.addRasterLayer(self.out_file_name, out_name)
+
+			except FileExistsError:
 				self.iface.messageBar().pushMessage("Info",
-								self.tr("File " + self.out_lyrs_fnames[i] + " has not been uploaded in to QGIS."),
-								level = Qgis.Warning)
-		self.iface.messageBar().clearWidgets()	
+													self.tr("File " +
+															out_name + " has"
+																" not been uploaded in to QGIS."),
+													level=Qgis.Warning)
+		self.iface.messageBar().clearWidgets()
 
 	def progbar(self):
 		# Start progressbar
-		self.progressMessageBar = self.iface.messageBar().createMessage(self.tr("SEBCS calculation in progress. Please wait a minute."))
+		self.progressMessageBar = self.iface.messageBar().createMessage(
+			self.tr(
+				"SEBCS calculation in progress. Please wait a minute."))
 		self.progress = QProgressBar()
 		self.progress.setMinimum(0)
 		self.progress.setMaximum(1)
-		self.progress.setAlignment(Qt.AlignLeft|Qt.AlignVCenter)
+		self.progress.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
 		self.progressMessageBar.layout().addWidget(self.progress)
-		self.iface.messageBar().pushWidget(self.progressMessageBar, Qgis.Info)
+		self.iface.messageBar().pushWidget(self.progressMessageBar,
+										   Qgis.Info)
 
 	def onStart(self):
 		self.progress.setMinimum(0)
@@ -1323,26 +1450,29 @@ class SEBCS:
 	def onFinished(self):
 		self.progress.setMinimum(0)
 		self.progress.setMaximum(1)
-		
-		# Reset settings
-		self.reset()
-		
-		# Create finish message and load lyrs 
+
+		# # Reset settings
+		# self.keepSettings()
+
+		# Create finish message and load lyrs
 		self.iface.messageBar().clearWidgets()
-		widget = self.iface.messageBar().createMessage("Info", self.tr("Calculation has been done. Do you want to load calculated layers in to QGIS?"))
+		widget = self.iface.messageBar().createMessage("Info", self.tr(
+			"Calculation has been done. Do you want to load "
+			"calculated layers in to QGIS?"))
 		button = QPushButton(widget)
 		button.setText(self.tr("Load layers"))
 		button.pressed.connect(self.loadRasters)
 		widget.layout().addWidget(button)
-		self.iface.messageBar().pushWidget(widget, Qgis.Info)		
+		self.iface.messageBar().pushWidget(widget, Qgis.Info)
 
 
 class WorkingThread(QtCore.QThread):
 	taskFinished = QtCore.pyqtSignal()
+
 	def __init__(self, function):
 		QtCore.QThread.__init__(self)
 		self.function = function
-		
+
 	def run(self):
 		self.function()
-		self.taskFinished.emit() 
+		self.taskFinished.emit()

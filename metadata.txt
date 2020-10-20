@@ -1,16 +1,8 @@
-# This file contains metadata for your plugin. Since 
-# version 2.0 of QGIS this is the proper way to supply 
-# information about a plugin. The old method of 
-# embedding metadata in __init__.py will 
-# is no longer supported since version 2.0.
-
-# This file should be included when you package your plugin.# Mandatory items:
-
 [general]
 name=SEBCS for QGIS
 qgisMinimumVersion=3.0
 description=Module for calculation of energy balance features and vegetation water stress indices
-version=1.1.3
+version=2.1.0
 author=Jakub Brom, University of South Bohemia in Ceske Budejovice, Faculty of Agriculture
 email=jbrom@zf.jcu.cz
 
@@ -21,14 +13,15 @@ about=The SEBCS for QGIS is software enabling calculation of energy balance and
     approach based on Penman-Monteith method, SEBAL method and gradient approach of
     the energy balance characteristics calculation.
 
-tracker=http://bugs
-repository=http://repo
-;End of mandatory metadata
+tracker=https://github.com/JakubBrom/SEBCS/issues
+repository=https://github.com/JakubBrom/SEBCS
 
-;Recommended items:
-
-;Uncomment the following line and add your changelog:
 changelog=
+    2.1.0 : (201020)
+        - Changes in UI
+        - Simplification of the code
+        - Some bugs fixed
+        - Larger changes i SEBCS_lib
     2.0.0 : (191202)
         - Complete
     1.1.3 : (190923)

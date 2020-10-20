@@ -1,7 +1,9 @@
 #  /***************************************************************************
 #  SEBCS_lib.py
 #
-#  TODO: popis
+#  Module SEBCS_lib is library of SEBCS software (Brom 2014-2020)
+#  designed for geographical and remotely sensed purposes, mainly for
+#  analysis of energy balance of the surface.
 #
 #                                -------------------
 #          begin                :
@@ -222,20 +224,14 @@ class GeoIO:
 
 		lyr_name = os.path.split(layer)[1]
 
-		try:
-			if layer is not None or layer is not "":
-				try:
-					new_array = gdal.Dataset.ReadAsArray(gdal.Open(layer)).astype(
-						np.float32)
-					new_array = np.nan_to_num(new_array)
-				except IOError:
-					new_array = None
-			else:
-				new_array = None
-
-		except IOError:
-			warnings.warn("Layer {lr} has not been readed. No data will be "
-			              "used instead".format(lr=lyr_name), stacklevel=3)
+		if layer is not None and layer is not "":
+			new_array = gdal.Dataset.ReadAsArray(gdal.Open(layer)).astype(
+				np.float32)
+			new_array = np.nan_to_num(new_array)
+		else:
+			warnings.warn(
+				"Layer {lr} has not been readed. No data will be "
+				"used instead".format(lr=lyr_name), stacklevel=3)
 			new_array = None
 
 		return new_array
