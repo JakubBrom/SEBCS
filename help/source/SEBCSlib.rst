@@ -1,9 +1,11 @@
 Documentation of SEBCS methods library
 ======================================
 
-SEBCS library includes some usable functions:-)
+SEBCS_lib is a library of SEBCS software (Brom 2020) designed for
+geographical and remote sensing purposes, mainly for analysis of energy
+balance of the surface.
 
-.. automodule:: scripts.SEBCS_lib
+.. automodule:: SEBCS_lib
     :members:
 
 

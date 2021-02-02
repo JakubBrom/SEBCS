@@ -1,0 +1,26 @@
+file format : IDRISI Raster A.1
+file title  : 
+data type   : real
+file type   : binary
+columns     : 783
+rows        : 606
+ref. system : utm-33n
+ref. units  : m
+unit dist.  : 1.0000000
+min. X      : 467055.0000000
+max. X      : 490545.0000000
+min. Y      : 5390505.0000000
+max. Y      : 5408685.0000000
+pos'n error : unknown
+resolution  : unknown
+min. value  : -0.0090000
+max. value  : 0.6119000
+display min : -0.0090000
+display max : 0.6119000
+value units : unspecified
+value error : unknown
+flag value  : none
+flag def'n  : none
+legend cats : 0
+lineage     : This file was created by SCALAR with the command line: 
+lineage     : D:\disertace\disertace_Kuntzman\sceny_Landsat\L8_2018_09_11\data_pro_vypocet\CUTLC08_L1TP_191026_20180911_20180927_01_T1_SR_BAND5.rst*D:\disertace\disertace_Kuntzman\sceny_Landsat\L8_2018_09_11\data_pro_vypocet\TMP-1.rst*4*10000

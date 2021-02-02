@@ -216,12 +216,11 @@ class SEBCS:
 			callback=self.run,
 			parent=self.iface.mainWindow())
 
-		if not self.pluginIsActive:
-			self.pluginIsActive = True
 		# Create the dialog with elements (after translation) and keep reference
 		# Only create GUI ONCE in callback, so that it will only load when
 		# the plugin is started
-		if self.dlg == None:
+		if not self.pluginIsActive:
+			self.pluginIsActive = True
 			self.dlg = SEBCSDialog()
 
 		# Help

@@ -385,7 +385,7 @@
                 <string notr="true"/>
                </property>
                <property name="currentIndex">
-                <number>0</number>
+                <number>2</number>
                </property>
                <widget class="QWidget" name="tab_3">
                 <attribute name="title">
@@ -1076,9 +1076,6 @@
                            <verstretch>0</verstretch>
                           </sizepolicy>
                          </property>
-                         <property name="decimals">
-                          <number>1</number>
-                         </property>
                          <property name="maximum">
                           <double>9999.000000000000000</double>
                          </property>
@@ -1098,9 +1095,6 @@
                            <horstretch>0</horstretch>
                            <verstretch>0</verstretch>
                           </sizepolicy>
-                         </property>
-                         <property name="decimals">
-                          <number>1</number>
                          </property>
                          <property name="maximum">
                           <double>100.000000000000000</double>
@@ -1127,12 +1121,6 @@
                          </property>
                          <property name="suffix">
                           <string/>
-                         </property>
-                         <property name="decimals">
-                          <number>1</number>
-                         </property>
-                         <property name="maximum">
-                          <double>1000.000000000000000</double>
                          </property>
                          <property name="value">
                           <double>10.000000000000000</double>

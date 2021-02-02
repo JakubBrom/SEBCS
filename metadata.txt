@@ -70,6 +70,6 @@ homepage=http://homepage
 category=Plugins
 icon=icon.png
 ;experimental flag
-experimental=True
+experimental=False
 deprecated=False
 
