@@ -12,8 +12,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>592</width>
-    <height>717</height>
+    <width>650</width>
+    <height>725</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -21,6 +21,12 @@
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>0</width>
+    <height>0</height>
+   </size>
   </property>
   <property name="focusPolicy">
    <enum>Qt::WheelFocus</enum>
@@ -185,8 +191,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>550</width>
-            <height>499</height>
+            <width>608</width>
+            <height>498</height>
            </rect>
           </property>
           <property name="sizePolicy">
@@ -232,6 +238,9 @@
                     <property name="toolTip">
                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Chose Landsat satellite or another satellite or aerial system. If &amp;quot;Other systems&amp;quot; is selected only red and NIR bands are used. &amp;quot;Other systems&amp;quot; can be another satellite, aerial aircraft or UAV technique which provides red and NIR spectral bands and thermal layer. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                     </property>
+                    <property name="currentText">
+                     <string>Landsat 8, 9 OLI/TIRS</string>
+                    </property>
                     <property name="currentIndex">
                      <number>2</number>
                     </property>
@@ -247,7 +256,7 @@
                     </item>
                     <item>
                      <property name="text">
-                      <string>Landsat 8 OLI/TIRS</string>
+                      <string>Landsat 8, 9 OLI/TIRS</string>
                      </property>
                     </item>
                     <item>
@@ -385,7 +394,7 @@
                 <string notr="true"/>
                </property>
                <property name="currentIndex">
-                <number>2</number>
+                <number>0</number>
                </property>
                <widget class="QWidget" name="tab_3">
                 <attribute name="title">
@@ -408,8 +417,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>506</width>
-                      <height>348</height>
+                      <width>564</width>
+                      <height>341</height>
                      </rect>
                     </property>
                     <layout class="QGridLayout" name="gridLayout_4">
@@ -563,6 +572,12 @@
                            <verstretch>0</verstretch>
                           </sizepolicy>
                          </property>
+                         <property name="minimumSize">
+                          <size>
+                           <width>0</width>
+                           <height>0</height>
+                          </size>
+                         </property>
                          <property name="acceptDrops">
                           <bool>true</bool>
                          </property>
@@ -693,8 +708,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>506</width>
-                      <height>348</height>
+                      <width>564</width>
+                      <height>341</height>
                      </rect>
                     </property>
                     <property name="sizePolicy">
@@ -1032,8 +1047,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>506</width>
-                      <height>348</height>
+                      <width>564</width>
+                      <height>341</height>
                      </rect>
                     </property>
                     <property name="sizePolicy">
@@ -1315,8 +1330,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>611</width>
-            <height>485</height>
+            <width>672</width>
+            <height>507</height>
            </rect>
           </property>
           <property name="sizePolicy">

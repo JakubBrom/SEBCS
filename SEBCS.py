@@ -10,7 +10,7 @@
 							  -------------------
 		begin                : 2019-03-06
 		git sha              : $Format:%H$
-		copyright            : (C) 2014-2020 by Jakub Brom, University
+		copyright            : (C) 2014-2022 by Jakub Brom, University
 							   of South Bohemia in Ceske Budejovice,
 							   Faculty of Agriculture
 		email                : jbrom@zf.jcu.cz
@@ -30,8 +30,10 @@
 import time
 import os.path
 import numpy as np
+import webbrowser
+import sys, os
 
-# Import PyQt libs
+import qgis.utils
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, \
 	Qt, QUrl, QDate, QTime
 from qgis.PyQt.QtGui import QIcon, QDesktopServices
@@ -57,7 +59,6 @@ vi = VegIndices()
 hf = HeatFluxes()
 ws = WindStability()
 
-
 class SEBCS:
 	"""QGIS Plugin Implementation."""
 
@@ -69,6 +70,7 @@ class SEBCS:
 			application at run time.
 		:type iface: QgsInterface
 		"""
+
 		# Save reference to the QGIS interface
 		self.iface = iface
 		# initialize plugin directory
@@ -222,6 +224,7 @@ class SEBCS:
 		if not self.pluginIsActive:
 			self.pluginIsActive = True
 			self.dlg = SEBCSDialog()
+			self.dlg.adjustSize()
 
 		# Help
 		self.dlg.buttonBox.helpRequested.connect(self.pluginHelp)
@@ -561,10 +564,24 @@ class SEBCS:
 	def pluginHelp(self):
 		"""Open the help file.
 		"""
-		self.help_file = os.path.join(self.plugin_dir, "help", "build",
-									  "html", "index.html")
+		help_file = os.path.join(self.plugin_dir, "help", "build", "html", "index.html")
+		# help_file = "https://jakubbrom.github.io/SEBCS/"
+
+		help_file_norm = os.path.normpath(help_file)
+
+
 		try:
-			QDesktopServices.openUrl(QUrl(self.help_file))
+			if sys.platform != "win32":
+				QDesktopServices.openUrl(QUrl(help_file_norm, QUrl.TolerantMode))
+
+			else:
+				os.startfile(help_file_norm)
+
+		# try:
+		# 	help_pdf = os.path.join(self.plugin_dir, "SEBCS.pdf")
+		# 	# QDesktopServices.openUrl(QUrl(help_file))
+		# 	webbrowser.open_new(help_pdf)
+		# 	# qgis.utils.showPluginHelp(help_file)
 		except IOError:
 			self.iface.messageBar().pushMessage(self.tr("Help error"),
 												self.tr(
@@ -1193,8 +1210,6 @@ class SEBCS:
 		self.gtransf, self.prj, self.x_size, self.y_size, self.EPSG = \
 			geo.readGeo(self.nir_path)
 
-		print("geotransf OK")
-
 		# Imports of inputs layers
 		blue_lyr = geo.rasterToArray(self.blue_path)
 		green_lyr = geo.rasterToArray(self.green_path)
@@ -1212,8 +1227,6 @@ class SEBCS:
 		self.mask = geo.rasterToArray(self.mask_path)
 		albedo_lyr = geo.rasterToArray(self.albedo_path)
 
-		print("importy vrstev OK")
-
 		# Vegetation indices
 		self.ndvi = vi.viNDVI(red_lyr, self.nir_lyr)
 		self.msavi = vi.viMSAVI(red_lyr, self.nir_lyr)
@@ -1227,8 +1240,6 @@ class SEBCS:
 				h_eff = canopy_lyr
 		else:
 			h_eff = None
-
-		print("vegindexy OK")
 
 		# Calculate misc
 		ta = mt.airTemperatureBlending(ta_Zst_lyr, self.Z, self.hwind,
@@ -1254,8 +1265,6 @@ class SEBCS:
 		vpd = mt.vpd(Es_Z, e_Z)
 		gamma = mt.gamma(air_press, lat_heat, self.cp)
 
-		print("meteo v pohodě")
-
 		# Wind profile
 		if self.rb_method is "grad":
 			U = None
@@ -1267,8 +1276,6 @@ class SEBCS:
 			z0m = ws.z0m(h_eff, self.lai)
 			z0h = ws.z0h(z0m)
 			zero_disp = ws.zeroPlaneDis(h_eff)
-
-		print("profily v pohodě")
 
 		# Calculation of output variables
 		self.slope, self.aspect = sb.slopeAspect(dmt_lyr, self.x_size,

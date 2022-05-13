@@ -2,7 +2,7 @@
 name=SEBCS for QGIS
 qgisMinimumVersion=3.0
 description=Module for calculation of energy balance features and vegetation water stress indices
-version=2.1.0
+version=2.1.1
 author=Jakub Brom, University of South Bohemia in Ceske Budejovice, Faculty of Agriculture
 email=jbrom@zf.jcu.cz
 
@@ -17,6 +17,8 @@ tracker=https://github.com/JakubBrom/SEBCS/issues
 repository=https://github.com/JakubBrom/SEBCS
 
 changelog=
+    2.1.1 : (220223)
+        - UI scaling - better but still not good...
     2.1.0 : (201020)
         - Changes in UI - simplification, possible keeping the setting
         etc.
@@ -27,7 +29,7 @@ changelog=
         - Complete
     1.1.3 : (190923)
         - Redefinition of sensible heat flux calculation. Temperature difference
-         deffinition is newly defined according to SEBAL. SEBAL procedure was
+         definition is newly defined according to SEBAL. SEBAL procedure was
          added to SEBCS library (not used for heat fluxes calculation).
         - Minor changes in scripts, bug fixes
         - Improving comments in SEBCS lib
@@ -43,10 +45,10 @@ changelog=
 		- Minor changes in scripts
 	0.1.6 : (190121)
 		- minor changes
-	0.1.5 :(181120)
+	0.1.5 : (181120)
 		- minor changes
 	0.1.4 : (171211)
-		- added possibility to use layer of canopy heigth (calculated e.g. from lidar data)
+		- added possibility to use layer of canopy height (calculated e.g. from lidar data)
 		- change UI
 	0.1.3 : (160814)
 		- change in UI - replacing output file(s) type chooser
@@ -59,7 +61,7 @@ changelog=
 		- Minor changes
 	0.1.0 : (160419)
 		- New module based on SABCS SA software (Brom 2014, unpubl.)
-		- Help/documentation is stil not available
+		- Help/documentation is still not available
 		- Some minor additions needed.
 	
 	

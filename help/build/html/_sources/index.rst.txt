@@ -9,7 +9,7 @@ SEBCS's documentation!
 The SEBCS for QGIS is software enabling calculation of energy balance
 and crop water stress features (heat fluxes, evaporative fraction,
 Bowen ratio, Omega factor, CWSI etc.) from Landsat satellite data (L5
-TM, L7 ETM+, L8 OLI/TIRS) and also from other devices (e.g. UAV).
+TM, L7 ETM+, L8 OLI/TIRS, L9 OLI/TIRS) and also from other devices (e.g. UAV).
 Calculation procedure uses approach based on Penman-Monteith method,
 SEBAL method and gradient approach of the energy balance
 characteristics calculation.

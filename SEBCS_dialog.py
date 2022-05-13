@@ -8,7 +8,7 @@
                              -------------------
         begin                : 2019-03-06
         git sha              : $Format:%H$
-        copyright            : (C) 2014-2020 by Jakub Brom,
+        copyright            : (C) 2014-2022 by Jakub Brom,
                                University of South Bohemia in Ceske
                                Budejovice, Faculty of Agriculture
         email                : jbrom@zf.jcu.cz
