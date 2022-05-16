@@ -3,8 +3,8 @@ name=SEBCS for QGIS
 qgisMinimumVersion=3.0
 description=Module for calculation of energy balance features and vegetation water stress indices
 version=2.1.2
-author=Jakub Brom, University of South Bohemia in Ceske Budejovice, Faculty of Agriculture
-email=jbrom@zf.jcu.cz
+author=Jakub Brom, University of South Bohemia in Ceske Budejovice, Faculty of Agriculture and Technology
+email=jbrom@fzt.jcu.cz
 
 about=The SEBCS for QGIS is software enabling calculation of energy balance and
     crop water stress features (heat fluxes, evaporative fraction, Bowen ratio,
