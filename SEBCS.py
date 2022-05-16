@@ -564,8 +564,8 @@ class SEBCS:
 	def pluginHelp(self):
 		"""Open the help file.
 		"""
-		help_file = os.path.join(self.plugin_dir, "help", "build", "html", "index.html")
-		# help_file = "https://jakubbrom.github.io/SEBCS/"
+		# help_file = os.path.join(self.plugin_dir, "help", "build", "html", "index.html")
+		help_file = "https://jakubbrom.github.io/SEBCS/"
 
 		help_file_norm = os.path.normpath(help_file)
 

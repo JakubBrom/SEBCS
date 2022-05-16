@@ -2,13 +2,13 @@
 name=SEBCS for QGIS
 qgisMinimumVersion=3.0
 description=Module for calculation of energy balance features and vegetation water stress indices
-version=2.1.1
+version=2.1.2
 author=Jakub Brom, University of South Bohemia in Ceske Budejovice, Faculty of Agriculture
 email=jbrom@zf.jcu.cz
 
 about=The SEBCS for QGIS is software enabling calculation of energy balance and
     crop water stress features (heat fluxes, evaporative fraction, Bowen ratio,
-    Omega factor, CWSI etc.) from Landsat satellite data (L5 TM, L7 ETM+, L8
+    Omega factor, CWSI etc.) from Landsat satellite data (L5 TM, L7 ETM+, L8 and L9
     OLI/TIRS) and also from other devices (e.g. UAV). Calculation procedure uses
     approach based on Penman-Monteith method, SEBAL method and gradient approach of
     the energy balance characteristics calculation.
@@ -17,6 +17,9 @@ tracker=https://github.com/JakubBrom/SEBCS/issues
 repository=https://github.com/JakubBrom/SEBCS
 
 changelog=
+    2.1.2 : (220516)
+        - Porting Help to GitHub.io - basic structure
+        - Bugs fixes
     2.1.1 : (220223)
         - UI scaling - better but still not good...
     2.1.0 : (201020)
@@ -33,8 +36,7 @@ changelog=
          added to SEBCS library (not used for heat fluxes calculation).
         - Minor changes in scripts, bug fixes
         - Improving comments in SEBCS lib
-
-	1.1.2 : (190429)
+    1.1.2 : (190429)
 		- Changes in z0m calculation. Method according to PySEBAL was used (see Jaafar, H.H., Ahmad, F.A., 2019. Time series trends of Landsat-based ET using automated calibration in METRIC and SEBAL: The Bekaa Valley, Lebanon. Remote Sensing of Environment S0034425718305947. https://doi.org/10.1016/j.rse.2018.12.033)
 	1.1.1 : (190409)
 		- Added albedo calculation for Landsat 8 according to Olmedo et al. (Constants from R package water) 
@@ -68,7 +70,7 @@ changelog=
 ;Tags are comma separated with spaces allowed
 tags=raster, energy balance, evapotranspiration, CWSI, vegetation water stress, ecology, remote sensing
 
-homepage=http://homepage
+homepage=https://www.researchgate.net/profile/Jakub-Brom
 category=Plugins
 icon=icon.png
 ;experimental flag
