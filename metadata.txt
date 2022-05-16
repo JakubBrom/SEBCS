@@ -70,7 +70,7 @@ changelog=
 ;Tags are comma separated with spaces allowed
 tags=raster, energy balance, evapotranspiration, CWSI, vegetation water stress, ecology, remote sensing
 
-homepage=https://www.researchgate.net/profile/Jakub-Brom
+homepage=https://researchgate.net/profile/Jakub-Brom
 category=Plugins
 icon=icon.png
 ;experimental flag
