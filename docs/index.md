@@ -9,7 +9,9 @@ Author: Jakub Brom
 
 ## [SEBCS usage](use_sebcs.md)
 
-## [Calculation procedure](calc.md)
+## [Calculation](calc.md)
+
+## [References](references.md)
 
 ## [Abbreviation](abbrev.md)
 
