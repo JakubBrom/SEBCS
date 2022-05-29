@@ -27,7 +27,7 @@ The computation of the variables requires some data inputs. These are raster rem
 | Mask                                 | x   | x     | x        | x       | 
 | Albedo (rel.)                        | x   | x     | x        | x       |
 | **Numerical data**                   |
-| Global radiation ($$W.m^{-2}$$)      | x   | x     | x        |
+| Global radiation (W.m<sup>-2</sup>)  | x   | x     | x        |
 | Air relative humidity (%)            | x   | x     | x        |
 | Height of wind speed measurement (m) | x   | x     |          |         |
 | Date of data acquisition             | x   | x     | x        |
@@ -35,18 +35,46 @@ The computation of the variables requires some data inputs. These are raster rem
 | Mean latitude of data                | x   | x     | x        |         | Can be calculated directly from data   |
 | Mean longiitude of data              | x   | x     | x        |         | Can be calculated directly from data   |
 
-```diff
-@- All raster data must have the same size, i.e. the same number of columns and rows, and the same geographic coordination system!@
-```
 
+<span style="color:red;"><b>All raster data must have the same size, i.e. the same number of columns and rows, and the same geographic coordination system!</b></span>
 
 
 ## Outputs
 
-The SEBCS for QGIS plug-in allows calculation of the following features described in the next table.
+The SEBCS for QGIS plug-in allows calculation of the following features described in the next table. The calculation of the features is described [here](calc.md).
 
-|Feature|Unit|Description|
+| Feature                                         | Unit                               |
+|-------------------------------------------------|------------------------------------|
+| Incomming shortwave radiation                   | W.m<sup>-2</sup>                   |
+| Reflected shortwave radiation                   | W.m<sup>-2</sup>                   |
+| Albedo                                          | rel.                               |
+| Incomming longwave radiation                    | W.m<sup>-2</sup>                   |
+| Outgoing (emitted) longwave radiation           | W.m<sup>-2</sup>                   |
+| Total net radiation                             | W.m<sup>-2</sup>                   |
+| Surface temperature                             | °C                                 |
+| Surface emissivity                              | rel.                               |
+| Latent heat flux                                | W.m<sup>-2</sup>                   |
+| Latent heat flux - Penman pot.                  | W.m<sup>-2</sup>                   |
+| Latent heat flux - Priestley-Taylor pot.        | W.m<sup>-2</sup>                   |
+| Sensible heat flux                              | W.m<sup>-2</sup>                   |
+| Ground heat flux                                | W.m<sup>-2</sup>                   |
+| Evapotranspiration intensity                    | mmol.m<sup>-2</sup>.s<sup>-1</sup> |
+| Evaporative fraction                            | rel.                               |
+| Bowen ratio                                     | unitless                           |
+| Decoupling coefficient                          | rel.                               |
+| Crop Water Stress Index (CWSI)                  | unitless                           |
+| Friction velocity                               | m.s<sup>-1</sup>                   |
+| Aerodynamic surface resistance                  | s.m<sup>-1</sup>                   |
+| Surface resistance for water transfer           | s.m<sup>-1</sup>                   |
+| Normalized difference vegetation index (NDVI)   | unitless                           |
+| Modified soil adjusted vegetation index (MSAVI) | unitless                           |
+| Normalized difference moisture index (NDMI)     | unitless                           |
+| Soil adjusted vegetation index (SAVI)           | unitless                           |
+| Leaf area index (LAI)                           | m<sup>2</sup>.m<sup>-2</sup>       |
+| Slope                                           | °                                  |
+| Aspect                                          | °                                  |
 
 
+## Input data preparation
 
-$$a=c+b$$
+TODO
