@@ -1,3 +1,5 @@
+#### [Go back to SEBCS](index.md)
+
 # SEBCS usage
 
 The SEBCS for QGIS plug-in allows spatial calculation of energy balance components and other surface characteristics. The plug-in uses three different approaches to calculate the actual latent heat flux. These are the aerodynamic method according to Penman-Monteith, the SEBAL method according to [Bastiaanssen et al.](https://www.sciencedirect.com/science/article/abs/pii/S0022169498002534) and the gradient method based on the formulation of [Suleiman & Crago](https://acsess.onlinelibrary.wiley.com/doi/full/10.2134/agronj2004.3840).

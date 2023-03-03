@@ -7,13 +7,14 @@ Author: Jakub Brom
 
 © 2014-2022, Jakub Brom, University of South Bohemia in České Budějovice, Faculty of Agriculture and Technology, Czech Republic  
 
-## [SEBCS usage](use_sebcs.md)
+## Table of Content
+### [SEBCS usage](use_sebcs.md)
 
-## [Calculation](calc.md)
+### [Calculation](calc.md)
 
-## [References](references.md)
+### [References](references.md)
 
-## [Abbreviation](abbrev.md)
+### [Abbreviation](abbrev.md)
 
 <!--- Příklad rovnice --->
 <!--- <img src="https://render.githubusercontent.com/render/math?math=e^{i \pi} = \frac{\frac{x^{e}}{y}}{b} -1 \cdot \varsigma"> --->
