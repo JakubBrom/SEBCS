@@ -36,7 +36,7 @@ import sys, os
 import qgis.utils
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, \
 	Qt, QUrl, QDate, QTime
-from qgis.PyQt.QtGui import QIcon, QDesktopServices
+from qgis.PyQt.QtGui import QIcon, QDesktopServices, QGuiApplication
 from qgis.PyQt.QtWidgets import QAction, QFileDialog, QComboBox, \
 	QPushButton, QProgressBar
 from qgis.core import Qgis, QgsMapLayerProxyModel
@@ -75,6 +75,8 @@ class SEBCS:
 		self.iface = iface
 		# initialize plugin directory
 		self.plugin_dir = os.path.dirname(__file__)
+		# Add plugin directory to PYTHONPATH
+		sys.path.append(self.plugin_dir)
 		# initialize locale
 		locale = QSettings().value('locale/userLocale')[0:2]
 		locale_path = os.path.join(
@@ -225,6 +227,9 @@ class SEBCS:
 			self.pluginIsActive = True
 			self.dlg = SEBCSDialog()
 			self.dlg.adjustSize()
+
+		app = QGuiApplication.instance()
+		app.setAttribute(Qt.AA_EnableHighDpiScaling)
 
 		# Help
 		self.dlg.buttonBox.helpRequested.connect(self.pluginHelp)

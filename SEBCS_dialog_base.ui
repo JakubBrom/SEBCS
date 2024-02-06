@@ -12,12 +12,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>650</width>
-    <height>725</height>
+    <width>726</width>
+    <height>744</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+   <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -99,6 +99,12 @@
           <property name="enabled">
            <bool>false</bool>
           </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="dialogTitle">
            <string>Save a file</string>
           </property>
@@ -112,6 +118,12 @@
         </item>
         <item row="1" column="1">
          <widget class="QgsFileWidget" name="out_folder">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="storageMode">
            <enum>QgsFileWidget::GetDirectory</enum>
           </property>
@@ -147,7 +159,7 @@
       <bool>true</bool>
      </property>
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -178,7 +190,7 @@
        <item row="0" column="0">
         <widget class="QScrollArea" name="scrollArea_2">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -191,8 +203,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>608</width>
-            <height>498</height>
+            <width>684</width>
+            <height>517</height>
            </rect>
           </property>
           <property name="sizePolicy">
@@ -210,7 +222,7 @@
              <item row="0" column="0">
               <widget class="QFrame" name="frame">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
@@ -382,7 +394,7 @@
              <item row="2" column="0">
               <widget class="QTabWidget" name="tabWidget_2">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
@@ -404,7 +416,7 @@
                  <item row="0" column="0">
                   <widget class="QScrollArea" name="scrollArea_4">
                    <property name="sizePolicy">
-                    <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
@@ -417,8 +429,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>564</width>
-                      <height>341</height>
+                      <width>640</width>
+                      <height>360</height>
                      </rect>
                     </property>
                     <layout class="QGridLayout" name="gridLayout_4">
@@ -427,7 +439,7 @@
                        <item row="4" column="2">
                         <widget class="QPushButton" name="b_swir1">
                          <property name="sizePolicy">
-                          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                            <horstretch>0</horstretch>
                            <verstretch>0</verstretch>
                           </sizepolicy>
@@ -443,7 +455,7 @@
                        <item row="5" column="2">
                         <widget class="QPushButton" name="b_swir2">
                          <property name="sizePolicy">
-                          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                            <horstretch>0</horstretch>
                            <verstretch>0</verstretch>
                           </sizepolicy>
@@ -459,7 +471,7 @@
                        <item row="2" column="2">
                         <widget class="QPushButton" name="b_red">
                          <property name="sizePolicy">
-                          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                            <horstretch>0</horstretch>
                            <verstretch>0</verstretch>
                           </sizepolicy>
@@ -494,6 +506,12 @@
                        </item>
                        <item row="6" column="2">
                         <widget class="QPushButton" name="b_ts_layer">
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
+                         </property>
                          <property name="text">
                           <string>...</string>
                          </property>
@@ -502,7 +520,7 @@
                        <item row="1" column="2">
                         <widget class="QPushButton" name="b_green">
                          <property name="sizePolicy">
-                          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                            <horstretch>0</horstretch>
                            <verstretch>0</verstretch>
                           </sizepolicy>
@@ -518,7 +536,7 @@
                        <item row="0" column="2">
                         <widget class="QPushButton" name="b_blue">
                          <property name="sizePolicy">
-                          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                            <horstretch>0</horstretch>
                            <verstretch>0</verstretch>
                           </sizepolicy>
@@ -660,7 +678,20 @@
                         </widget>
                        </item>
                        <item row="6" column="1">
-                        <widget class="QgsMapLayerComboBox" name="cb_ts_layer"/>
+                        <widget class="QgsMapLayerComboBox" name="cb_ts_layer">
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
+                         </property>
+                         <property name="minimumSize">
+                          <size>
+                           <width>0</width>
+                           <height>0</height>
+                          </size>
+                         </property>
+                        </widget>
                        </item>
                        <item row="4" column="0">
                         <widget class="QLabel" name="label_7">
@@ -708,8 +739,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>564</width>
-                      <height>341</height>
+                      <width>640</width>
+                      <height>360</height>
                      </rect>
                     </property>
                     <property name="sizePolicy">
@@ -1047,8 +1078,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>564</width>
-                      <height>341</height>
+                      <width>640</width>
+                      <height>360</height>
                      </rect>
                     </property>
                     <property name="sizePolicy">
@@ -1317,7 +1348,7 @@
        <item row="0" column="0">
         <widget class="QScrollArea" name="scrollArea_3">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -1330,8 +1361,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>672</width>
-            <height>507</height>
+            <width>684</width>
+            <height>517</height>
            </rect>
           </property>
           <property name="sizePolicy">
@@ -1664,6 +1695,12 @@
              </item>
              <item row="15" column="0">
               <widget class="QCheckBox" name="ch_e_int">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="text">
                 <string>Evapotranspiration intensity (mmol.m-2.s-1)</string>
                </property>
@@ -1851,422 +1888,6 @@
  <resources/>
  <connections>
   <connection>
-   <sender>ch_all</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>ch_le_pt</receiver>
-   <slot>setChecked(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>142</x>
-     <y>67</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>86</x>
-     <y>346</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>ch_all</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>ch_rs_out</receiver>
-   <slot>setChecked(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>142</x>
-     <y>67</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>142</x>
-     <y>139</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>ch_all</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>ch_albedo</receiver>
-   <slot>setChecked(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>142</x>
-     <y>67</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>341</x>
-     <y>162</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>ch_all</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>ch_ndmi</receiver>
-   <slot>setChecked(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>142</x>
-     <y>67</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>664</x>
-     <y>346</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>ch_all</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>ch_ra</receiver>
-   <slot>setChecked(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>142</x>
-     <y>67</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>664</x>
-     <y>254</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>ch_all</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>ch_rs_in</receiver>
-   <slot>setChecked(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>142</x>
-     <y>67</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>98</x>
-     <y>116</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>ch_all</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>ch_rl_in</receiver>
-   <slot>setChecked(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>142</x>
-     <y>67</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>142</x>
-     <y>185</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>ch_all</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>ch_omega</receiver>
-   <slot>setChecked(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>142</x>
-     <y>67</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>454</x>
-     <y>185</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>ch_all</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>ch_ground</receiver>
-   <slot>setChecked(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>142</x>
-     <y>67</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>118</x>
-     <y>392</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>ch_all</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>ch_bowen</receiver>
-   <slot>setChecked(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>142</x>
-     <y>67</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>459</x>
-     <y>162</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>ch_all</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>ch_ef</receiver>
-   <slot>setChecked(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>142</x>
-     <y>67</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>403</x>
-     <y>139</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>ch_all</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>ch_cwsi</receiver>
-   <slot>setChecked(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>142</x>
-     <y>67</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>664</x>
-     <y>208</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>ch_all</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>ch_msavi</receiver>
-   <slot>setChecked(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>142</x>
-     <y>67</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>664</x>
-     <y>323</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>ch_all</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>ch_frict</receiver>
-   <slot>setChecked(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>142</x>
-     <y>67</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>664</x>
-     <y>231</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>ch_all</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>ch_le_pen</receiver>
-   <slot>setChecked(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>142</x>
-     <y>67</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>99</x>
-     <y>323</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>ch_all</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>ch_rl_out</receiver>
-   <slot>setChecked(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>142</x>
-     <y>67</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>142</x>
-     <y>208</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>ch_all</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>ch_ndvi</receiver>
-   <slot>setChecked(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>142</x>
-     <y>67</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>664</x>
-     <y>300</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>ch_all</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>ch_slope</receiver>
-   <slot>setChecked(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>142</x>
-     <y>67</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>664</x>
-     <y>369</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>ch_all</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>ch_rn</receiver>
-   <slot>setChecked(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>142</x>
-     <y>67</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>341</x>
-     <y>231</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>ch_all</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>ch_emiss</receiver>
-   <slot>setChecked(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>142</x>
-     <y>67</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>341</x>
-     <y>277</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>ch_all</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>ch_le</receiver>
-   <slot>setChecked(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>142</x>
-     <y>67</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>123</x>
-     <y>300</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>ch_all</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>ch_sensible</receiver>
-   <slot>setChecked(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>142</x>
-     <y>67</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>97</x>
-     <y>354</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>ch_all</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>ch_rc</receiver>
-   <slot>setChecked(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>142</x>
-     <y>67</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>664</x>
-     <y>277</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>ch_all</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>ch_aspect</receiver>
-   <slot>setChecked(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>142</x>
-     <y>67</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>664</x>
-     <y>392</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>ch_all</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>ch_ts</receiver>
-   <slot>setChecked(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>196</x>
-     <y>67</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>196</x>
-     <y>254</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>ch_all</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>ch_e_int</receiver>
-   <slot>setChecked(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>186</x>
-     <y>59</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>506</x>
-     <y>108</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>ch_multi</sender>
    <signal>toggled(bool)</signal>
    <receiver>out_folder</receiver>
@@ -2395,38 +2016,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>ch_all</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>ch_savi</receiver>
-   <slot>setChecked(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>199</x>
-     <y>66</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>520</x>
-     <y>389</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>ch_all</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>ch_lai</receiver>
-   <slot>setChecked(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>199</x>
-     <y>66</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>520</x>
-     <y>416</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>ch_canopy</sender>
    <signal>toggled(bool)</signal>
    <receiver>cb_hmin</receiver>
@@ -2519,6 +2108,454 @@
     <hint type="destinationlabel">
      <x>295</x>
      <y>358</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ch_all</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ch_le</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>142</x>
+     <y>67</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>123</x>
+     <y>300</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ch_all</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ch_rs_out</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>142</x>
+     <y>67</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>142</x>
+     <y>139</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ch_all</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ch_rl_in</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>142</x>
+     <y>67</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>142</x>
+     <y>185</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ch_all</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ch_slope</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>142</x>
+     <y>67</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>664</x>
+     <y>369</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ch_all</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ch_lai</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>199</x>
+     <y>66</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>520</x>
+     <y>416</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ch_all</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ch_msavi</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>142</x>
+     <y>67</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>664</x>
+     <y>323</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ch_all</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ch_rn</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>142</x>
+     <y>67</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>341</x>
+     <y>231</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ch_all</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ch_ndvi</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>142</x>
+     <y>67</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>664</x>
+     <y>300</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ch_all</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ch_e_int</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>186</x>
+     <y>59</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>506</x>
+     <y>108</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ch_all</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ch_cwsi</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>142</x>
+     <y>67</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>664</x>
+     <y>208</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ch_all</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ch_omega</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>142</x>
+     <y>67</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>454</x>
+     <y>185</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ch_all</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ch_le_pt</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>142</x>
+     <y>67</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>86</x>
+     <y>346</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ch_all</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ch_sensible</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>142</x>
+     <y>67</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>97</x>
+     <y>354</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ch_all</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ch_ts</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>196</x>
+     <y>67</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>196</x>
+     <y>254</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ch_all</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ch_ra</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>142</x>
+     <y>67</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>664</x>
+     <y>254</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ch_all</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ch_rs_in</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>142</x>
+     <y>67</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>98</x>
+     <y>116</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ch_all</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ch_bowen</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>142</x>
+     <y>67</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>459</x>
+     <y>162</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ch_all</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ch_savi</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>199</x>
+     <y>66</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>520</x>
+     <y>389</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ch_all</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ch_frict</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>142</x>
+     <y>67</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>664</x>
+     <y>231</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ch_all</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ch_rl_out</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>142</x>
+     <y>67</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>142</x>
+     <y>208</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ch_all</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ch_ndmi</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>142</x>
+     <y>67</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>664</x>
+     <y>346</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ch_all</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ch_ground</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>142</x>
+     <y>67</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>118</x>
+     <y>392</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ch_all</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ch_emiss</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>142</x>
+     <y>67</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>341</x>
+     <y>277</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ch_all</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ch_le_pen</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>142</x>
+     <y>67</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>99</x>
+     <y>323</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ch_all</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ch_aspect</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>142</x>
+     <y>67</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>664</x>
+     <y>392</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ch_all</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ch_albedo</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>142</x>
+     <y>67</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>341</x>
+     <y>162</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ch_all</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ch_ef</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>142</x>
+     <y>67</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>403</x>
+     <y>139</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ch_all</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ch_rc</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>142</x>
+     <y>67</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>664</x>
+     <y>277</y>
     </hint>
    </hints>
   </connection>

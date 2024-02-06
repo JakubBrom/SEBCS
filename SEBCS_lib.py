@@ -138,16 +138,16 @@ class GeoIO:
 		"""
 
 		# Convert arrays and names on list
-		if type(arrays) is not list:
+		if type(arrays) != list:
 			arr_list = list()
 			arr_list.append(arrays)
 			arrays = arr_list
-		if type(names) is not list:
+		if type(names) != list:
 			names_list = list()
 			names_list.append(names)
 			names = names_list
 
-		if out_file_name is None:
+		if out_file_name == None:
 			out_file_name = ""
 			multiband = False
 
@@ -162,7 +162,7 @@ class GeoIO:
 		driver_index = driver_list.index(driver_name)
 		suffix = out_suffixes[driver_index]
 
-		if multiband is True and driver_name != "RST":
+		if multiband == True and driver_name != "RST":
 			out_file_name, ext = os.path.splitext(out_file_name)
 			out_file = os.path.join(out_folder, out_file_name + suffix)
 
@@ -171,7 +171,7 @@ class GeoIO:
 				ds = driver.Create(out_file, arrays[0].shape[1], arrays[0].shape[0], len(arrays), gdal.GDT_Float32)
 				ds.SetProjection(prj)
 				ds.SetGeoTransform(gtransf)
-				if EPSG is not None:
+				if EPSG != None:
 					outRasterSRS = osr.SpatialReference()
 					outRasterSRS.ImportFromEPSG(EPSG)
 					ds.SetProjection(outRasterSRS.ExportToWkt())
@@ -197,7 +197,7 @@ class GeoIO:
 					ds = driver.Create(out_file, arrays[i].shape[1], arrays[i].shape[0], 1, gdal.GDT_Float32)
 					ds.SetProjection(prj)
 					ds.SetGeoTransform(gtransf)
-					if EPSG is not None:
+					if EPSG != None:
 						outRasterSRS = osr.SpatialReference()
 						outRasterSRS.ImportFromEPSG(EPSG)
 						ds.SetProjection(outRasterSRS.ExportToWkt())
@@ -224,7 +224,7 @@ class GeoIO:
 
 		lyr_name = os.path.split(layer)[1]
 
-		if layer is not None and layer is not "":
+		if layer != None and layer != "":
 			new_array = gdal.Dataset.ReadAsArray(gdal.Open(layer)).astype(
 				np.float32)
 			new_array = np.nan_to_num(new_array)
@@ -248,8 +248,7 @@ class GeoIO:
 		"""
 		# TODO: Solution of different spatial extent of rasters...
 
-		in_lyrs_list_true = [i for i in in_lyrs_list if
-		                     i is not None]  # List of input layers without
+		in_lyrs_list_true = [i for i in in_lyrs_list if i != None]  # List of input layers without
 		# empty (None)
 
 		len_list = []
@@ -378,7 +377,7 @@ class VegIndices:
 
 		ignore_zero = np.seterr(all="ignore")  # ignoring exceptions with dividing by zero
 
-		if swir1 is not None:
+		if swir1 != None:
 			try:
 				ndmi = (nir - swir1) / (nir + swir1)
 				ndmi[ndmi == np.inf] = 0  # replacement inf values by 0
@@ -537,15 +536,15 @@ class VegIndices:
 		# 5:'vineyard', 6:'Carrasco', 7:'Turner', 8:'Haboudane',
 		# 9:'Brom'}
 
-		if method is 1:     # Pôças
+		if method == 1:     # Pôças
 			LAI = np.where(savi > 0, 11.0 * savi**3, 0)
 			LAI = np.where(savi > 0.817, 6, LAI)
 
-		elif method is 2:   # Bastiaanssen
+		elif method == 2:   # Bastiaanssen
 			LAI = np.where(savi > 0, np.log((0.61 - savi)/0.51)/0.91 * (-1), 0)
 			LAI = np.where(savi >= 0.61, 6, LAI)
 
-		elif method is 3:   # Jafaar
+		elif method == 3:   # Jafaar
 			LAI_1 = np.where(savi > 0, 11.0 * savi ** 3, 0)
 			LAI_1 = np.where(savi > 0.817, 6, LAI_1)
 
@@ -555,22 +554,22 @@ class VegIndices:
 
 			LAI = (LAI_1 + LAI_2)/2
 
-		elif method is 4:   # Anderson
+		elif method == 4:   # Anderson
 			LAI = (4 * osavi - 0.8) * (1 + 4.73e-6 * np.exp(15.64 * osavi))
 
-		elif method is 5:   # vineyard
+		elif method == 5:   # vineyard
 			LAI = 4.9 * ndvi - 0.46
 
-		elif method is 6:   # Carrasco
+		elif method == 6:   # Carrasco
 			LAI = 1.2 - 3.08 * np.exp(-2013.35 * ndvi ** 6.41)
 
-		elif method is 7:   # Turner
+		elif method == 7:   # Turner
 			LAI = 0.5724 + 0.0989 * ndvi - 0.0114 * ndvi**2 + 0.0004 * ndvi**3
 
-		elif method is 8:   # Haboudane
+		elif method == 8:   # Haboudane
 			LAI = 0.0918 ** (6.0002 * rdvi)
 
-		elif method is 9:   # Brom
+		elif method == 9:   # Brom
 			LAI = 6.0/(1 + np.exp(-(8 * savi - 5)))
 			# Method proposed by Brom (mathematical definition only,
 			# not tested). Good approximation with another methods (1, 2, 3) but
@@ -655,9 +654,9 @@ class SolarRadBalance(VegIndices):
 		:param y_size: Size of pixel in y axis (m)
 		:type y_size: float
 
-		:return: Slope of the terrain :math:`(\SI{}\degree)`
+		:return: Slope of the terrain (˚)
 		:rtype: numpy.ndarray
-		:return: Aspect of the terrain :math:`(\SI{}\degree)`
+		:return: Aspect of the terrain (˚)
 		:rtype: numpy.ndarray
 		"""
 
@@ -692,9 +691,9 @@ class SolarRadBalance(VegIndices):
 		:param Rs_in: Global radiation measured by pyranometer\
 		:math:`(W.m^{-2})`.
 		:type Rs_in: float
-		:param slope: Slope of the terrain :math:`(\SI{}\degree)`.
+		:param slope: Slope of the terrain (˚).
 		:type slope: numpy.ndarray
-		:param aspect: Orientation of the terrain :math:`(\SI{}\degree)`.
+		:param aspect: Orientation of the terrain (˚).
 		:type aspect: numpy.ndarray
 		:param latitude: Mean latitude of the data in decimal degrees
 		:type latitude: float
@@ -768,16 +767,19 @@ class SolarRadBalance(VegIndices):
 
 	def atmEmissivity(self, e_Z, ta):
 		"""
-		Atmospheric emissivity calculated according to Idso (see
-		Brutsaert 1982).
+		Atmospheric emissivity calculated according to Idso (see Brutsaert 1982).
 
 		:param e_Z: Atmospheric water vapour pressure (kPa)
 		:type e_Z: numpy.ndarray, float
-		:param ta: Air temperature :math:`(\SI{}\degreeCelsius)`
+		:param ta: Air temperature (˚C)
 		:type ta: numpy.ndarray, float
 
 		:return: Air emissivity (rel.)
 		:rtype: numpy.ndarray, float
+
+		\n
+		**References:**\n
+		*Brutsaert W. (1982) Evapotranspiration into the atmosphere. Theory, history and applications. D. Reidel Publishing Company, Dotrecht.*
 		"""
 
 		try:
@@ -792,7 +794,7 @@ class SolarRadBalance(VegIndices):
 		Funtion calculates downward flux of longwave radiation :math:`(W.m^{
 		-2})`
 
-		:param ta: Air temperature :math:`(\SI{}\degreeCelsius)`
+		:param ta: Air temperature (˚C)
 		:type ta: numpy.ndarray, float
 		:param emis_a: Air emissivity (rel.)
 		:type emis_a: numpy.ndarray, float
@@ -813,7 +815,7 @@ class SolarRadBalance(VegIndices):
 		"""
 		Upward flux of longwave radiation :math:`(W.m^{-2})`
 
-		:param ts: Surface temperature :math:`(\SI{}\degreeCelsius)`
+		:param ts: Surface temperature (˚C)
 		:type ts: numpy.ndarray
 		:param emiss: Surface emissivity (rel.)
 		:type emiss: numpy.ndarray
@@ -840,31 +842,30 @@ class SolarRadBalance(VegIndices):
 
 		:param ndvi: Normalized Difference Vegetation Index (-)
 		:type ndvi: numpy.array
-		:param msavi: Modified Soil Adjusted Vegetation Index (-) according\
-		to Gao et al. 1996.
-		:param c_a: constant. Default a = 0.08611
+		:param msavi: Modified Soil Adjusted Vegetation Index (-) according to Gao et al. 1996.
+		:param c_a: constant. Default c_a = 0.08611
 		:type c_a: float
-		:param c_b: constant. Default a = 0.894716
+		:param c_b: constant. Default c_b = 0.894716
 		:type c_b: float
-		:param c_c: constant. Default a = 5.558657
+		:param c_c: constant. Default c_c = 5.558657
 		:type c_c: float
-		:param c_d: constant. Default a = -0.11829
+		:param c_d: constant. Default c_d = -0.11829
 		:type c_d: float
-		:param c_e: constant. Default a = -1.9818
+		:param c_e: constant. Default c_e = -1.9818
 		:type c_e: float
-		:param c_f: constant. Default a = -4.50339
+		:param c_f: constant. Default c_f = -4.50339
 		:type c_f: float
-		:param c_g: constant. Default a = -11.4625
+		:param c_g: constant. Default c_g = -11.4625
 		:type c_g: float
-		:param c_h: constant. Default a = 7.461454
+		:param c_h: constant. Default c_h = 7.461454
 		:type c_h: float
-		:param c_i: constant. Default a = 5.299396
+		:param c_i: constant. Default c_i = 5.299396
 		:type c_i: float
-		:param c_j: constant. Default a = 4.76657
+		:param c_j: constant. Default c_j = 4.76657
 		:type c_j: float
-		:param c_k: constant. Default a = -2.3127
+		:param c_k: constant. Default c_k = -2.3127
 		:type c_k: float
-		:param c_l: constant. Default a = -3.42739
+		:param c_l: constant. Default c_l = -3.42739
 		:type c_l: float
 
 		:returns: Albedo (rel.)
@@ -875,7 +876,10 @@ class SolarRadBalance(VegIndices):
 		*Duffková, R., Brom, J., Žížala, D., Zemek, F., Procházka, J.,
 		Nováková, E., Zajíček, A., Kvítek, T., 2012. Určení infiltračních
 		oblastí pomocí vodního stresu vegetace na základě dálkového průzkumu
-		Země a pozemních měření. Certifikovaná metodika. VÚMOP, v.v.i., Praha.*
+		Země a pozemních měření. Certifikovaná metodika. VÚMOP, v.v.i., Praha.*\n
+		*Gao, Z.Q., Liu, C.S., Gao, W., Chang, N.B. (2011): A coupled remote sensing and the Surface Energy Balance
+		with Topography Algorithm (SEBTA) to estimate actual evapotranspiration over heterogeneous terrain. Hydrology
+		and Earth System Sciences, 15, 119-139.*
 		"""
 
 		try:
@@ -928,8 +932,8 @@ class SolarRadBalance(VegIndices):
 		Version 0.6 (2017)*\n
 		*Tasumi, M., Allen, R.G., Trezza, R., 2008. At-Surface Reflectance
 		and Albedo from Satellite for Operational Calculation of Land
-		Surface Energy Balance. Journal of Hydrologic Engineering 13, 51–63.*
-		https://doi.org/10.1061/(ASCE)1084-0699(2008)13:2(51).
+		Surface Energy Balance. Journal of Hydrologic Engineering 13, 51–63.
+		https://doi.org/10.1061/(ASCE)1084-0699(2008)13:2(51)*
 		"""
 
 		# Constants
@@ -972,11 +976,11 @@ class SolarRadBalance(VegIndices):
 	           band_green=None, band_sw1=None, band_sw2=None):
 		"""
 		Calculation of Albedo according to data type (satellite data type)
-		or data availability. Albedo can be calculated using Landsat data 
-		or using any data including RED and NIR band. For the Landsat 8 data 
-		Olmedo method is used, for tle Landsat 4, 5 and 7 Tasumi approach is 
+		or data availability. Albedo can be calculated using Landsat data
+		or using any data including RED and NIR band. For the Landsat 8 data
+		Olmedo method is used, for tle Landsat 4, 5 and 7 Tasumi approach is
 		used. If only RED and NIR bands are available, Brom method is used.
-		
+
 		:param band_red: Red band (rel.)
 		:type band_red: numpy.ndarray
 		:param band_nir: NIR band (rel.)
@@ -996,7 +1000,7 @@ class SolarRadBalance(VegIndices):
 
 		:return: Albedo (rel.)
 		:rtype: numpy.ndarray
-		
+
 		\n
 		**References:**\n
 		*G.F. Olmedo, S. Ortega-Farias, D. Fonseca-Luengo,
@@ -1014,8 +1018,8 @@ class SolarRadBalance(VegIndices):
 		"""
 
 		try:
-			if sat_type == "other" or band_blue is None or band_green is None\
-					or band_sw1 is None or band_sw2 is None:
+			if sat_type == "other" or band_blue == None or band_green == None\
+					or band_sw1 == None or band_sw2 == None:
 				ndvi = self.viNDVI(band_red, band_nir)
 				msavi = self.viMSAVI(band_red, band_nir)
 				albedo = self.albedoBrom(ndvi, msavi)
@@ -1091,21 +1095,18 @@ class MeteoFeatures(VegIndices):
 	def airTemp(self, ta_st, st_altitude, DMT, adiabatic=0.0065):
 		"""
 		Conversion of air temperature calculated from temperature data and
-		digital	elevation model :math:`(\SI{}\degreeCelsius)` to spatial
+		digital	elevation model (˚) to spatial
 		near to ground temperature or temperature at different altitude.
 
-		:param ta_st: Air temperature measured on meteostation :math:`(\SI{
-		}\degreeCelsius)`
+		:param ta_st: Air temperature measured on meteostation (˚C)
 		:type ta_st: float
 		:param st_altitude: Meteostation altitude (m a.s.l.)
 		:type st_altitude: float
-		:param DMT: Digital elevation model (m) or altitude for calculation
-		of ta value.
+		:param DMT: Digital elevation model (m) or altitude for calculation of ta value.
 		:type DMT: numpy.ndarray, float
-		:param adiabatic: Adiabatic lapse rate :math:`(\SI{}\degreeCelsius)`.
-		Default = 0.0065 :math:`\SI{}\degreeCelsius.m^{-1}`
+		:param adiabatic: Adiabatic lapse rate (˚C). Default = 0.0065 ˚C
 		:type adiabatic: float
-		:return: Spatial air temperature :math:`(\SI{}\degreeCelsius)`
+		:return: Spatial air temperature (˚C)
 		:rtype: numpy.ndarray, float
 		"""
 
@@ -1124,19 +1125,16 @@ class MeteoFeatures(VegIndices):
 		level to level Z above the surface. This approach is usually used
 		for calculation of air temperature at blending height (mixing layer).
 
-		:param ta_surface: Spatial air temperature for near ground level (
-		Z_st; :math:`\SI{}\degreeCelsius)`
+		:param ta_surface: Spatial air temperature for near ground level (Z_st; ˚C)
 		:type ta_surface:
-		:param Z: Height of a level which is used for calculation. Default
-		value corresponds with "blending" height or height of mixing layer.
-		Default is 200 m above surface.
+		:param Z: Height of a level which is used for calculation. Default value corresponds with "blending" height or height of mixing layer. Default is 200 m above surface.
 		:type Z: float
 		:param Z_st: Height of air temperature measurement (m)
 		:type Z_st: float
-		:param adiabatic: Adiabatic lapse rate :math:`(\SI{}\degreeCelsius)`.
-		Default = 0.0065 :math:`\SI{}\degreeCelsius.m^{-1}`
+		:param adiabatic: Adiabatic lapse rate (˚C). Default = 0.0065 :math:`˚C.m^{-1}`
 		:type adiabatic: float
-		:return:
+		:return: Blending height air temperature (˚C)
+		:rtype: numpy.ndarray, float
 		"""
 
 		try:
@@ -1149,21 +1147,19 @@ class MeteoFeatures(VegIndices):
 
 	def surfaceTemperature(self, tir_band, emissivity=1.0, emis_rule="No"):
 		"""Correction of surface temperature on emissivity.
-		:param tir_band: Layer of surface temperature :math:`(\SI{
-		}\degreeCelsius)`.
+
+		:param tir_band: Layer of surface temperature (˚C).
 		:type tir_band: numpy.ndarray
 		:param emissivity: Layer of emissivity (rel.).
 		:type emissivity: numpy.ndarray
-		:param emis_rule: Setting if the correction will be done or not.
-			No is default.
+		:param emis_rule: Setting if the correction will be done or not. No is default.
 		:type emis_rule: str
 
-		:return: Layer of corrected surface temperature :math:`(\SI{
-		}\degreeCelsius)`.
+		:return: Layer of corrected surface temperature (˚C).
 		:rtype: numpy.ndarray
 		"""
 		try:
-			if emis_rule is not "No":
+			if emis_rule != "No":
 				ts = ((tir_band + 273.16) / emissivity ** 0.25) - 273.16
 			else:
 				ts = tir_band
@@ -1176,7 +1172,7 @@ class MeteoFeatures(VegIndices):
 		"""
 		Atmospheric air pressure at level Z (kPa)
 
-		:param ta: Air temperature :math:`(\SI{}\degreeCelsius)`
+		:param ta: Air temperature (˚C)
 		:type ta: numpy.ndarray, float
 		:param DMT: Digital elevation model or altitude (m)
 		:type DMT: numpy.ndarray, float
@@ -1184,7 +1180,7 @@ class MeteoFeatures(VegIndices):
 		:type Z: float
 		:param P0: Sea level air pressure (kPa)
 		:type P0: float
-		:param adiabatic: Adiabatic lapse rate :math:`(\SI{}\degreeCelsius)`
+		:param adiabatic: Adiabatic lapse rate (˚C)
 		:type adiabatic: float
 
 		:return: Air pressure at level Z (kPa)
@@ -1205,7 +1201,7 @@ class MeteoFeatures(VegIndices):
 		Saturated water vapour pressure (kPa) calculated using Magnus-Tetens
 		equation.
 
-		:param ta: Air temperature :math:`(\SI{}\degreeCelsius)`
+		:param ta: Air temperature (˚C)
 		:type ta: numpy.ndarray, float
 
 		:return: Saturated water vapour pressure (kPa)
@@ -1266,7 +1262,7 @@ class MeteoFeatures(VegIndices):
 		"""
 		Volumetric dry air density :math:`(kg.m^{-3})`.
 
-		:param ta: Air temperature :math:`(\SI{}\degreeCelsius)`
+		:param ta: Air temperature (˚C)
 		:type ta: numpy.ndarray, float
 
 		:return: Volumetric dry air density :math:`(kg.m^{-3})`
@@ -1285,7 +1281,7 @@ class MeteoFeatures(VegIndices):
 		"""
 		Latent heat for the water vapour exchange :math:`(J.g^{-1})`.
 
-		:param ta: Air temperature :math:`(\SI{}\degreeCelsius)`
+		:param ta: Air temperature (˚C)
 		:type ta: numpy.ndarray, float
 
 		:return: Latent heat for the water vapour exchange :math:`(J.g^{-1})`
@@ -1327,9 +1323,9 @@ class MeteoFeatures(VegIndices):
 		function :math:`(kPa.K^{-1})`. Calculation according to Jackson et
 		al. (1998).
 
-		:param ts: Surface temperature :math:`(\SI{}\degreeCelsius)`
+		:param ts: Surface temperature (˚C)
 		:type ts: numpy.ndarray
-		:param ta: Air temperature :math:`(\SI{}\degreeCelsius)`
+		:param ta: Air temperature (˚C)
 		:type ta: numpy.ndarray, float
 
 		:return: Slope of water vapour pressure gradient to temperature\
@@ -1339,8 +1335,7 @@ class MeteoFeatures(VegIndices):
 
 		try:
 			T = (ts + ta) / 2
-			delta = (
-						        45.03 + 3.014 * T + 0.05345 * T ** 2 + 0.00224 * T ** 3) * 0.001
+			delta = (45.03 + 3.014 * T + 0.05345 * T ** 2 + 0.00224 * T ** 3) * 0.001
 			del T
 		except ArithmeticError:
 			raise ArithmeticError("Delta has not been calculated.")
@@ -1389,7 +1384,7 @@ class HeatFluxes(MeteoFeatures):
 	heat flux, sensible heat flux, latent heat flux, evaporative fraction,
 	omega factor (decoupling coefficient), surface resistance for water
 	vapour transfer etc. Calculation for both aerodynamic and gradient
-	method is included. 
+	method is included.
 	"""
 
 	def fluxLE_p(self, Rn, G, delta, VPD, ra, gamma, rho, cp=1012.0):
@@ -1475,8 +1470,7 @@ class HeatFluxes(MeteoFeatures):
 
 		return LE_PT
 
-	def fluxLE_ref(self, Rn, G, ta, ts, U, Rh, DMT, veg_type="short",
-	               cp=1012.0):
+	def fluxLE_ref(self, Rn, G, ta, ts, U, Rh, DMT, veg_type="short", cp=1012.0):
 		"""
 		Latent heat flux for reference evapotranspiration according to FAO56
 		method (Allen et al. 1998, ASCE-ET 2000)
@@ -1485,11 +1479,9 @@ class HeatFluxes(MeteoFeatures):
 		:type Rn: numpy.ndarray, float
 		:param G: Ground heat flux :math:`(W.m^{-2})`
 		:type G: numpy.ndarray, float
-		:param ta: Air temperature measured at meteostation at approx. 2 m.
-		:math:`(\SI{}\degreeCelsius)`
+		:param ta: Air temperature measured at meteostation at approx. 2 m. (˚C)
 		:type ta: numpy.ndarray, float
-		:param ts: Surface temperature measured at meteostation at approx. 2 m.
-		:math:`(\SI{}\degreeCelsius)`
+		:param ts: Surface temperature measured at meteostation at approx. 2 m. (˚C)
 		:param U: Wind speed measured at meteostation :math:`(m.s^{-1})`
 		:type U: numpy.ndarray, float
 		:param Rh: Relative humidity (%)
@@ -1514,7 +1506,7 @@ class HeatFluxes(MeteoFeatures):
 		Equation. National Irrigation Symposium in Phoenix, Arizona, US.
 		"""
 
-		if veg_type is "short":
+		if veg_type == "short":
 			if Rn > 0.0:
 				cn = 37.0
 				cd = 0.24
@@ -1538,26 +1530,22 @@ class HeatFluxes(MeteoFeatures):
 		VPD = self.vpd(E_sat, e_abs)
 
 		try:
-			LE_ref = (408.0 * delta * (Rn - G) * 0.0036) + (gamma * cn/(ta +
-			                                                            273.15) * U * VPD)/(delta + gamma * (1 + cd * U)) * latent_heat/3600.0
+			LE_ref = (408.0 * delta * (Rn - G) * 0.0036) + (gamma * cn/(ta + 273.15) * U * VPD)/(delta + gamma * (1 + cd * U)) * latent_heat/3600.0
 		except ArithmeticError:
-			raise ArithmeticError("Reference evapotranspiration has not been "
-			                      "calculated.")
+			raise ArithmeticError("Reference evapotranspiration has not been calculated.")
 
 		return LE_ref
 
 	def fluxHAer(self, ra, rho, dT, cp=1012.0):
 		"""
-		Sensible heat flux :math:`(W.m^{-2})` calculated using aerodynamic 
+		Sensible heat flux :math:`(W.m^{-2})` calculated using aerodynamic
 		method.
-		
-		:param ra: Aerodynamic resistance for heat and momentum transfer\
-		:math:`(s.m^{-1})` calculated according to Thom (1975)
+
+		:param ra: Aerodynamic resistance for heat and momentum transfer :math:`(s.m^{-1})` calculated according to Thom (1975)
 		:type ra: numpy.ndarray
 		:param rho: Specific air density :math:`(g.m^{-3})`
 		:type rho: numpy.ndarray
-		:param dT: Temperature gradient calculated according to SEBAL\
-		(Bastiaanssen et al. 1998) :math:`(\SI{}\degreeCelsius)`
+		:param dT: Temperature gradient calculated according to SEBAL (Bastiaanssen et al. 1998) (˚C)
 		:type dT: numpy.ndarray
 		:param cp: Thermal heat capacity of dry air :math:`(K.kg^{-1}.K^{-1})`
 		:type cp: float
@@ -1565,6 +1553,12 @@ class HeatFluxes(MeteoFeatures):
 		:return: Sensible heat flux :math:`(W.m^{-2})`
 		:rtype: numpy.ndarray
 
+		\n
+		**References**\n
+		*Bastiaanssen, W.G.M., Menenti, M., Feddes, R.A., Holtslag, A.A.M.,
+		1998. A remote sensing surface energy balance algorithm for land (
+		SEBAL). 1. Formulation. Journal of Hydrology 212–213, 198–212.
+		https://doi.org/10.1016/S0022-1694(98)00253-4*
 		"""
 
 		try:
@@ -1667,12 +1661,11 @@ class HeatFluxes(MeteoFeatures):
 		Evaporative fraction calculated from gradient method according
 		to Suleiman and Crago (2004).
 
-		:param ts: Surface temperature :math:`(\SI{}\degreeCelsius)`
+		:param ts: Surface temperature (˚C)
 		:type ts: numpy.ndarray
-		:param ta: Air temperature :math:`(\SI{}\degreeCelsius)`
+		:param ta: Air temperature (˚C)
 		:type ta: numpy.ndarray, float
-		:param mask: Mask of the area of interest. Number of rows and columns
-		should be the same.  Format (1, 0) or (1, nan).
+		:param mask: Mask of the area of interest. Number of rows and columns should be the same.  Format (1, 0) or (1, nan).
 		:type mask: numpy.ndarray
 
 		:return: Evaporative fraction (rel.)
@@ -1694,118 +1687,107 @@ class HeatFluxes(MeteoFeatures):
 	               a=1.0, b=0.667, c=5.0, d=0.35, kappa=0.41, gravit=9.81):
 		# noinspection SpellCheckingInspection
 		"""
-		Function provides a calculation for heat fluxes, aerodynimc
+		Function provides a calculation for heat fluxes, aerodynamic
 		resistance of surface and friction velocity for three different
-		methods: \
-			1. "aero" - Aerodynamic method based on Monin-Obukhov theory \
-			2. "sebal" - Method based on SEBAL approach provided by
-			Bastiaanssen et al.
+		methods:
+			1. "aero" - Aerodynamic method based on Monin-Obukhov theory and Penman-Monteith method
+			2. "SEBAL" - Method based on SEBAL approach provided by	Bastiaanssen et al. (1998)
+			3. "grad" - Gradient method proposed by Suleiman and Crago (2004)
 
-				:param disp:
-				:param Rn: Total net radiation :math:`(W.m^{-2})`
-				:type Rn: numpy.ndarray
-				:param G: Ground heat flux :math:`(W.m^{-2})`
-				:type G: numpy.ndarray
-				:param ts: Surface temperature :math:`(\SI{}\degreeCelsius)`
-				:type ts: numpy.ndarray
-				:param ta: Air temperature :math:`(\SI{}\degreeCelsius)`
-				:type ta: numpy.ndarray, float
-				:param method: Method of heat fluxes calculation: \n\n
-						- aero - Aerodynamic method based on  calculation
-						of ra using approach proposed by Thom (1975) \n
-						- SEBAL - SEBAL method proposed by Bastiaanssen et al. (1998) \n
-						- grad - Gradient method proposed by Suleiman and Crago (2004)
-				:type method: str
-				:param Uz: Wind speed measured on meteostation at level Z_st :math:`(m.s^{-1})`.
-				:type Uz: float, numpy.ndarray
-				:param h_eff: Effective height of vegetation cover
-				:type h_eff: numpy.ndarray, float
-				:param LAI: Leaf area index :math:`(m^{2}.m^{-2})`
-				:param z0m: Aerodynamic roughness of the surface for momentum
-				transfer (m)
-				:type z0m: numpy.ndarray
-				:param z0h: Aerodynamic roughness of the surface for heat
-				transfer (m)
-				:type z0h: numpy.ndarray
-				:param rho: Volumetric dry air density :math:`(kg.m^{-3})`
-				:type rho: numpy.ndarray, float
-				:param disp: Zero plane displacement (m)
-				:type disp: numpy.ndarray, float
-				:param mask: Mask of the area of interest. Number of rows
-				and columns should be the same.  Format (1, 0) or (1, nan).
-				:type mask: numpy.ndarray
-				:param air_pressure: Air pressure  at level Z (kPa)
-				:type air_pressure: float, numpy.ndarray
-				:param Z: Blending height (m)
-				:type Z: float
-				:param cp: Thermal heat capacity of dry air :math:`(K.kg^{-1}.K^{-1})`
-				:type cp: float
-				:param L: Initial Monin-Obukhov lenght (m).
-				:type L: float
-				:param n_iter: Number of iteration in stability coefficient calculation.
-				:type n_iter: int
-				:param a: Constant for stability parameters calculation (Beljaars and
-				Holtslag, 1991)
-				:type a: float
-				:param b: Constant for stability parameters calculation (Beljaars and
-				Holtslag, 1991)
-				:type b: float
-				:param c: Constant for stability parameters calculation (Beljaars and
-				Holtslag, 1991)
-				:type c: float
-				:param d: Constant for stability parameters calculation (Beljaars and
-				Holtslag, 1991)
-				:type d: float
-				:param kappa: von Karman constant. Default 0.41
-				:type kappa: float
-				:param gravit: Gravitation forcing (m/s2). Default 9.81
-				:type gravit: float
+		:param disp:
+		:param Rn: Total net radiation :math:`(W.m^{-2})`
+		:type Rn: numpy.ndarray
+		:param G: Ground heat flux :math:`(W.m^{-2})`
+		:type G: numpy.ndarray
+		:param ts: Surface temperature (˚C)
+		:type ts: numpy.ndarray
+		:param ta: Air temperature (˚C)
+		:type ta: numpy.ndarray, float
+		:param method: Method of heat fluxes calculation: \n\n
+				- aero - Aerodynamic method based on  calculation of ra using approach proposed by Thom (1975)
+				- SEBAL - SEBAL method proposed by Bastiaanssen et al. (1998)
+				- grad - Gradient method proposed by Suleiman and Crago (2004)
+		:type method: str
+		:param Uz: Wind speed measured on meteostation at level Z_st :math:`(m.s^{-1})`.
+		:type Uz: float, numpy.ndarray
+		:param h_eff: Effective height of vegetation cover
+		:type h_eff: numpy.ndarray, float
+		:param LAI: Leaf area index :math:`(m^{2}.m^{-2})`
+		:param z0m: Aerodynamic roughness of the surface for momentum transfer (m)
+		:type z0m: numpy.ndarray
+		:param z0h: Aerodynamic roughness of the surface for heat transfer (m)
+		:type z0h: numpy.ndarray
+		:param rho: Volumetric dry air density :math:`(kg.m^{-3})`
+		:type rho: numpy.ndarray, float
+		:param disp: Zero plane displacement (m)
+		:type disp: numpy.ndarray, float
+		:param mask: Mask of the area of interest. Number of rows and columns should be the same.  Format (1, 0) or (1, nan).
+		:type mask: numpy.ndarray
+		:param air_pressure: Air pressure  at level Z (kPa)
+		:type air_pressure: float, numpy.ndarray
+		:param Z: Blending height (m)
+		:type Z: float
+		:param cp: Thermal heat capacity of dry air :math:`(K.kg^{-1}.K^{-1})`
+		:type cp: float
+		:param L: Initial Monin-Obukhov lenght (m).
+		:type L: float
+		:param n_iter: Number of iteration in stability coefficient calculation.
+		:type n_iter: int
+		:param a: Constant for stability parameters calculation (Beljaars and Holtslag, 1991)
+		:type a: float
+		:param b: Constant for stability parameters calculation (Beljaars and Holtslag, 1991)
+		:type b: float
+		:param c: Constant for stability parameters calculation (Beljaars and Holtslag, 1991)
+		:type c: float
+		:param d: Constant for stability parameters calculation (Beljaars and Holtslag, 1991)
+		:type d: float
+		:param kappa: von Karman constant. Default 0.41
+		:type kappa: float
+		:param gravit: Gravitation forcing (m/s2). Default 9.81
+		:type gravit: float
 
-				:returns: Sensible heat flux :math:`(W.m^{-2})`
-				:rtype: numpy.ndarray
-				:returns: Latent heat flux :math:`(W.m^{-2})`
-				:rtype: numpy.ndarray
-				:returns: Evaporative fraction (rel.)
-				:rtype: numpy.ndarray
-				:returns: Latent heat flux for equilibrium evaporation :math:`(W.m^{
-				-2})`
-				:rtype: numpy.ndarray
-				:returns: Latent heat flux for Priestley-Taylor evaporation :math:`(
-				W.m^{-2})`
-				:rtype: numpy.ndarray
-				:returns: Aerodynamic resistance for heat and momentum transfer :math:`(
-				s.m^{-1})`
-				:rtype: numpy.ndarray
-				:returns: Friction velocity :math:`(m.s^{-1})`
+		:returns: Sensible heat flux :math:`(W.m^{-2})`
+		:rtype: numpy.ndarray
+		:returns: Latent heat flux :math:`(W.m^{-2})`
+		:rtype: numpy.ndarray
+		:returns: Evaporative fraction (rel.)
+		:rtype: numpy.ndarray
+		:returns: Latent heat flux for equilibrium evaporation :math:`(W.m^{-2})`
+		:rtype: numpy.ndarray
+		:returns: Latent heat flux for Priestley-Taylor evaporation :math:`(W.m^{-2})`
+		:rtype: numpy.ndarray
+		:returns: Aerodynamic resistance for heat and momentum transfer :math:`(s.m^{-1})`
+		:rtype: numpy.ndarray
+		:returns: Friction velocity :math:`(m.s^{-1})`
 
-				\n
-				**References**\n
-				*Bastiaanssen, W.G.M., Menenti, M., Feddes, R.A., Holtslag, A.A.M.,
-				1998. A remote sensing surface energy balance algorithm for land (
-				SEBAL). 1. Formulation. Journal of Hydrology 212–213, 198–212.
-				https://doi.org/10.1016/S0022-1694(98)00253-4*\n
-				*Beljaars, A.C.M., Holtslag, A.A.M., 1991. Flux Parametrization over
-				Land Surfaces for Atmospheric Models. Journal of Applied Meteorology
-				30, 327–341. https://doi.org/10.1175/1520-0450(
-				1991)030<0327:FPOLSF>2.0.CO;2*\n
-				*Suleiman, A., Crago, R., 2004. Hourly and Daytime Evapotranspiration
-				from Grassland Using Radiometric Surface Temperatures. Agronomy
-				Journal 96, 384–390. https://doi.org/10.2134/agronj2004.3840*\n
-				*Thom, A.S., 1975. Momentum, mass and heat exchange of plant
-				communities, in: Monteith, J.L. (Ed.), Vegetation and the Atmosphere,
-				Vol. 1 Principles. Academic Press, London, pp. 57–110.*
-				"""
+		\n
+		**References**\n
+		*Bastiaanssen, W.G.M., Menenti, M., Feddes, R.A., Holtslag, A.A.M.,
+		1998. A remote sensing surface energy balance algorithm for land (
+		SEBAL). 1. Formulation. Journal of Hydrology 212–213, 198–212.
+		https://doi.org/10.1016/S0022-1694(98)00253-4*\n
+		*Beljaars, A.C.M., Holtslag, A.A.M., 1991. Flux Parametrization over
+		Land Surfaces for Atmospheric Models. Journal of Applied Meteorology
+		30, 327–341. https://doi.org/10.1175/1520-0450(
+		1991)030<0327:FPOLSF>2.0.CO;2*\n
+		*Suleiman, A., Crago, R., 2004. Hourly and Daytime Evapotranspiration
+		from Grassland Using Radiometric Surface Temperatures. Agronomy
+		Journal 96, 384–390. https://doi.org/10.2134/agronj2004.3840*\n
+		*Thom, A.S., 1975. Momentum, mass and heat exchange of plant
+		communities, in: Monteith, J.L. (Ed.), Vegetation and the Atmosphere,
+		Vol. 1 Principles. Academic Press, London, pp. 57–110.*
+		"""
 
 		ignore_zero = np.seterr(all="ignore")
 
 		# Handling inputs
-		if method is "aero" or method is "SEBAL":
-			if Uz is None:
+		if method == "aero" or method == "SEBAL":
+			if Uz == None:
 				raise IOError("Heat fluxes have not been calculated - wind "
 				              "speed has not been set up.")
 			else:
-				if z0m is None or z0h is None:
-					if h_eff is not None and LAI is not None:
+				if z0m == None or z0h == None:
+					if h_eff != None and LAI != None:
 						try:
 							z0m = WindStability().z0m(h_eff, LAI)
 							z0h = WindStability().z0h(z0m)
@@ -1818,20 +1800,19 @@ class HeatFluxes(MeteoFeatures):
 						              "vegetation or leaf area index has not "
 						              "been set up correctly")
 
-				if disp is None:
-					if h_eff is not None:
+				if disp == None:
+					if h_eff != None:
 						disp = WindStability().zeroPlaneDis(h_eff)
 					else:
 						disp = 0.0
 		try:
-			if rho is None or rho is "":
+			if rho == None or rho == "":
 				rho = self.airDensity(ta)
 		except ArithmeticError:
-			raise ArithmeticError("Air density has not been "
-			                      "calculated.")
+			raise ArithmeticError("Air density has not been calculated.")
 
 		# Heat fluxes calculation
-		if method is "aero":
+		if method == "aero":
 			try:
 				psi_m, psi_h, frict, L = WindStability().stabCoef(Uz, ta, ts,
 				                                                  z0m, z0h,
@@ -1848,10 +1829,9 @@ class HeatFluxes(MeteoFeatures):
 				EF = self.aeroEF(LE, Rn, G)
 
 			except ArithmeticError:
-				raise ArithmeticError("Heat fluxes for aerodynamic method "
-				                      "has not been calculated")
+				raise ArithmeticError("Heat fluxes for aerodynamic method has not been calculated")
 
-		elif method is "SEBAL":
+		elif method == "SEBAL":
 			try:
 				psi_m, psi_h, frict, L = WindStability().stabCoef(Uz, ta, ts,
 				                                                  z0m,
@@ -1869,10 +1849,9 @@ class HeatFluxes(MeteoFeatures):
 				EF = self.aeroEF(LE, Rn, G)
 
 			except ArithmeticError:
-				raise ArithmeticError("Heat fluxes for SEBAL method "
-				                      "has not been calculated")
+				raise ArithmeticError("Heat fluxes for SEBAL method has not been calculated")
 
-		elif method is "grad":
+		elif method == "grad":
 			EF = self.gradEF(ts, ta, mask)
 			LE = self.gradLE(EF, Rn, G)
 			flux_H = self.gradH(LE, Rn, G)
@@ -1905,12 +1884,12 @@ class HeatFluxes(MeteoFeatures):
 
 	def intensityE(self, LE, latent):
 		"""Evaporation intensity in :math:`mmol.m^{-2}.s^{-1}`.
-		
+
 		:param LE: Latent heat flux :math:`(W.m^{-2})`
 		:type LE: numpy.ndarray
 		:param latent: Latent heat of water evaporation :math:`(J.g^{-1})`.
 		:type latent: numpy.ndarray
-		
+
 		:returns: Intensity of water evaporation :math:`(mmol.m^{-2}.s^{-1})`.
 		:rtype: numpy.ndarray
 		"""
@@ -2091,7 +2070,7 @@ class HeatFluxes(MeteoFeatures):
 
 		except ArithmeticError:
 			warnings.warn("CWSI has not been calculated", stacklevel=3)
-			if LEp is not None:
+			if LEp != None:
 				cwsi = np.zeros(LEp.shape)
 			else:
 				cwsi = None
@@ -2106,13 +2085,20 @@ class HeatFluxes(MeteoFeatures):
 		:type ndvi: numpy.ndarray
 		:param Rn: Total net radiation :math:`(W.m^{-2})`
 		:type Rn: numpy.ndarray
-		:param ts: Surface temperature :math:`(\SI{}\degreeCelsius)`
+		:param ts: Surface temperature (˚C)
 		:type ts: numpy.ndarray
 		:param albedo: Albedo (rel.)
 		:type albedo: numpy.ndarray
 
 		:return: Ground heat flux :math:`(W.m^{-2})`
 		:rtype: numpy.ndarray
+
+		\n
+		**References**\n
+		*Bastiaanssen, W.G.M., Menenti, M., Feddes, R.A., Holtslag, A.A.M.,
+		1998. A remote sensing surface energy balance algorithm for land (
+		SEBAL). 1. Formulation. Journal of Hydrology 212–213, 198–212.
+		https://doi.org/10.1016/S0022-1694(98)00253-4*
 		"""
 
 		G = ts / albedo * (0.0038 * albedo + 0.0074 * albedo ** 2) * (1 - 0.98 * ndvi ** 4) * Rn
@@ -2252,11 +2238,11 @@ class WindStability(HeatFluxes, VegIndices):
 		ignore_zero = np.seterr(all="ignore")
 
 		try:
-			if ws_homog is 0:
+			if ws_homog == 0:
 				U_float = np.mean(U)
 				Uz = U_float * np.log(Z / (0.123 * h_st)) / np.log(Z_st / (
 						0.123 * h_st))
-				if type(U) is not float:
+				if type(U) != float:
 					Uz = np.full_like(U, Uz, float)
 			else:
 				Uz = U * np.log(Z / (0.123 * h_st)) / np.log(Z_st / (
@@ -2346,8 +2332,7 @@ class WindStability(HeatFluxes, VegIndices):
 		:type L: numpy.ndarray
 		:param X: X coefficient for stability calculation
 		:type X: numpy.ndarray
-		:param Z: Blending height (mixing layer height) (m).
-				  Default 200 m.
+		:param Z: Blending height (mixing layer height) (m). Default 200 m.
 		:type Z: float
 		:param a: Coefficient. Default a = 1.0
 		:type a: float
@@ -2394,8 +2379,7 @@ class WindStability(HeatFluxes, VegIndices):
 		:type L: numpy.ndarray
 		:param X: X coefficient for stability calculation
 		:type X: numpy.ndarray
-		:param Z: Blending height (mixing layer height) (m).
-				  Default 200 m.
+		:param Z: Blending height (mixing layer height) (m). Default 200 m.
 		:type Z: float
 		:param a: Coefficient. Default a = 1.0
 		:type a: float
@@ -2419,9 +2403,7 @@ class WindStability(HeatFluxes, VegIndices):
 			               * (dzeta - c / d) * np.exp((-d) * dzeta)
 			               + (b * c/d - 1))
 		except ArithmeticError:
-			raise ArithmeticError("Stability coefficient for heat transfer "
-			                      "for stable conditions has not been "
-			                      "calculated")
+			raise ArithmeticError("Stability coefficient for heat transfer in stable conditions has not been calculated")
 
 		try:
 			psi_h_unstab = 2.0 * np.log((1.0 + X ** 2.0) / 2.0)
@@ -2462,7 +2444,7 @@ class WindStability(HeatFluxes, VegIndices):
 		ignore_zero = np.seterr(all="ignore")
 
 		try:
-			if flux_H is None:
+			if flux_H == None:
 				L = frict ** 2.0 * (ts + 273.16) / (kappa * gravit * t_virt)
 			else:
 				L = -(frict ** 3 * (ts + 273.15) * rho * cp / (kappa * gravit * flux_H))
@@ -2657,6 +2639,13 @@ class WindStability(HeatFluxes, VegIndices):
 		:return: Aerodynamic resistance for heat transfer based on\
 		SEBAL approach (Bastiaanssen, 1998).
 		:rtype: numpy.ndarray
+
+		\n
+		**References**\n
+		*Bastiaanssen, W.G.M., Menenti, M., Feddes, R.A., Holtslag, A.A.M.,
+		1998. A remote sensing surface energy balance algorithm for land (
+		SEBAL). 1. Formulation. Journal of Hydrology 212–213, 198–212.
+		https://doi.org/10.1016/S0022-1694(98)00253-4*
 		"""
 
 		# ra calculation
@@ -2678,9 +2667,9 @@ class WindStability(HeatFluxes, VegIndices):
 		:type flux_H: numpy.ndarray
 		:param rho: Specific air density :math:`(g.m^{-3})`
 		:type rho: numpy.ndarray
-		:param ts: Surface temperature :math:`(\SI{}\degreeCelsius)`
+		:param ts: Surface temperature (˚C)
 		:type ta: numpy.ndarray
-		:param ta: Air temperature at level Z :math:`(\SI{}\degreeCelsius)`
+		:param ta: Air temperature at level Z (˚C)
 		:type ta: numpy.ndarray
 		:param cp: Thermal heat capacity of dry air :math:`(K.kg^{-1}.K^{-1})`
 		:type cp: float
@@ -2701,36 +2690,36 @@ class WindStability(HeatFluxes, VegIndices):
 	def maxT(Rn, G, ra, ta, rho, cp=1012.0):
 		"""
 		Maximal surface temperature calculated on physical basis (K).
-		
+
 		:param Rn: Total net radiation :math:`(W.m^{-2})`
 		:type Rn: numpy.ndarray
 		:param G: Ground heat flux :math:`(W.m^{-2})`
 		:type G: numpy.ndarray
 		:param ra: Aerodynamic resistance for heat transfer :math:`(s.m^{-1})`
 		:type ra: numpy.ndarray
-		:param ta: Air temperature at level Z :math:`(\SI{}\degreeCelsius)`
+		:param ta: Air temperature at level Z (˚C)
 		:type ta: numpy.ndarray
 		:param rho: Specific air density :math:`(g.m^{-3})`
 		:type rho: numpy.ndarray
 		:param cp: Thermal heat capacity of dry air :math:`(K.kg^{-1}.K^{-1})`
 		:type cp: float
 		:return: Maximal surface temperature calculated from energy balance\
-		equation :math:`(\SI{}\degreeCelsius)`
+		equation (˚C)
 		:rtype: numpy.ndarray
 		"""
 
 		t_max = (Rn - G) * ra / (rho * cp) + ta
-		
+
 		return t_max
 
 	@staticmethod
 	def wetT(ta):
 		"""
 		Surface temperature for wet surface. In this case surface temperature
-		for wet surface is equal to air temperature. This statement follows 
+		for wet surface is equal to air temperature. This statement follows
 		from imagine that the LE = Rn - G and thus H is close to zero. \n
 
-		:param ta: Air temperature at level Z :math:`(\SI{}\degreeCelsius)`
+		:param ta: Air temperature at level Z (˚C)
 		:type ta: numpy.ndarray
 
 		:return: Temperature of wet surface.
@@ -2739,26 +2728,26 @@ class WindStability(HeatFluxes, VegIndices):
 		# TODO: definition of surface temperature on basis of ETr calculation
 
 		t_wet = ta
-		
+
 		return t_wet
-	
+
 	@staticmethod
 	def dryT(ts, mask=None):
 		"""
 		Extraction of temperature for dry surface with no evaporation.
-		
-		:param ts: Surface temperature :math:`(\SI{}\degreeCelsius)`
+
+		:param ts: Surface temperature (˚C)
 		:type ts: numpy.ndarray
 		:param mask: Mask of the area of interest. Number of rows and columns
 		should be the same.  Format (1, 0) or (1, nan).
 		:type mask: numpy.ndarray
-		
+
 		:return: Temperature of dry surface derived from surface temperature \
 		layer.
 		:rtype: float
 		"""
 
-		if mask is not None:
+		if mask != None:
 			try:
 				ts = ts * mask
 			except ArithmeticError:
@@ -2781,16 +2770,13 @@ class WindStability(HeatFluxes, VegIndices):
 		"""
 		Coefficient b calculated from temperature gradient.
 
-		:param t_dry: Temperature for dry surface derived from the surface\
-		temperature layer :math:`(\SI{}\degreeCelsius)`
+		:param t_dry: Temperature for dry surface derived from the surface temperature layer (˚C)
 		:type t_dry: float, numpy.ndarray
-		:param t_wet: Temperature for wet surface derived from the surface\
-		temperature layer :math:`(\SI{}\degreeCelsius)`
+		:param t_wet: Temperature for wet surface derived from the surface temperature layer (˚C)
 		:type t_wet: float, numpy.ndarray
-		:param t_max: Maximal surface temperature calculated from energy\
-		balance :math:`(\SI{}\degreeCelsius)`
+		:param t_max: Maximal surface temperature calculated from energy balance (˚C)
 		:type t_max: numpy.ndarray
-		:param ta: Air temperature at level Z :math:`(\SI{}\degreeCelsius)`
+		:param ta: Air temperature at level Z (˚C)
 		:type ta: numpy.ndarray
 
 		:return: Coefficient a calculated from temperature gradient
@@ -2810,7 +2796,7 @@ class WindStability(HeatFluxes, VegIndices):
 		"""
 		Coefficient a calculated from temperature gradient.
 
-		:param t_wet: Temperature for wet surface :math:`(\SI{}\degreeCelsius)`
+		:param t_wet: Temperature for wet surface (˚C)
 		:type t_wet: numpy.ndarray
 		:param cb: Coefficient b calculated from temperature gradient
 		:type cb: numpy.ndarray
@@ -2831,29 +2817,35 @@ class WindStability(HeatFluxes, VegIndices):
 		"""
 		Temperature gradient calculated according to SEBAL
 		(Bastiaanssen et al. 1998).
-		
-		:param ts: Surface temperature :math:`(\SI{}\degreeCelsius)`
+
+		:param ts: Surface temperature (˚C)
 		:type ts: numpy.ndarray
-		:param ta: Air temperature at level Z :math:`(\SI{}\degreeCelsius)`
+		:param ta: Air temperature at level Z (˚C)
 		:type ta: numpy.ndarray
 		:param Rn: Total net radiation :math:`(W.m^{-2})`
 		:type Rn: numpy.ndarray
 		:param G: Ground heat flux :math:`(W.m^{-2})`
 		:type G: numpy.ndarray
-		:param ra: Aerodynamic resistance :math:`(s.m^{-1})` 
+		:param ra: Aerodynamic resistance :math:`(s.m^{-1})`
 		:type ra: numpy.ndarray
 		:param rho: Specific air density :math:`(g.m^{-3})`
 		:type rho: numpy.ndarray
 		:param cp: Thermal heat capacity of dry air :math:`(K.kg^{-1}.K^{-1})`
 		:type cp: float
-		:param mask: Mask of the area of interest. Number of rows and columns
-		should be the same.  Format (1, 0) or (1, nan).
+		:param mask: Mask of the area of interest. Number of rows and columns should be the same.  Format (1, 0) or (1, nan).
 		:type mask: numpy.ndarray
-		:return: Temperature difference dT calculated according to\
-		Bastiaanssen (1998)
+
+		:return: Temperature difference dT calculated according to Bastiaanssen (1998)
 		:rtype: numpy.ndarray
+
+		\n
+		**References**\n
+		*Bastiaanssen, W.G.M., Menenti, M., Feddes, R.A., Holtslag, A.A.M.,
+		1998. A remote sensing surface energy balance algorithm for land (
+		SEBAL). 1. Formulation. Journal of Hydrology 212–213, 198–212.
+		https://doi.org/10.1016/S0022-1694(98)00253-4*
 		"""
-				
+
 		t_wet = self.wetT(ta)
 		t_dry = self.dryT(ts, mask)
 		t_max = self.maxT(Rn, G, ra, ta, rho, cp)
@@ -2871,10 +2863,9 @@ class WindStability(HeatFluxes, VegIndices):
 
 		:param Uz: Wind speed at level Z :math:`(m.s^{-1})`
 		:type Uz: numpy.ndarray
-		:param ta: Air temperature at blending height\
-		:math:`(\SI{}\degreeCelsius)`
+		:param ta: Air temperature at blending height (˚C)
 		:type ta: numpy.ndarray
-		:param ts: Surface temperature :math:`(\SI{}\degreeCelsius)`
+		:param ts: Surface temperature (˚C)
 		:type ts: numpy.ndarray
 		:param z0m: Surface roughness for momentum transfer (m)
 		:type z0m: numpy.ndarray
@@ -2896,16 +2887,20 @@ class WindStability(HeatFluxes, VegIndices):
 		:type cp: float
 		:param kappa: von Karman constant. Default 0.41
 		:type kappa: float
-		:param mask: Mask of the area of interest. Number of rows and columns
-		should be the same.  Format (1, 0) or (1, nan).
+		:param mask: Mask of the area of interest. Number of rows and columns should be the same. Format (1, 0) or (1, nan).
 		:type mask: numpy.ndarray
 
-		:return: Aerodynamic resistance for heat transfer :math:`(s.m^{-1})`\
-		calculated according to SEBAL (Bastiaanssen et al. 1998)
+		:return: Aerodynamic resistance for heat transfer :math:`(s.m^{-1})` calculated according to SEBAL (Bastiaanssen et al. 1998)
 		:rtype: numpy.ndarray
-		:return: Sensible heat flux :math:`(W.m^{-2})` calculated according\
-		to SEBAL (Bastiaanssen et al. 1998)
+		:return: Sensible heat flux :math:`(W.m^{-2})` calculated according	to SEBAL (Bastiaanssen et al. 1998)
 		:rtype: numpy.ndarray
+
+		\n
+		**References**\n
+		*Bastiaanssen, W.G.M., Menenti, M., Feddes, R.A., Holtslag, A.A.M.,
+		1998. A remote sensing surface energy balance algorithm for land (
+		SEBAL). 1. Formulation. Journal of Hydrology 212–213, 198–212.
+		https://doi.org/10.1016/S0022-1694(98)00253-4*
 		"""
 
 		# Settings and definition of returns
@@ -2925,7 +2920,7 @@ class WindStability(HeatFluxes, VegIndices):
 		except ArithmeticError:
 			raise ArithmeticError("Initial calculation of aerodynamic "
 			                      "resistance and sensible heat flux using "
-			                      "SEBAL has not finished.")
+			                      "SEBAL has not been done.")
 
 		# Iterative procedure:
 		try:
