@@ -115,7 +115,7 @@ The digital terrain model is a raster layer that captures the elevation of the a
 
 Vegetation cover height
 ........................
-Information on the (effective) height of the vegetation cover is an important parameter for the calculation of aerodynamic parameters such as aerodynamic surface roughness or atmospheric boundary layer stability. The vegetation cover height can be obtained e.g. by scanning the surface using LiDAR as a digital surface model. In the case that the vegetation height layer is not available, it can be estimated by scaling the MSAVI index values between the minimum (:math:`h_{min}`) and maximum (:math:`h_{max}`) vegetation height (Gao et al. 2011):
+Information on the (effective) height of the vegetation cover is an important parameter for the calculation of aerodynamic parameters such as aerodynamic surface roughness or atmospheric boundary layer stability. The vegetation cover height can be obtained e.g. by scanning the surface using LiDAR as a digital surface model. In the case that the vegetation height layer is not available, it can be estimated by scaling the MSAVI index values between the minimum (:math:`h_{min}`) and maximum (:math:`h_{max}`) vegetation height (`Gao et al. 2011 <https://hess.copernicus.org/articles/15/119/2011/>`_):
 
 .. math::
     :label: eq:veg_height
@@ -126,7 +126,7 @@ To get an idea of the minimum and maximum vegetation cover height values to be u
 
 
 
-.. csv-table:: Summary of maximum and minimum values of vegetation cover effective height (m). Modified from Gao et al. (2011).
+.. csv-table:: Summary of maximum and minimum values of vegetation cover effective height (m). Modified from Gao et al. (`2011 <https://hess.copernicus.org/articles/15/119/2011/>`_).
     :header: , Max. (m), Min. (m)
 
         Arid agricultural areas, 0.75, 0.01
@@ -136,7 +136,7 @@ To get an idea of the minimum and maximum vegetation cover height values to be u
         Water bodies, 0.001, –
         Urban area, 10, –
         Resident municipalities, 5, –
-        Scattered municipalities 5, –
+        Scattered municipalities, 5, –
         Bareland, 0.001, –
 
 

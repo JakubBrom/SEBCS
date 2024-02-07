@@ -423,12 +423,12 @@ In the case of the assumption of a heterogeneous air temperature distribution in
 </section>
 <section id="vegetation-cover-height">
 <h3>Vegetation cover height<a class="headerlink" href="#vegetation-cover-height" title="Permalink to this heading"></a></h3>
-<p>Information on the (effective) height of the vegetation cover is an important parameter for the calculation of aerodynamic parameters such as aerodynamic surface roughness or atmospheric boundary layer stability. The vegetation cover height can be obtained e.g. by scanning the surface using LiDAR as a digital surface model. In the case that the vegetation height layer is not available, it can be estimated by scaling the MSAVI index values between the minimum (<span class="math notranslate nohighlight">\(h_{min}\)</span>) and maximum (<span class="math notranslate nohighlight">\(h_{max}\)</span>) vegetation height (Gao et al. 2011):</p>
+<p>Information on the (effective) height of the vegetation cover is an important parameter for the calculation of aerodynamic parameters such as aerodynamic surface roughness or atmospheric boundary layer stability. The vegetation cover height can be obtained e.g. by scanning the surface using LiDAR as a digital surface model. In the case that the vegetation height layer is not available, it can be estimated by scaling the MSAVI index values between the minimum (<span class="math notranslate nohighlight">\(h_{min}\)</span>) and maximum (<span class="math notranslate nohighlight">\(h_{max}\)</span>) vegetation height (<a class="reference external" href="https://hess.copernicus.org/articles/15/119/2011/">Gao et al. 2011</a>):</p>
 <div class="math notranslate nohighlight" id="equation-eq-veg-height">
 <span class="eqno">()<a class="headerlink" href="#equation-eq-veg-height" title="Permalink to this equation"></a></span>\[    h = h_{min} + \frac{MSAVI - MSAVI_{min}}{MSAVI_{min} - MSAVI_{max}} (h_{min} – h_{max})\]</div>
 <p>To get an idea of the minimum and maximum vegetation cover height values to be used, either values in the table listed below or an estimated values can be used.</p>
-<table class="docutils align-default" id="id1">
-<caption><span class="caption-text">Summary of maximum and minimum values of vegetation cover effective height (m). Modified from Gao et al. (2011).</span><a class="headerlink" href="#id1" title="Permalink to this table"></a></caption>
+<table class="docutils align-default" id="id2">
+<caption><span class="caption-text">Summary of maximum and minimum values of vegetation cover effective height (m). Modified from Gao et al. (<a class="reference external" href="https://hess.copernicus.org/articles/15/119/2011/">2011</a>).</span><a class="headerlink" href="#id2" title="Permalink to this table"></a></caption>
 <thead>
 <tr class="row-odd"><th class="head"></th>
 <th class="head"><p>Max. (m)</p></th>
@@ -464,9 +464,9 @@ In the case of the assumption of a heterogeneous air temperature distribution in
 <td><p>5</p></td>
 <td><p>–</p></td>
 </tr>
-<tr class="row-odd"><td><p>Scattered municipalities 5</p></td>
+<tr class="row-odd"><td><p>Scattered municipalities</p></td>
+<td><p>5</p></td>
 <td><p>–</p></td>
-<td></td>
 </tr>
 <tr class="row-even"><td><p>Bareland</p></td>
 <td><p>0.001</p></td>
