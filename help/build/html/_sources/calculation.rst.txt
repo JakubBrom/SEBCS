@@ -348,7 +348,7 @@ Alternatively albedo can be calculated from spectral indices according to Duffko
 .. math::
     :label: eq:ra_SEBAL
 
-    r_{ah} = \frac{\ln \left( \frac{z_2}{z_1}\right) - \Psi_{H\_z_2}(\varsigma) + \Psi_{H\_z_1}(\varsigma)}{u^*\kappa}
+    r_{ah} = \frac{\ln \left( \frac{z_2}{z_1}\right) - \Psi_{h\_z_2}(\varsigma) + \Psi_{h\_z_1}(\varsigma)}{u^*\kappa}
 
 .. math::
     :label: eq:G

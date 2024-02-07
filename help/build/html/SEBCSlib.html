@@ -214,11 +214,10 @@ balance analysis.</p>
 <section id="access-to-sebcs-lib-library">
 <h2>Access to SEBCS_lib library<a class="headerlink" href="#access-to-sebcs-lib-library" title="Permalink to this heading"></a></h2>
 <p>The library (package) can be accessed in standard pythonic way using import in the Python console in QGIS. Classes can be imported separately.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">SEBCS_lib</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">SEBCS</span> <span class="kn">import</span> <span class="n">SEBCS_lib</span>
 </pre></div>
 </div>
-<p>This works from SEBCS for QGIS 2.1.2 version. For previous versions the path to plugin directory need to be added to the PYTHONPATH.
-The SEBCS_lib can be used within QGIS plugins.</p>
+<p>The SEBCS_lib can be used within QGIS plugins. If there is an issue with importing SEBCS_lib please reinstall the plug-in.</p>
 </section>
 <section id="module-SEBCS_lib">
 <span id="sebcs-lib-documentation"></span><h2>SEBCS_lib documentation<a class="headerlink" href="#module-SEBCS_lib" title="Permalink to this heading"></a></h2>

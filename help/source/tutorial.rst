@@ -82,6 +82,65 @@ The SEBCS for QGIS plug-in allows calculation of the following features describe
 Input data preparation
 ----------------------
 
+SEBCS for QGIS is primarily designed to use Landsat satellite data, but also allows the use of other spatial data sources. Regardless of the data source, the same spatial resolution (number of pixels) and spatial extent (same area) must be maintained for all layers used. The choice of the geographical reference system does not affect the function of the module.
+Data preparation is specific for some data inputs. The procedure is as follows:
 
+
+Optical data
+............
+The optical data must be used in the form of the surface spectral reflectance as relative values, in the range 0 to 1.
+
+
+Air temperature
+...............
+The air temperature is the temperature measured by a weather station at the reference height :math:`z`. It is usually the temperature measured at a height of 2 m above the surface. Air temperature can be understood as either homogeneous or heterogeneous in a given space, depending on the measurement capabilities. For this reason, the air temperature is specified as a temperature layer for a given area.
+Assuming a homogeneous temperature distribution in space, the layer has only one value, which can be created using the Create constant raster layer function in QGIS Processing module or the Raster Calculator.
+In the case of the assumption of a heterogeneous air temperature distribution in the space, the air temperature needs to be modeled. If a sufficient number of measurements in a given area is available, various interpolation and geostatistical methods can be used to create an air temperature layer. A possible way to create an air temperature map is to assume an adiabatic change in air temperature with altitude (e.g. a decrease of 0.6 °C per 100 m altitude). In this case, it is necessary to have a digital model of terrain (elevation map converted to raster form, see below) and to know the altitude of the weather station location. The surface temperature is then calculated using the Raster Calculator according to the formula:
+
+.. math::
+    :label: eq:Ta_dmt
+
+    T_a = T_{st} + \Gamma(Z_{st}-DMT)
+
+
+Wind speed
+..........
+The wind speed is given as a layer of wind velocity at height :math:`Z_{st}` in :math:`m \cdot s^{-1}`. The situation is similar to that of surface temperature. The user can use a raster layer with constant values or a heterogeneous raster airflow map. The wind speed over a given area is, together with the air temperature, one of the major factors that greatly influence the result of the computation, so careful attention should be paid to the data preparation.
+
+
+Digital model of terrain
+........................
+The digital terrain model is a raster layer that captures the elevation of the area of interest. It is usually created by interpolating the elevation given by contours or elevation points. It is possible to use elevation from LiDAR data or radar altimetry data, e.g. SRTM. In the case where an elevation map is not available and the terrain is essentially flat, a constant elevation layer can be used.
+
+
+Vegetation cover height
+........................
+Information on the (effective) height of the vegetation cover is an important parameter for the calculation of aerodynamic parameters such as aerodynamic surface roughness or atmospheric boundary layer stability. The vegetation cover height can be obtained e.g. by scanning the surface using LiDAR as a digital surface model. In the case that the vegetation height layer is not available, it can be estimated by scaling the MSAVI index values between the minimum (:math:`h_{min}`) and maximum (:math:`h_{max}`) vegetation height (Gao et al. 2011):
+
+.. math::
+    :label: eq:veg_height
+
+        h = h_{min} + \frac{MSAVI - MSAVI_{min}}{MSAVI_{min} - MSAVI_{max}} (h_{min} – h_{max})
+
+To get an idea of the minimum and maximum vegetation cover height values to be used, either values in the table listed below or an estimated values can be used.
+
+
+
+.. csv-table:: Summary of maximum and minimum values of vegetation cover effective height (m). Modified from Gao et al. (2011).
+    :header: , Max. (m), Min. (m)
+
+        Arid agricultural areas, 0.75, 0.01
+        Forest areas, 15, 1.50
+        Medium to tall graslands, 0.46, 0.31
+        Low and sparse grasslands, 0.35, 0.20
+        Water bodies, 0.001, –
+        Urban area, 10, –
+        Resident municipalities, 5, –
+        Scattered municipalities 5, –
+        Bareland, 0.001, –
+
+
+For Central European agricultural landscapes, the maximum stand height is approx. 1-1.5 m for non forested areas. The minimum value can be set to 0.1 m. For forest areas, it is appropriate to use the value based on knowledge of the stand or forest unit.
+The layers of minimum and maximum vegetation cover height are used as a raster layers.
 
 

@@ -51,7 +51,14 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">SEBCS usage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#inputs">Inputs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#input-data-preparation">Input data preparation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#input-data-preparation">Input data preparation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#optical-data">Optical data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#air-temperature">Air temperature</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#wind-speed">Wind speed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#digital-model-of-terrain">Digital model of terrain</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#vegetation-cover-height">Vegetation cover height</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -392,7 +399,84 @@
 </section>
 <section id="input-data-preparation">
 <h2>Input data preparation<a class="headerlink" href="#input-data-preparation" title="Permalink to this heading"></a></h2>
-<p>TODO</p>
+<p>SEBCS for QGIS is primarily designed to use Landsat satellite data, but also allows the use of other spatial data sources. Regardless of the data source, the same spatial resolution (number of pixels) and spatial extent (same area) must be maintained for all layers used. The choice of the geographical reference system does not affect the function of the module.
+Data preparation is specific for some data inputs. The procedure is as follows:</p>
+<section id="optical-data">
+<h3>Optical data<a class="headerlink" href="#optical-data" title="Permalink to this heading"></a></h3>
+<p>The optical data must be used in the form of the surface spectral reflectance as relative values, in the range 0 to 1.</p>
+</section>
+<section id="air-temperature">
+<h3>Air temperature<a class="headerlink" href="#air-temperature" title="Permalink to this heading"></a></h3>
+<p>The air temperature is the temperature measured by a weather station at the reference height <span class="math notranslate nohighlight">\(z\)</span>. It is usually the temperature measured at a height of 2 m above the surface. Air temperature can be understood as either homogeneous or heterogeneous in a given space, depending on the measurement capabilities. For this reason, the air temperature is specified as a temperature layer for a given area.
+Assuming a homogeneous temperature distribution in space, the layer has only one value, which can be created using the Create constant raster layer function in QGIS Processing module or the Raster Calculator.
+In the case of the assumption of a heterogeneous air temperature distribution in the space, the air temperature needs to be modeled. If a sufficient number of measurements in a given area is available, various interpolation and geostatistical methods can be used to create an air temperature layer. A possible way to create an air temperature map is to assume an adiabatic change in air temperature with altitude (e.g. a decrease of 0.6 °C per 100 m altitude). In this case, it is necessary to have a digital model of terrain (elevation map converted to raster form, see below) and to know the altitude of the weather station location. The surface temperature is then calculated using the Raster Calculator according to the formula:</p>
+<div class="math notranslate nohighlight" id="equation-eq-ta-dmt">
+<span class="eqno">()<a class="headerlink" href="#equation-eq-ta-dmt" title="Permalink to this equation"></a></span>\[T_a = T_{st} + \Gamma(Z_{st}-DMT)\]</div>
+</section>
+<section id="wind-speed">
+<h3>Wind speed<a class="headerlink" href="#wind-speed" title="Permalink to this heading"></a></h3>
+<p>The wind speed is given as a layer of wind velocity at height <span class="math notranslate nohighlight">\(Z_{st}\)</span> in <span class="math notranslate nohighlight">\(m \cdot s^{-1}\)</span>. The situation is similar to that of surface temperature. The user can use a raster layer with constant values or a heterogeneous raster airflow map. The wind speed over a given area is, together with the air temperature, one of the major factors that greatly influence the result of the computation, so careful attention should be paid to the data preparation.</p>
+</section>
+<section id="digital-model-of-terrain">
+<h3>Digital model of terrain<a class="headerlink" href="#digital-model-of-terrain" title="Permalink to this heading"></a></h3>
+<p>The digital terrain model is a raster layer that captures the elevation of the area of interest. It is usually created by interpolating the elevation given by contours or elevation points. It is possible to use elevation from LiDAR data or radar altimetry data, e.g. SRTM. In the case where an elevation map is not available and the terrain is essentially flat, a constant elevation layer can be used.</p>
+</section>
+<section id="vegetation-cover-height">
+<h3>Vegetation cover height<a class="headerlink" href="#vegetation-cover-height" title="Permalink to this heading"></a></h3>
+<p>Information on the (effective) height of the vegetation cover is an important parameter for the calculation of aerodynamic parameters such as aerodynamic surface roughness or atmospheric boundary layer stability. The vegetation cover height can be obtained e.g. by scanning the surface using LiDAR as a digital surface model. In the case that the vegetation height layer is not available, it can be estimated by scaling the MSAVI index values between the minimum (<span class="math notranslate nohighlight">\(h_{min}\)</span>) and maximum (<span class="math notranslate nohighlight">\(h_{max}\)</span>) vegetation height (Gao et al. 2011):</p>
+<div class="math notranslate nohighlight" id="equation-eq-veg-height">
+<span class="eqno">()<a class="headerlink" href="#equation-eq-veg-height" title="Permalink to this equation"></a></span>\[    h = h_{min} + \frac{MSAVI - MSAVI_{min}}{MSAVI_{min} - MSAVI_{max}} (h_{min} – h_{max})\]</div>
+<p>To get an idea of the minimum and maximum vegetation cover height values to be used, either values in the table listed below or an estimated values can be used.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Summary of maximum and minimum values of vegetation cover effective height (m). Modified from Gao et al. (2011).</span><a class="headerlink" href="#id1" title="Permalink to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"></th>
+<th class="head"><p>Max. (m)</p></th>
+<th class="head"><p>Min. (m)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Arid agricultural areas</p></td>
+<td><p>0.75</p></td>
+<td><p>0.01</p></td>
+</tr>
+<tr class="row-odd"><td><p>Forest areas</p></td>
+<td><p>15</p></td>
+<td><p>1.50</p></td>
+</tr>
+<tr class="row-even"><td><p>Medium to tall graslands</p></td>
+<td><p>0.46</p></td>
+<td><p>0.31</p></td>
+</tr>
+<tr class="row-odd"><td><p>Low and sparse grasslands</p></td>
+<td><p>0.35</p></td>
+<td><p>0.20</p></td>
+</tr>
+<tr class="row-even"><td><p>Water bodies</p></td>
+<td><p>0.001</p></td>
+<td><p>–</p></td>
+</tr>
+<tr class="row-odd"><td><p>Urban area</p></td>
+<td><p>10</p></td>
+<td><p>–</p></td>
+</tr>
+<tr class="row-even"><td><p>Resident municipalities</p></td>
+<td><p>5</p></td>
+<td><p>–</p></td>
+</tr>
+<tr class="row-odd"><td><p>Scattered municipalities 5</p></td>
+<td><p>–</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>Bareland</p></td>
+<td><p>0.001</p></td>
+<td><p>–</p></td>
+</tr>
+</tbody>
+</table>
+<p>For Central European agricultural landscapes, the maximum stand height is approx. 1-1.5 m for non forested areas. The minimum value can be set to 0.1 m. For forest areas, it is appropriate to use the value based on knowledge of the stand or forest unit.
+The layers of minimum and maximum vegetation cover height are used as a raster layers.</p>
+</section>
 </section>
 </section>
 
