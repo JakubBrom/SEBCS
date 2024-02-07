@@ -33,12 +33,6 @@ Table of Content
 
 
 .. toctree::
-   :maxdepth: 3
-
-   calculation
-
-
-.. toctree::
    :maxdepth: 2
 
    SEBCSlib

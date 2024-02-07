@@ -45,7 +45,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'SEBCS'
-copyright = u'2013-2023, Jakub Brom, University of South Bohemia in ' \
+copyright = u'2013-2024, Jakub Brom, University of South Bohemia in ' \
             u'České ' \
             u'Budějovice, Faculty of Agriculture and Technology'
 
