@@ -17,7 +17,7 @@ The calculation procedure uses an approach based on Penman-Monteith method, SEBA
 Author:
    | Dr. Jakub Brom, Ph.D.
 
-© 2013-2023, Jakub Brom, University of South Bohemia in České Budějovice, Faculty of Agriculture and Technology (`<https://www.fzt.jcu.cz>`_, `<https://www.researchgate.net/profile/Jakub_Brom>`_)
+© 2013-2024, Jakub Brom, University of South Bohemia in České Budějovice, Faculty of Agriculture and Technology (`<https://www.fzt.jcu.cz>`_, `<https://www.researchgate.net/profile/Jakub_Brom>`_)
 
 .. image:: figs/ZF_logo_CZ_EN_dlouha_verze_JU.png
    :width: 12 cm

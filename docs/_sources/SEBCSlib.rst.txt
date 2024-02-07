@@ -27,10 +27,9 @@ The library (package) can be accessed in standard pythonic way using import in t
 
 .. code-block::
 
-    import SEBCS_lib
+    from SEBCS import SEBCS_lib
 
-This works from SEBCS for QGIS 2.1.2 version. For previous versions the path to plugin directory need to be added to the PYTHONPATH.
-The SEBCS_lib can be used within QGIS plugins.
+The SEBCS_lib can be used within QGIS plugins. If there is an issue with importing SEBCS_lib please reinstall the plug-in.
 
 
 SEBCS_lib documentation
