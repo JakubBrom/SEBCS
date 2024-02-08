@@ -13,10 +13,164 @@ Using the SEBCS for QGIS plug-in, it is possible to calculate several characteri
 Radiation balance features
 ---------------------------
 
+The calculation of the radiation balance features includes the balance of short-wave and long-wave radiation on the active surface and the resulting total net radiation. The calculation procedure includes the calculation of the albedo, surface reflectance and atmospheric emissivity. The SEBCS for QGIS includes surface geometry issues in the radiation balance features calculation.
+The relationship of the individual radiation balance components is summarized by the equation :ref:`(1) <rnflux>`:
+
+.. _rnflux:
 .. math::
-    :label: eq_Rn_fluxes
+    :label: eq:Rn_fluxes
 
     Rn=Rs_{\downarrow}-Rs_{\uparrow}+Rl_{\downarrow}-Rl_{\uparrow}
+
+The individual radiation balance components calculation procedure is described in the following text.
+
+
+Incoming short-wave radiation flux
+..................................
+
+The incoming (incident) short-wave radiation flux (irradiance) is the main source of energy for evaporation and energy transformations on the Earth's surface. The flux is usually measured at meteorological stations as the energy of radiation incident on a horizontal surface (global radiation), but the amount of energy reaching the surface is significantly related to its shape and the geometry of the incident radiation. The SEBCS for QGIS module calculates the flux of incident shortwave radiation as a function of surface shape and radiation geometry. The computational approach summarized by Kumar (1997) was used as follows.
+The value of the incident short-wave radiation flux on the surface was calculated using equation:
+
+.. math::
+    :label: eq:RS_in
+
+    Rs_{\downarrow} = I_s \cdot \cos i
+
+where
+
+.. math::
+    :label: eq:cosi
+
+    \cos i = \sin \delta_s (\sin Lat \cos \beta_s - \cos Lat \sin \beta_s \cos a_{w}) \\
+        + \cos \delta_s \cos H_s (\cos Lat \cos \beta_s
+        + \sin Lat \sin \beta_s \cos a_{w}) \\
+        + \cos \delta_s \sin \beta_s \sin a_{w} \sin H_s
+
+The value of :math:`\delta_s` can be calculated using equation:
+
+.. math::
+    :label: eq:sol_dek
+
+    \delta_s = 23.45 \sin \left(\frac{360(284+N)}{365}\right)
+
+The hour angle corresponds to the condition where :math:`H_s = 0` at noon (right local time). Each hour plus represents a change in angle of +15°, each hour minus represents a change in angle of -15°.
+
+.. math::
+    :label: eq:hour_ang
+
+    H_s = (12 - S_t)\cdot 15
+
+Depending on the longitude, the solar time (:math:`S_t`) was determined according to the relation:
+
+.. math::
+    :label: eq:sol_time
+
+    S_t = GMT + \frac{24 \cdot Long}{360}
+
+
+Since the module uses the global radiation measured per horizontal surface as input, the value of :math:`I_s` is calculated based on the relationship:
+
+
+.. math::
+    :label: eq:irrad
+
+    I_s = \frac{R_{s\downarrow konst}}{\sin \alpha_s}
+
+where
+
+.. math::
+    :label: eq:sol_ang
+
+    \sin \alpha_s = \sin \delta_s \sin Lat + \cos \delta_s \cos Lat \cos H_s
+
+
+Surface reflectance (albedo)
+............................
+
+The calculation of the broadband reflectance or albedo is based on empirical approache. An empirical relation was used for the calculation, which calculates the broadband albedo based on the spectral reflectance of the surface for individual spectral bands according to the relation (Tasumi et al. 2008):
+
+.. math::
+    :label: eq:albedo
+
+    \alpha = \displaystyle\sum_{b=1}^{7} (\rho_{s\_b} \cdot w_b)
+
+The :math:`w_b` constants for each Landsat satellite are given in the table:
+
+.. table:: Values of :math:`w_b` for particular spectral bands according to Liang et al. (2001 and 2003) and Tasumi et al. (2008) for Landsat 4, 5 and 7 and according to Olmeo et al (2017) for Landsat 8 and 9.
+
+    +----------------+-------+-------+-------+-------+-------+-------+
+    |Spectral band   | Blue  | Green | Red   | NIR   | SWIR1 | SWIR2 |
+    +================+=======+=======+=======+=======+=======+=======+
+    |Landsat 8, 9    | 0.246 | 0.146 | 0.191 | 0.304 | 0.105 | 0.008 |
+    +----------------+-------+-------+-------+-------+-------+-------+
+    |Landsat 4, 5, 7 | 0.254 | 0.149 | 0.147 | 0.311 | 0.103 | 0.036 |
+    +----------------+-------+-------+-------+-------+-------+-------+
+
+
+Alternatively, for other data sources, an empirical approach based on the use of vegetation indices NDVI and MSAVI can be used (Duffková et al. 2012):
+
+.. math::
+    :label: eq:albedo_Brom
+
+    \alpha =  0.08611 + 0.89472 \cdot MSAVI + 5.55866 \cdot  MSAVI^2 -0.1183 \cdot NDVI\\
+        - 1.9818 \cdot MSAVI^3 - 4.5034 \cdot MSAVI \cdot NDVI - 11.463 \cdot MSAVI^2 \cdot NDVI\\
+        + 7.46145 \cdot MSAVI \cdot NDVI^2 + 5.2994 \cdot MSAVI^2 \cdot NDVI^2\\
+        + 4.76657 \cdot MSAVI^3 \cdot NDVI - 2.3127 \cdot MSAVI^3 \cdot NDVI^2\\
+        - 3.4274 \cdot MSAVI \cdot NDVI^3
+
+The reflected shortwave radiation flux is calculated as follows:
+
+.. math::
+    :label: eq:Rs_out
+
+    Rs_\uparrow = \alpha \cdot Rs_\downarrow
+
+
+Incoming long-wave radiation flux
+..................................
+
+The incoming longwave radiation emitted by the atmosphere is calculated from the air temperature measured at :math:`z`. The calculation is based on the Stefan-Boltzmann law:
+
+.. math::
+    :label: eq:Rl_down
+
+    Rl_{\downarrow} = \varepsilon_{ac} \sigma {T_{a\_K}}^4
+
+The emissivity of the atmosphere is calculated based on the air temperature at the :math:`z` level and the amount of water vapour in the air. According to Brutsaert (1982) it is calculated:
+
+.. math::
+    :label: eq:emis_atm
+
+    \varepsilon_{ac} = 1.24 \left( \frac{e_a \cdot 10}{T_a + 273.16} \right)^{\frac{1}{7}}
+
+This approach is largely approximate and can be used for clear-sky weather conditions using the calculated :math:`\varepsilon_{ac}` value. A more appropriate approach is to measure the value of :math:`Rl_{\uparrow}` directly.
+
+
+Emitted long-wave radiation flux
+................................
+
+.. math::
+    :label: eq:Rl_up
+
+    Rl_{\uparrow} = \varepsilon \sigma {T_{s\_K}}^4
+
+where surface emissivity can be calculated ...
+
+.. math::
+    :label: eq:emis_all
+
+    \varepsilon = \varepsilon_v P_v + \varepsilon_s (1 - P_v) +d\varepsilon
+
+
+.. math::
+    :label: eq:frac
+
+    P_v = \left(\frac{NDVI - NDVI_{min}}{NDVI_{max} - NDVI_{min}}\right)^2
+
+.. math::
+    :label: eq:emis_surf
+
+    \varepsilon = 0.004 P_v + 0.986
 
 
 
@@ -62,7 +216,7 @@ The calculation of vegetation cover characteristics includes the estimation of v
 .. TODO
 
 .. math::
-    :label: eq:msavi
+    :label: eq:savi
 
     SAVI=
 
@@ -136,21 +290,7 @@ pro účely výpočtu albeda je hodnota vypočtena pro teplotu vzduchu ve výšc
 
     \gamma = \frac{c_p \cdot P}{\lambda \cdot 0.622}
 
-.. math::
-    :label: eq:emis_all
 
-    \varepsilon = \varepsilon_v P_v + \varepsilon_s (1 - P_v) +d\varepsilon
-
-
-.. math::
-    :label: eq:frac
-
-    P_v = \left(\frac{NDVI - NDVI_{min}}{NDVI_{max} - NDVI_{min}}\right)^2
-
-.. math::
-    :label: eq:emis_surf
-
-    \varepsilon = 0.004 P_v + 0.986
 
 
 .. math::
@@ -177,98 +317,7 @@ where
 
     E_s = 0.61121 \cdot \exp{\left(\frac{17.502 \cdot T_s}{240.97 + T_s}\right)}
 
-.. math::
-    :label: eq:RS_in
 
-    Rs_{\downarrow} = I_s \cdot \cos i
-
-
-.. math::
-    :label: eq:cosi
-
-    \cos i = \sin \delta_s (\sin Lat \cos \beta_s - \cos Lat \sin \beta_s \cos a_{w}) \\
-        + \cos \delta_s \cos H_s (\cos Lat \cos \beta_s
-        + \sin Lat \sin \beta_s \cos a_{w}) \\
-        + \cos \delta_s \sin \beta_s \sin a_{w} \sin H_s
-
-
-.. math::
-    :label: eq:sol_dek
-
-    \delta_s = 23.45 \sin \left(\frac{360(284+N)}{365}\right)
-
-
-.. math::
-    :label: eq:sol_time
-
-    S_t = GMT + \frac{24 \cdot Long}{360}
-
-
-.. math::
-    :label: eq:hour_ang
-
-    H_s = (12 - S_t)\cdot 15
-
-
-.. math::
-    :label: eq:irrad
-
-    I_s = \frac{R_{s\downarrow konst}}{\sin \alpha_s}
-
-
-.. math::
-    :label: eq:sol_ang
-
-    \sin \alpha_s = \sin \delta_s \sin Lat + \cos \delta_s \cos Lat \cos H_s
-
-.. math::
-    :label: eq:emis_atm
-
-    \varepsilon_{ac} = 1.24 \left( \frac{e_a \cdot 10}{T_a + 273.16} \right)^{\frac{1}{7}}
-
-
-.. math::
-    :label: eq:Rl_up
-
-    Rl_{\uparrow} = \varepsilon \sigma {T_{s\_K}}^4
-
-.. math::
-    :label: eq:Rl_down
-
-    Rl_{\downarrow} = \varepsilon_{ac} \sigma {T_{a\_K}}^4
-
-.. math::
-    :label: eq:albedo
-
-    \alpha = \displaystyle\sum_{b=1}^{7} (\rho_{s\_b} \cdot w_b)
-
-
-.. table:: Values of :math:`w_b` for particular spectral bands.
-
-    +----------------+-------+-------+-------+-------+-------+-------+
-    |Spectral band   | Blue  | Green | Red   | NIR   | SWIR1 | SWIR2 |
-    +================+=======+=======+=======+=======+=======+=======+
-    |Landsat 8, 9    | 0.246 | 0.146 | 0.191 | 0.304 | 0.105 | 0.008 |
-    +----------------+-------+-------+-------+-------+-------+-------+
-    |Landsat 4, 5, 7 | 0.254 | 0.149 | 0.147 | 0.311 | 0.103 | 0.036 |
-    +----------------+-------+-------+-------+-------+-------+-------+
-
-
-Alternatively albedo can be calculated from spectral indices according to Duffková et al (2012).
-
-.. math::
-    :label: eq:albedo_Brom
-
-    \alpha =  0.08611 + 0.89472 \cdot MSAVI + 5.55866 \cdot  MSAVI^2 -0.1183 \cdot NDVI\\
-        - 1.9818 \cdot MSAVI^3 - 4.5034 \cdot MSAVI \cdot NDVI - 11.463 \cdot MSAVI^2 \cdot NDVI\\
-        + 7.46145 \cdot MSAVI \cdot NDVI^2 + 5.2994 \cdot MSAVI^2 \cdot NDVI^2\\
-        + 4.76657 \cdot MSAVI^3 \cdot NDVI - 2.3127 \cdot MSAVI^3 \cdot NDVI^2\\
-        - 3.4274 \cdot MSAVI \cdot NDVI^3
-
-.. math::
-    :label: eq:Rs_out
-
-    Rs_\uparrow = \alpha \cdot Rs_\downarrow
 
 .. math::
     :label: eq:Rn
