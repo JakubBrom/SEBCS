@@ -149,298 +149,304 @@ This approach is largely approximate and can be used for clear-sky weather condi
 Emitted long-wave radiation flux
 ................................
 
+The longwave radiation emitted by a surface is determined by the temperature of the surface. The calculation is based on the Stefan-Boltzmann law:
+
 .. math::
     :label: eq:Rl_up
 
     Rl_{\uparrow} = \varepsilon \sigma {T_{s\_K}}^4
 
-where surface emissivity can be calculated ...
+The surface emissivity is calculated based on an empirical approach of emissivity determination using the NDVI Treshold Method - :math:`NDVI^{THM}` (Sobrino et al. 2004). The method uses the NDVI index (Normalized Difference Vegetation Index, Tucker 1979). For the emissivity determination, the range of index values is divided into three categories:
+
+* :math:`NDVI < 0.2` - In this case the surface is considered as bare ground and the emissivity values are derived from the reflectance values in the red region of the spectrum
+* :math:`NDVI > 0.5` - In this case the surface is fully covered by vegetation and a typical emissivity value of :math:`\varepsilon = 0.99` is determined.
+* :math:`0.2 ≤ NDVI ≤ 0.5` - In this case the surface can be considered as a mixture of bare soil and vegetation cover.
+
+The relationship between emissivity and surface cover is shown by the following relationship:
 
 .. math::
     :label: eq:emis_all
 
     \varepsilon = \varepsilon_v P_v + \varepsilon_s (1 - P_v) +d\varepsilon
 
+where fraction of vegetation cover is calculated as follows:
 
 .. math::
     :label: eq:frac
 
     P_v = \left(\frac{NDVI - NDVI_{min}}{NDVI_{max} - NDVI_{min}}\right)^2
 
+where :math:`NDVI_{min} = 0.2` and :math:`NDVI_{max} = 0.5`.
+As a result, the emissivity can be calculated based on the empirical relation as follows (Sobrino et al. 2004):
+
 .. math::
     :label: eq:emis_surf
 
     \varepsilon = 0.004 P_v + 0.986
 
-
-
-Surface aerodynamic parameters and atmospheric stability
----------------------------------------------------------
-
-Heat balance and energy fluxes
---------------------------------
-
-Vegetation cover characteristics
----------------------------------
-
-The calculation of vegetation cover characteristics includes the estimation of vegetation spectral indices and leaf area index.
-
-**Normalized Difference Vegetation Index (NDVI)** is one of the most widely used spectral vegetation indices. NDVI provides information on vegetation cover, its quality and possibly also its quantity (biomass). NDVI can be calculated as follows:
-
-.. math::
-    :label: eq:ndvi
-
-    NDVI=\frac{R_{NIR}-R_{RED}}{R_{NIR}+R_{RED}}
-
-
-**Modified Soil Adjusted Vegetation Index (MSAVI)** has similar uses to the NDVI. Unlike the NDVI, there is no oversaturation of values with higher vegetation cover. The MSAVI can also be used to estimate vegetation height. MSAVI can be calculated as follows:
-
-.. math::
-    :label: eq:msavi
-
-    MSAVI=0.5\cdot(2R_{NIR}+1-\sqrt{(2R_{NIR}+1)^{2}-8\cdot(R_{NIR}-R_{RED})}
-
-
-**Normalized Difference Moisture Index (NDMI)** can be used for surface moisture estimation. NDMI can be calculated as follows:
-
 .. TODO
+.. Surface aerodynamic parameters and atmospheric stability
+    ---------------------------------------------------------
 
-.. math::
-    :label: eq:ndmi
+    Heat balance and energy fluxes
+    --------------------------------
 
-    NDVI=\frac{R_{NIR}-R_{SWIR1}}{R_{NIR}+R_{SWIR1}}
+    Vegetation cover characteristics
+    ---------------------------------
 
+    The calculation of vegetation cover characteristics includes the estimation of vegetation spectral indices and leaf area index.
 
-**Soil Adjusted Vegetation Index (SAVI)** is next widely used vegetation index. It is similar to MSAVI. SAVI can be calculated as follows:
+    **Normalized Difference Vegetation Index (NDVI)** is one of the most widely used spectral vegetation indices. NDVI provides information on vegetation cover, its quality and possibly also its quantity (biomass). NDVI can be calculated as follows:
 
-.. TODO
+    .. math::
+        :label: eq:ndvi
 
-.. math::
-    :label: eq:savi
+        NDVI=\frac{R_{NIR}-R_{RED}}{R_{NIR}+R_{RED}}
 
-    SAVI=
 
-.. TODO
+    **Modified Soil Adjusted Vegetation Index (MSAVI)** has similar uses to the NDVI. Unlike the NDVI, there is no oversaturation of values with higher vegetation cover. The MSAVI can also be used to estimate vegetation height. MSAVI can be calculated as follows:
 
-.. math::
-    :label: eq:LAI
+    .. math::
+        :label: eq:msavi
 
-    LAI =
+        MSAVI=0.5\cdot(2R_{NIR}+1-\sqrt{(2R_{NIR}+1)^{2}-8\cdot(R_{NIR}-R_{RED})}
 
 
-Meteorological features
-------------------------
+    **Normalized Difference Moisture Index (NDMI)** can be used for surface moisture estimation. NDMI can be calculated as follows:
 
 
 
+    .. math::
+        :label: eq:ndmi
 
-.. math::
-    :label: eq:Rn_bil
+        NDVI=\frac{R_{NIR}-R_{SWIR1}}{R_{NIR}+R_{SWIR1}}
 
-    Rn=G+H+LE
 
+    **Soil Adjusted Vegetation Index (SAVI)** is next widely used vegetation index. It is similar to MSAVI. SAVI can be calculated as follows:
 
+    .. TODO
 
-.. math::
-    :label: eq:Ta
+    .. math::
+        :label: eq:savi
 
-    T_a = T_{st} + \Gamma(Z_{st}-DMT)
+        SAVI=
 
-.. math::
-    :label: eq:U
+    .. TODO
 
-    U = U_{st}\frac{\ln\left(\frac{z}{z_{0m\_st}}\right)}{\ln\left(\frac{z_{st}}{z_{0m\_st}}\right)}
+    .. math::
+        :label: eq:LAI
 
-.. math::
-    :label: eq:z0m_st
+        LAI =
 
-    z_{0m\_st} = 0.123 h_{st}
 
-.. math::
-    :label: eq:press
+    Meteorological features
+    ------------------------
 
-    P = 101.3 \left( \frac{293-\Gamma \cdot (DMT + z)}{293} \right)^{5.26}
 
-.. math::
-    :label: eq:Ea_sat
 
-    E_a = 0.61121 \cdot \exp \left( \frac{17.502 \cdot T_a}{240.97 + T_a} \right)
 
-pro účely výpočtu albeda je hodnota vypočtena pro teplotu vzduchu ve výšce zst.
+    .. math::
+        :label: eq:Rn_bil
 
-.. math::
-    :label: eq:ea
+        Rn=G+H+LE
 
-    e_a = \frac{E_a \cdot Rh}{100}
 
-pro účely výpočtu albeda je hodnota vypočtena pro teplotu vzduchu ve výšce zst.
 
-.. math::
-    :label: eq:rho
+    .. math::
+        :label: eq:Ta
 
-    \rho = \frac{353.4}{T_a + 273}
+        T_a = T_{st} + \Gamma(Z_{st}-DMT)
 
-.. math::
-    :label: eq:latent
+    .. math::
+        :label: eq:U
 
-    \lambda = 2501 - 2.3723 \cdot T_a
+        U = U_{st}\frac{\ln\left(\frac{z}{z_{0m\_st}}\right)}{\ln\left(\frac{z_{st}}{z_{0m\_st}}\right)}
 
-.. math::
-    :label: eq:gama
+    .. math::
+        :label: eq:z0m_st
 
-    \gamma = \frac{c_p \cdot P}{\lambda \cdot 0.622}
+        z_{0m\_st} = 0.123 h_{st}
 
+    .. math::
+        :label: eq:press
 
+        P = 101.3 \left( \frac{293-\Gamma \cdot (DMT + z)}{293} \right)^{5.26}
 
+    .. math::
+        :label: eq:Ea_sat
 
-.. math::
-    :label: eq:tsk
+        E_a = 0.61121 \cdot \exp \left( \frac{17.502 \cdot T_a}{240.97 + T_a} \right)
 
-    T_s = T_{s\_K} - 273.16
+    pro účely výpočtu albeda je hodnota vypočtena pro teplotu vzduchu ve výšce zst.
 
+    .. math::
+        :label: eq:ea
 
-.. math::
-    :label: eq:delta
+        e_a = \frac{E_a \cdot Rh}{100}
 
-    \Delta = 45.03 + 3.014 T + 0.05345 T^2 + 0.00224 T^3
+    pro účely výpočtu albeda je hodnota vypočtena pro teplotu vzduchu ve výšce zst.
 
-where
+    .. math::
+        :label: eq:rho
 
-.. math::
-    :label: eq:t_mean
+        \rho = \frac{353.4}{T_a + 273}
 
-    T = \frac{T_a + T_s}{2}
+    .. math::
+        :label: eq:latent
 
+        \lambda = 2501 - 2.3723 \cdot T_a
 
-.. math::
-    :label: eq:Es
+    .. math::
+        :label: eq:gama
 
-    E_s = 0.61121 \cdot \exp{\left(\frac{17.502 \cdot T_s}{240.97 + T_s}\right)}
+        \gamma = \frac{c_p \cdot P}{\lambda \cdot 0.622}
 
 
 
-.. math::
-    :label: eq:Rn
 
-    Rn = Rs_\downarrow - Rs_\uparrow + Rl_{\downarrow} - Rl_{\uparrow}
+    .. math::
+        :label: eq:tsk
 
-.. math::
-    :label: eq:vegheight
+        T_s = T_{s\_K} - 273.16
 
-    h = h_{min} + \frac{MSAVI - MSAVI_{min}}{MSAVI_{min} - MSAVI_{max}} (h_{min} - h_{max})
 
-.. math::
-    :label: eq:zeroplane
+    .. math::
+        :label: eq:delta
 
-    d = \frac{2}{3}h
+        \Delta = 45.03 + 3.014 T + 0.05345 T^2 + 0.00224 T^3
 
-.. math::
-    :label: eq:zom
+    where
 
-    z_{0m} = 0.123 \cdot h
+    .. math::
+        :label: eq:t_mean
 
-.. math::
-    :label: eq:zoh
+        T = \frac{T_a + T_s}{2}
 
-    z_{0h} = 0.1 \cdot z_{0m}
 
-.. math::
-    :label: eq:MO_length
+    .. math::
+        :label: eq:Es
 
-    L = \frac{{u^*}^3 \rho c_p T_{a\_K}}{\kappa g H} = \frac{{u^*}^2 T_{a\_K}}{\kappa g T^*}
+        E_s = 0.61121 \cdot \exp{\left(\frac{17.502 \cdot T_s}{240.97 + T_s}\right)}
 
-.. math::
-    :label: eq:MOS
 
-    \varsigma = \frac{z}{L}
 
-.. math::
-    :label: eq:psim_instab
+    .. math::
+        :label: eq:Rn
 
-    \Psi_m(\varsigma) = 2 \ln \left( \frac{1 + x}{2} \right) + \ln \left( \frac{1+ x^2}{2}\right) - 2 \arctan (x) + \frac{\pi}{2}
+        Rn = Rs_\downarrow - Rs_\uparrow + Rl_{\downarrow} - Rl_{\uparrow}
 
-.. math::
-    :label: eq:psih_instab
+    .. math::
+        :label: eq:vegheight
 
-    \Psi_h(\varsigma) = 2 \ln \left( \frac{1 + x}{2} \right)
+        h = h_{min} + \frac{MSAVI - MSAVI_{min}}{MSAVI_{min} - MSAVI_{max}} (h_{min} - h_{max})
 
-.. math::
-    :label: eq:x
+    .. math::
+        :label: eq:zeroplane
 
-    x = (1-16\varsigma)^{0.25}
+        d = \frac{2}{3}h
 
-.. math::
-    :label: eq:psim_stab
+    .. math::
+        :label: eq:zom
 
-    \Psi_m(\varsigma) = -\left[a\varsigma + b \left( \varsigma - \frac{c}{d} \right) \exp(-d\varsigma) + \frac{bc}{d} \right]
+        z_{0m} = 0.123 \cdot h
 
-.. math::
-    :label: eq:psih_stab
+    .. math::
+        :label: eq:zoh
 
-    \Psi_h(\varsigma) = - \left[ \left(1 + \frac{2a}{3}\varsigma \right) + b \left(\varsigma - \frac{c}{d} \right) \exp(-d\varsigma) + \left(\frac{bc}{d} -1 \right) \right]
+        z_{0h} = 0.1 \cdot z_{0m}
 
-.. math::
-    :label: eq:frict
+    .. math::
+        :label: eq:MO_length
 
-    u^* = \frac{\kappa U}{\ln \left(\frac{z-d}{z_{0m}} \right) \Psi_m(\varsigma)}
+        L = \frac{{u^*}^3 \rho c_p T_{a\_K}}{\kappa g H} = \frac{{u^*}^2 T_{a\_K}}{\kappa g T^*}
 
-.. math::
-    :label: eq:virtT
+    .. math::
+        :label: eq:MOS
 
-    T^* = \frac{\kappa(T_a - T_s)}{\ln \left(\frac{z-d}{z_{0h}} \right) \Psi_h(\varsigma)}
+        \varsigma = \frac{z}{L}
 
-.. math::
-    :label: eq:ra_Thom
+    .. math::
+        :label: eq:psim_instab
 
-    r_a = \frac{\left[ \ln \left(\frac{z-d}{z_{0m}} \right) \Psi_m(\varsigma) \right]\left[ \ln \left(\frac{z-d}{z_{0h}} \right) \Psi_h(\varsigma) \right]}{U \kappa^2}
+        \Psi_m(\varsigma) = 2 \ln \left( \frac{1 + x}{2} \right) + \ln \left( \frac{1+ x^2}{2}\right) - 2 \arctan (x) + \frac{\pi}{2}
 
-.. math::
-    :label: eq:ra_SEBAL
+    .. math::
+        :label: eq:psih_instab
 
-    r_{ah} = \frac{\ln \left( \frac{z_2}{z_1}\right) - \Psi_{h\_z_2}(\varsigma) + \Psi_{h\_z_1}(\varsigma)}{u^*\kappa}
+        \Psi_h(\varsigma) = 2 \ln \left( \frac{1 + x}{2} \right)
 
-.. math::
-    :label: eq:G
+    .. math::
+        :label: eq:x
 
-    G=\frac{T_{s}}{\alpha}\left(0.0038\alpha+0.0074\alpha^{2}\right)\left(1-0.98NDVI^{4}\right)Rn
+        x = (1-16\varsigma)^{0.25}
 
-.. math::
-    :label: eq:H
+    .. math::
+        :label: eq:psim_stab
 
-    H=\frac{\rho c_{p}\delta T}{r_{a}}
+        \Psi_m(\varsigma) = -\left[a\varsigma + b \left( \varsigma - \frac{c}{d} \right) \exp(-d\varsigma) + \frac{bc}{d} \right]
 
+    .. math::
+        :label: eq:psih_stab
 
-.. math::
-    :label: eq:LE_bil
+        \Psi_h(\varsigma) = - \left[ \left(1 + \frac{2a}{3}\varsigma \right) + b \left(\varsigma - \frac{c}{d} \right) \exp(-d\varsigma) + \left(\frac{bc}{d} -1 \right) \right]
 
-    LE=Rn-H-G
+    .. math::
+        :label: eq:frict
 
-.. math::
-    :label: eq:cwsi
+        u^* = \frac{\kappa U}{\ln \left(\frac{z-d}{z_{0m}} \right) \Psi_m(\varsigma)}
 
-    CWSI=1-\frac{\Delta+\gamma^{*}}{\Delta+\gamma\left(1+\frac{r_{c}}{r_{a}}\right)}
+    .. math::
+        :label: eq:virtT
 
-.. math::
-    :label: eq:gamma_stair
+        T^* = \frac{\kappa(T_a - T_s)}{\ln \left(\frac{z-d}{z_{0h}} \right) \Psi_h(\varsigma)}
 
-    \gamma^{*}=\gamma+\left(1+\frac{r_{cp}}{r_{a}}\right)
+    .. math::
+        :label: eq:ra_Thom
 
-.. math::
-    :label: eq:r_c
+        r_a = \frac{\left[ \ln \left(\frac{z-d}{z_{0m}} \right) \Psi_m(\varsigma) \right]\left[ \ln \left(\frac{z-d}{z_{0h}} \right) \Psi_h(\varsigma) \right]}{U \kappa^2}
 
-    r_{c}=\left[\left(\frac{\Delta+\gamma}{\Omega}-\Delta\right)\frac{1}{\gamma}-1\right]r_{a}
+    .. math::
+        :label: eq:ra_SEBAL
 
-.. math::
-    :label: eq:r_cp
+        r_{ah} = \frac{\ln \left( \frac{z_2}{z_1}\right) - \Psi_{h\_z_2}(\varsigma) + \Psi_{h\_z_1}(\varsigma)}{u^*\kappa}
 
-    r_{cp}=\frac{\left(E_{s}-e_{a}\right)\rho c_{p}}{\gamma\cdot LE_{p}}-r_{a}
+    .. math::
+        :label: eq:G
 
-.. math::
-    :label: eq:EF
+        G=\frac{T_{s}}{\alpha}\left(0.0038\alpha+0.0074\alpha^{2}\right)\left(1-0.98NDVI^{4}\right)Rn
 
-    EF=\frac{LE}{Rn-G}
+    .. math::
+        :label: eq:H
 
+        H=\frac{\rho c_{p}\delta T}{r_{a}}
 
 
+    .. math::
+        :label: eq:LE_bil
 
+        LE=Rn-H-G
 
+    .. math::
+        :label: eq:cwsi
+
+        CWSI=1-\frac{\Delta+\gamma^{*}}{\Delta+\gamma\left(1+\frac{r_{c}}{r_{a}}\right)}
+
+    .. math::
+        :label: eq:gamma_stair
+
+        \gamma^{*}=\gamma+\left(1+\frac{r_{cp}}{r_{a}}\right)
+
+    .. math::
+        :label: eq:r_c
+
+        r_{c}=\left[\left(\frac{\Delta+\gamma}{\Omega}-\Delta\right)\frac{1}{\gamma}-1\right]r_{a}
+
+    .. math::
+        :label: eq:r_cp
+
+        r_{cp}=\frac{\left(E_{s}-e_{a}\right)\rho c_{p}}{\gamma\cdot LE_{p}}-r_{a}
+
+    .. math::
+        :label: eq:EF
+
+        EF=\frac{LE}{Rn-G}

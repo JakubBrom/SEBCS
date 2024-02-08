@@ -59,10 +59,6 @@
 <li class="toctree-l3"><a class="reference internal" href="#emitted-long-wave-radiation-flux">Emitted long-wave radiation flux</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#surface-aerodynamic-parameters-and-atmospheric-stability">Surface aerodynamic parameters and atmospheric stability</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#heat-balance-and-energy-fluxes">Heat balance and energy fluxes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#vegetation-cover-characteristics">Vegetation cover characteristics</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#meteorological-features">Meteorological features</a></li>
 </ul>
 </li>
 </ul>
@@ -210,122 +206,26 @@ The value of the incident short-wave radiation flux on the surface was calculate
 </section>
 <section id="emitted-long-wave-radiation-flux">
 <h3>Emitted long-wave radiation flux<a class="headerlink" href="#emitted-long-wave-radiation-flux" title="Permalink to this heading"></a></h3>
+<p>The longwave radiation emitted by a surface is determined by the temperature of the surface. The calculation is based on the Stefan-Boltzmann law:</p>
 <div class="math notranslate nohighlight" id="equation-eq-rl-up">
 <span class="eqno">(32)<a class="headerlink" href="#equation-eq-rl-up" title="Permalink to this equation"></a></span>\[Rl_{\uparrow} = \varepsilon \sigma {T_{s\_K}}^4\]</div>
-<p>where surface emissivity can be calculated …</p>
+<p>The surface emissivity is calculated based on an empirical approach of emissivity determination using the NDVI Treshold Method - <span class="math notranslate nohighlight">\(NDVI^{THM}\)</span> (Sobrino et al. 2004). The method uses the NDVI index (Normalized Difference Vegetation Index, Tucker 1979). For the emissivity determination, the range of index values is divided into three categories:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(NDVI &lt; 0.2\)</span> - In this case the surface is considered as bare ground and the emissivity values are derived from the reflectance values in the red region of the spectrum</p></li>
+<li><p><span class="math notranslate nohighlight">\(NDVI &gt; 0.5\)</span> - In this case the surface is fully covered by vegetation and a typical emissivity value of <span class="math notranslate nohighlight">\(\varepsilon = 0.99\)</span> is determined.</p></li>
+<li><p><span class="math notranslate nohighlight">\(0.2 ≤ NDVI ≤ 0.5\)</span> - In this case the surface can be considered as a mixture of bare soil and vegetation cover.</p></li>
+</ul>
+<p>The relationship between emissivity and surface cover is shown by the following relationship:</p>
 <div class="math notranslate nohighlight" id="equation-eq-emis-all">
 <span class="eqno">(17)<a class="headerlink" href="#equation-eq-emis-all" title="Permalink to this equation"></a></span>\[\varepsilon = \varepsilon_v P_v + \varepsilon_s (1 - P_v) +d\varepsilon\]</div>
+<p>where fraction of vegetation cover is calculated as follows:</p>
 <div class="math notranslate nohighlight" id="equation-eq-frac">
 <span class="eqno">(18)<a class="headerlink" href="#equation-eq-frac" title="Permalink to this equation"></a></span>\[P_v = \left(\frac{NDVI - NDVI_{min}}{NDVI_{max} - NDVI_{min}}\right)^2\]</div>
+<p>where <span class="math notranslate nohighlight">\(NDVI_{min} = 0.2\)</span> and <span class="math notranslate nohighlight">\(NDVI_{max} = 0.5\)</span>.
+As a result, the emissivity can be calculated based on the empirical relation as follows (Sobrino et al. 2004):</p>
 <div class="math notranslate nohighlight" id="equation-eq-emis-surf">
 <span class="eqno">(19)<a class="headerlink" href="#equation-eq-emis-surf" title="Permalink to this equation"></a></span>\[\varepsilon = 0.004 P_v + 0.986\]</div>
 </section>
-</section>
-<section id="surface-aerodynamic-parameters-and-atmospheric-stability">
-<h2>Surface aerodynamic parameters and atmospheric stability<a class="headerlink" href="#surface-aerodynamic-parameters-and-atmospheric-stability" title="Permalink to this heading"></a></h2>
-</section>
-<section id="heat-balance-and-energy-fluxes">
-<h2>Heat balance and energy fluxes<a class="headerlink" href="#heat-balance-and-energy-fluxes" title="Permalink to this heading"></a></h2>
-</section>
-<section id="vegetation-cover-characteristics">
-<h2>Vegetation cover characteristics<a class="headerlink" href="#vegetation-cover-characteristics" title="Permalink to this heading"></a></h2>
-<p>The calculation of vegetation cover characteristics includes the estimation of vegetation spectral indices and leaf area index.</p>
-<p><strong>Normalized Difference Vegetation Index (NDVI)</strong> is one of the most widely used spectral vegetation indices. NDVI provides information on vegetation cover, its quality and possibly also its quantity (biomass). NDVI can be calculated as follows:</p>
-<div class="math notranslate nohighlight" id="equation-eq-ndvi">
-<span class="eqno">(2)<a class="headerlink" href="#equation-eq-ndvi" title="Permalink to this equation"></a></span>\[NDVI=\frac{R_{NIR}-R_{RED}}{R_{NIR}+R_{RED}}\]</div>
-<p><strong>Modified Soil Adjusted Vegetation Index (MSAVI)</strong> has similar uses to the NDVI. Unlike the NDVI, there is no oversaturation of values with higher vegetation cover. The MSAVI can also be used to estimate vegetation height. MSAVI can be calculated as follows:</p>
-<div class="math notranslate nohighlight" id="equation-eq-msavi">
-<span class="eqno">(5)<a class="headerlink" href="#equation-eq-msavi" title="Permalink to this equation"></a></span>\[MSAVI=0.5\cdot(2R_{NIR}+1-\sqrt{(2R_{NIR}+1)^{2}-8\cdot(R_{NIR}-R_{RED})}\]</div>
-<p><strong>Normalized Difference Moisture Index (NDMI)</strong> can be used for surface moisture estimation. NDMI can be calculated as follows:</p>
-<div class="math notranslate nohighlight" id="equation-eq-ndmi">
-<span class="eqno">(4)<a class="headerlink" href="#equation-eq-ndmi" title="Permalink to this equation"></a></span>\[NDVI=\frac{R_{NIR}-R_{SWIR1}}{R_{NIR}+R_{SWIR1}}\]</div>
-<p><strong>Soil Adjusted Vegetation Index (SAVI)</strong> is next widely used vegetation index. It is similar to MSAVI. SAVI can be calculated as follows:</p>
-<div class="math notranslate nohighlight" id="equation-eq-savi">
-<span class="eqno">()<a class="headerlink" href="#equation-eq-savi" title="Permalink to this equation"></a></span>\[SAVI=\]</div>
-<div class="math notranslate nohighlight" id="equation-eq-lai">
-<span class="eqno">(6)<a class="headerlink" href="#equation-eq-lai" title="Permalink to this equation"></a></span>\[LAI =\]</div>
-</section>
-<section id="meteorological-features">
-<h2>Meteorological features<a class="headerlink" href="#meteorological-features" title="Permalink to this heading"></a></h2>
-<div class="math notranslate nohighlight" id="equation-eq-rn-bil">
-<span class="eqno">(7)<a class="headerlink" href="#equation-eq-rn-bil" title="Permalink to this equation"></a></span>\[Rn=G+H+LE\]</div>
-<div class="math notranslate nohighlight" id="equation-eq-ta">
-<span class="eqno">(8)<a class="headerlink" href="#equation-eq-ta" title="Permalink to this equation"></a></span>\[T_a = T_{st} + \Gamma(Z_{st}-DMT)\]</div>
-<div class="math notranslate nohighlight" id="equation-eq-u">
-<span class="eqno">(9)<a class="headerlink" href="#equation-eq-u" title="Permalink to this equation"></a></span>\[U = U_{st}\frac{\ln\left(\frac{z}{z_{0m\_st}}\right)}{\ln\left(\frac{z_{st}}{z_{0m\_st}}\right)}\]</div>
-<div class="math notranslate nohighlight" id="equation-eq-z0m-st">
-<span class="eqno">(10)<a class="headerlink" href="#equation-eq-z0m-st" title="Permalink to this equation"></a></span>\[z_{0m\_st} = 0.123 h_{st}\]</div>
-<div class="math notranslate nohighlight" id="equation-eq-press">
-<span class="eqno">(11)<a class="headerlink" href="#equation-eq-press" title="Permalink to this equation"></a></span>\[P = 101.3 \left( \frac{293-\Gamma \cdot (DMT + z)}{293} \right)^{5.26}\]</div>
-<div class="math notranslate nohighlight" id="equation-eq-ea-sat">
-<span class="eqno">(12)<a class="headerlink" href="#equation-eq-ea-sat" title="Permalink to this equation"></a></span>\[E_a = 0.61121 \cdot \exp \left( \frac{17.502 \cdot T_a}{240.97 + T_a} \right)\]</div>
-<p>pro účely výpočtu albeda je hodnota vypočtena pro teplotu vzduchu ve výšce zst.</p>
-<div class="math notranslate nohighlight" id="equation-eq-ea">
-<span class="eqno">(13)<a class="headerlink" href="#equation-eq-ea" title="Permalink to this equation"></a></span>\[e_a = \frac{E_a \cdot Rh}{100}\]</div>
-<p>pro účely výpočtu albeda je hodnota vypočtena pro teplotu vzduchu ve výšce zst.</p>
-<div class="math notranslate nohighlight" id="equation-eq-rho">
-<span class="eqno">(14)<a class="headerlink" href="#equation-eq-rho" title="Permalink to this equation"></a></span>\[\rho = \frac{353.4}{T_a + 273}\]</div>
-<div class="math notranslate nohighlight" id="equation-eq-latent">
-<span class="eqno">(15)<a class="headerlink" href="#equation-eq-latent" title="Permalink to this equation"></a></span>\[\lambda = 2501 - 2.3723 \cdot T_a\]</div>
-<div class="math notranslate nohighlight" id="equation-eq-gama">
-<span class="eqno">(16)<a class="headerlink" href="#equation-eq-gama" title="Permalink to this equation"></a></span>\[\gamma = \frac{c_p \cdot P}{\lambda \cdot 0.622}\]</div>
-<div class="math notranslate nohighlight" id="equation-eq-tsk">
-<span class="eqno">(20)<a class="headerlink" href="#equation-eq-tsk" title="Permalink to this equation"></a></span>\[T_s = T_{s\_K} - 273.16\]</div>
-<div class="math notranslate nohighlight" id="equation-eq-delta">
-<span class="eqno">(21)<a class="headerlink" href="#equation-eq-delta" title="Permalink to this equation"></a></span>\[\Delta = 45.03 + 3.014 T + 0.05345 T^2 + 0.00224 T^3\]</div>
-<p>where</p>
-<div class="math notranslate nohighlight" id="equation-eq-t-mean">
-<span class="eqno">(22)<a class="headerlink" href="#equation-eq-t-mean" title="Permalink to this equation"></a></span>\[T = \frac{T_a + T_s}{2}\]</div>
-<div class="math notranslate nohighlight" id="equation-eq-es">
-<span class="eqno">(23)<a class="headerlink" href="#equation-eq-es" title="Permalink to this equation"></a></span>\[E_s = 0.61121 \cdot \exp{\left(\frac{17.502 \cdot T_s}{240.97 + T_s}\right)}\]</div>
-<div class="math notranslate nohighlight" id="equation-eq-rn">
-<span class="eqno">(37)<a class="headerlink" href="#equation-eq-rn" title="Permalink to this equation"></a></span>\[Rn = Rs_\downarrow - Rs_\uparrow + Rl_{\downarrow} - Rl_{\uparrow}\]</div>
-<div class="math notranslate nohighlight" id="equation-eq-vegheight">
-<span class="eqno">(38)<a class="headerlink" href="#equation-eq-vegheight" title="Permalink to this equation"></a></span>\[h = h_{min} + \frac{MSAVI - MSAVI_{min}}{MSAVI_{min} - MSAVI_{max}} (h_{min} - h_{max})\]</div>
-<div class="math notranslate nohighlight" id="equation-eq-zeroplane">
-<span class="eqno">(39)<a class="headerlink" href="#equation-eq-zeroplane" title="Permalink to this equation"></a></span>\[d = \frac{2}{3}h\]</div>
-<div class="math notranslate nohighlight" id="equation-eq-zom">
-<span class="eqno">(40)<a class="headerlink" href="#equation-eq-zom" title="Permalink to this equation"></a></span>\[z_{0m} = 0.123 \cdot h\]</div>
-<div class="math notranslate nohighlight" id="equation-eq-zoh">
-<span class="eqno">(41)<a class="headerlink" href="#equation-eq-zoh" title="Permalink to this equation"></a></span>\[z_{0h} = 0.1 \cdot z_{0m}\]</div>
-<div class="math notranslate nohighlight" id="equation-eq-mo-length">
-<span class="eqno">(42)<a class="headerlink" href="#equation-eq-mo-length" title="Permalink to this equation"></a></span>\[L = \frac{{u^*}^3 \rho c_p T_{a\_K}}{\kappa g H} = \frac{{u^*}^2 T_{a\_K}}{\kappa g T^*}\]</div>
-<div class="math notranslate nohighlight" id="equation-eq-mos">
-<span class="eqno">(43)<a class="headerlink" href="#equation-eq-mos" title="Permalink to this equation"></a></span>\[\varsigma = \frac{z}{L}\]</div>
-<div class="math notranslate nohighlight" id="equation-eq-psim-instab">
-<span class="eqno">(44)<a class="headerlink" href="#equation-eq-psim-instab" title="Permalink to this equation"></a></span>\[\Psi_m(\varsigma) = 2 \ln \left( \frac{1 + x}{2} \right) + \ln \left( \frac{1+ x^2}{2}\right) - 2 \arctan (x) + \frac{\pi}{2}\]</div>
-<div class="math notranslate nohighlight" id="equation-eq-psih-instab">
-<span class="eqno">(45)<a class="headerlink" href="#equation-eq-psih-instab" title="Permalink to this equation"></a></span>\[\Psi_h(\varsigma) = 2 \ln \left( \frac{1 + x}{2} \right)\]</div>
-<div class="math notranslate nohighlight" id="equation-eq-x">
-<span class="eqno">(46)<a class="headerlink" href="#equation-eq-x" title="Permalink to this equation"></a></span>\[x = (1-16\varsigma)^{0.25}\]</div>
-<div class="math notranslate nohighlight" id="equation-eq-psim-stab">
-<span class="eqno">(47)<a class="headerlink" href="#equation-eq-psim-stab" title="Permalink to this equation"></a></span>\[\Psi_m(\varsigma) = -\left[a\varsigma + b \left( \varsigma - \frac{c}{d} \right) \exp(-d\varsigma) + \frac{bc}{d} \right]\]</div>
-<div class="math notranslate nohighlight" id="equation-eq-psih-stab">
-<span class="eqno">(48)<a class="headerlink" href="#equation-eq-psih-stab" title="Permalink to this equation"></a></span>\[\Psi_h(\varsigma) = - \left[ \left(1 + \frac{2a}{3}\varsigma \right) + b \left(\varsigma - \frac{c}{d} \right) \exp(-d\varsigma) + \left(\frac{bc}{d} -1 \right) \right]\]</div>
-<div class="math notranslate nohighlight" id="equation-eq-frict">
-<span class="eqno">(49)<a class="headerlink" href="#equation-eq-frict" title="Permalink to this equation"></a></span>\[u^* = \frac{\kappa U}{\ln \left(\frac{z-d}{z_{0m}} \right) \Psi_m(\varsigma)}\]</div>
-<div class="math notranslate nohighlight" id="equation-eq-virtt">
-<span class="eqno">(50)<a class="headerlink" href="#equation-eq-virtt" title="Permalink to this equation"></a></span>\[T^* = \frac{\kappa(T_a - T_s)}{\ln \left(\frac{z-d}{z_{0h}} \right) \Psi_h(\varsigma)}\]</div>
-<div class="math notranslate nohighlight" id="equation-eq-ra-thom">
-<span class="eqno">(51)<a class="headerlink" href="#equation-eq-ra-thom" title="Permalink to this equation"></a></span>\[r_a = \frac{\left[ \ln \left(\frac{z-d}{z_{0m}} \right) \Psi_m(\varsigma) \right]\left[ \ln \left(\frac{z-d}{z_{0h}} \right) \Psi_h(\varsigma) \right]}{U \kappa^2}\]</div>
-<div class="math notranslate nohighlight" id="equation-eq-ra-sebal">
-<span class="eqno">(52)<a class="headerlink" href="#equation-eq-ra-sebal" title="Permalink to this equation"></a></span>\[r_{ah} = \frac{\ln \left( \frac{z_2}{z_1}\right) - \Psi_{h\_z_2}(\varsigma) + \Psi_{h\_z_1}(\varsigma)}{u^*\kappa}\]</div>
-<div class="math notranslate nohighlight" id="equation-eq-g">
-<span class="eqno">(53)<a class="headerlink" href="#equation-eq-g" title="Permalink to this equation"></a></span>\[G=\frac{T_{s}}{\alpha}\left(0.0038\alpha+0.0074\alpha^{2}\right)\left(1-0.98NDVI^{4}\right)Rn\]</div>
-<div class="math notranslate nohighlight" id="equation-eq-h">
-<span class="eqno">(54)<a class="headerlink" href="#equation-eq-h" title="Permalink to this equation"></a></span>\[H=\frac{\rho c_{p}\delta T}{r_{a}}\]</div>
-<div class="math notranslate nohighlight" id="equation-eq-le-bil">
-<span class="eqno">(55)<a class="headerlink" href="#equation-eq-le-bil" title="Permalink to this equation"></a></span>\[LE=Rn-H-G\]</div>
-<div class="math notranslate nohighlight" id="equation-eq-cwsi">
-<span class="eqno">(56)<a class="headerlink" href="#equation-eq-cwsi" title="Permalink to this equation"></a></span>\[CWSI=1-\frac{\Delta+\gamma^{*}}{\Delta+\gamma\left(1+\frac{r_{c}}{r_{a}}\right)}\]</div>
-<div class="math notranslate nohighlight" id="equation-eq-gamma-stair">
-<span class="eqno">(57)<a class="headerlink" href="#equation-eq-gamma-stair" title="Permalink to this equation"></a></span>\[\gamma^{*}=\gamma+\left(1+\frac{r_{cp}}{r_{a}}\right)\]</div>
-<div class="math notranslate nohighlight" id="equation-eq-r-c">
-<span class="eqno">(58)<a class="headerlink" href="#equation-eq-r-c" title="Permalink to this equation"></a></span>\[r_{c}=\left[\left(\frac{\Delta+\gamma}{\Omega}-\Delta\right)\frac{1}{\gamma}-1\right]r_{a}\]</div>
-<div class="math notranslate nohighlight" id="equation-eq-r-cp">
-<span class="eqno">(59)<a class="headerlink" href="#equation-eq-r-cp" title="Permalink to this equation"></a></span>\[r_{cp}=\frac{\left(E_{s}-e_{a}\right)\rho c_{p}}{\gamma\cdot LE_{p}}-r_{a}\]</div>
-<div class="math notranslate nohighlight" id="equation-eq-ef">
-<span class="eqno">(60)<a class="headerlink" href="#equation-eq-ef" title="Permalink to this equation"></a></span>\[EF=\frac{LE}{Rn-G}\]</div>
 </section>
 </section>
 
