@@ -233,16 +233,16 @@ As a result, the emissivity can be calculated based on the empirical relation as
 <p>The calculation of vegetation cover characteristics includes the estimation of vegetation spectral indices and leaf area index.</p>
 <p><strong>Normalized Difference Vegetation Index (NDVI)</strong> is one of the most widely used spectral vegetation indices. NDVI provides information on vegetation cover, its quality and possibly also its quantity (biomass). NDVI can be calculated as follows:</p>
 <div class="math notranslate nohighlight" id="equation-eq-ndvi">
-<span class="eqno">()<a class="headerlink" href="#equation-eq-ndvi" title="Permalink to this equation"></a></span>\[NDVI=\frac{R_{NIR}-R_{RED}}{R_{NIR}+R_{RED}}\]</div>
+<span class="eqno">(20)<a class="headerlink" href="#equation-eq-ndvi" title="Permalink to this equation"></a></span>\[NDVI=\frac{R_{NIR}-R_{RED}}{R_{NIR}+R_{RED}}\]</div>
 <p><strong>Modified Soil Adjusted Vegetation Index (MSAVI)</strong> has similar uses to the NDVI. Unlike the NDVI, there is no oversaturation of values with higher vegetation cover. The MSAVI can also be used to estimate vegetation height. MSAVI can be calculated as follows:</p>
 <div class="math notranslate nohighlight" id="equation-eq-msavi">
-<span class="eqno">()<a class="headerlink" href="#equation-eq-msavi" title="Permalink to this equation"></a></span>\[MSAVI=0.5\cdot(2R_{NIR}+1-\sqrt{(2R_{NIR}+1)^{2}-8\cdot(R_{NIR}-R_{RED})}\]</div>
+<span class="eqno">(21)<a class="headerlink" href="#equation-eq-msavi" title="Permalink to this equation"></a></span>\[MSAVI=0.5\cdot(2R_{NIR}+1-\sqrt{(2R_{NIR}+1)^{2}-8\cdot(R_{NIR}-R_{RED})}\]</div>
 <p><strong>Normalized Difference Moisture Index (NDMI)</strong> can be used for surface moisture estimation. NDMI can be calculated as follows:</p>
 <div class="math notranslate nohighlight" id="equation-eq-ndmi">
-<span class="eqno">()<a class="headerlink" href="#equation-eq-ndmi" title="Permalink to this equation"></a></span>\[NDVI=\frac{R_{NIR}-R_{SWIR1}}{R_{NIR}+R_{SWIR1}}\]</div>
+<span class="eqno">(22)<a class="headerlink" href="#equation-eq-ndmi" title="Permalink to this equation"></a></span>\[NDVI=\frac{R_{NIR}-R_{SWIR1}}{R_{NIR}+R_{SWIR1}}\]</div>
 <p><strong>Soil Adjusted Vegetation Index (SAVI)</strong> is next widely used vegetation index. It is similar to MSAVI. SAVI can be calculated as follows:</p>
 <div class="math notranslate nohighlight" id="equation-eq-savi">
-<span class="eqno">()<a class="headerlink" href="#equation-eq-savi" title="Permalink to this equation"></a></span>\[SAVI = \frac{NIR - R}{NIR + R + L} (1 + L)\]</div>
+<span class="eqno">(23)<a class="headerlink" href="#equation-eq-savi" title="Permalink to this equation"></a></span>\[SAVI = \frac{NIR - R}{NIR + R + L} (1 + L)\]</div>
 <p>where <span class="math notranslate nohighlight">\(L\)</span> is soil brightness correction factor defined as 0.5 to accommodate most land cover types.
 SEBCS for QGIS calculates leaf area index (<span class="math notranslate nohighlight">\(LAI\)</span>) according to <a class="reference external" href="https://www.sciencedirect.com/science/article/pii/S0034425718305947?via%3Dihub">Jafaar &amp; Ahmad (2016)</a>:</p>
 <div class="math notranslate nohighlight">
