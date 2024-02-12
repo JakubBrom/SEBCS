@@ -3,11 +3,11 @@ Calculation
 
 Using the SEBCS for QGIS plug-in, it is possible to calculate several characteristics related to energy exchange at the surface and energy transformation into individual heat fluxes. It also calculates meteorological features and vegetation indices that have some connection with the land microclimate. The following features can be calculated:
 
-* radiation balance features
-* heat balance features
-* surface aerodynamic features and boundary layer (atmospheric) stability
 * meteorological features
 * vegetation cover characteristics
+* radiation balance features
+* surface aerodynamic features and boundary layer (atmospheric) stability
+* heat balance features
 
 
 Radiation balance features
@@ -28,7 +28,7 @@ The individual radiation balance components calculation procedure is described i
 Incoming short-wave radiation flux
 ..................................
 
-The incoming (incident) short-wave radiation flux (irradiance) is the main source of energy for evaporation and energy transformations on the Earth's surface. The flux is usually measured at meteorological stations as the energy of radiation incident on a horizontal surface (global radiation), but the amount of energy reaching the surface is significantly related to its shape and the geometry of the incident radiation. The SEBCS for QGIS module calculates the flux of incident shortwave radiation as a function of surface shape and radiation geometry. The computational approach summarized by Kumar (1997) was used as follows.
+The incoming (incident) short-wave radiation flux (irradiance) is the main source of energy for evaporation and energy transformations on the Earth's surface. The flux is usually measured at meteorological stations as the energy of radiation incident on a horizontal surface (global radiation), but the amount of energy reaching the surface is significantly related to its shape and the geometry of the incident radiation. The SEBCS for QGIS module calculates the flux of incident shortwave radiation as a function of surface shape and radiation geometry. The computational approach summarized by `Kumar (1997) <https://www.tandfonline.com/doi/abs/10.1080/136588197242266>`_ was used as follows.
 The value of the incident short-wave radiation flux on the surface was calculated using equation:
 
 .. math::
@@ -53,7 +53,7 @@ The value of :math:`\delta_s` can be calculated using equation:
 
     \delta_s = 23.45 \sin \left(\frac{360(284+N)}{365}\right)
 
-The hour angle corresponds to the condition where :math:`H_s = 0` at noon (right local time). Each hour plus represents a change in angle of +15°, each hour minus represents a change in angle of -15°.
+The hour angle corresponds to the condition where :math:`H_s = 0` at noon (when the Sun is on the meridian). Each hour plus represents a change in angle of +15°; each hour minus represents a change in angle of -15°. By convention morning values are positive and afternoon values are negative.
 
 .. math::
     :label: eq:hour_ang
@@ -184,66 +184,77 @@ As a result, the emissivity can be calculated based on the empirical relation as
 
     \varepsilon = 0.004 P_v + 0.986
 
-
-.. Surface aerodynamic parameters and atmospheric stability
+.. TODO
+    Surface aerodynamic parameters and atmospheric stability
     ---------------------------------------------------------
-
     Heat balance and energy fluxes
     --------------------------------
 
-    Vegetation cover characteristics
-    ---------------------------------
+Vegetation cover characteristics
+---------------------------------
 
-    The calculation of vegetation cover characteristics includes the estimation of vegetation spectral indices and leaf area index.
+The calculation of vegetation cover characteristics includes the estimation of vegetation spectral indices and leaf area index.
 
-    **Normalized Difference Vegetation Index (NDVI)** is one of the most widely used spectral vegetation indices. NDVI provides information on vegetation cover, its quality and possibly also its quantity (biomass). NDVI can be calculated as follows:
+**Normalized Difference Vegetation Index (NDVI)** is one of the most widely used spectral vegetation indices. NDVI provides information on vegetation cover, its quality and possibly also its quantity (biomass). NDVI can be calculated as follows:
 
-    .. math::
-        :label: eq:ndvi
+.. math::
+    :label: eq:ndvi
 
-        NDVI=\frac{R_{NIR}-R_{RED}}{R_{NIR}+R_{RED}}
-
-
-    **Modified Soil Adjusted Vegetation Index (MSAVI)** has similar uses to the NDVI. Unlike the NDVI, there is no oversaturation of values with higher vegetation cover. The MSAVI can also be used to estimate vegetation height. MSAVI can be calculated as follows:
-
-    .. math::
-        :label: eq:msavi
-
-        MSAVI=0.5\cdot(2R_{NIR}+1-\sqrt{(2R_{NIR}+1)^{2}-8\cdot(R_{NIR}-R_{RED})}
+    NDVI=\frac{R_{NIR}-R_{RED}}{R_{NIR}+R_{RED}}
 
 
-    **Normalized Difference Moisture Index (NDMI)** can be used for surface moisture estimation. NDMI can be calculated as follows:
+**Modified Soil Adjusted Vegetation Index (MSAVI)** has similar uses to the NDVI. Unlike the NDVI, there is no oversaturation of values with higher vegetation cover. The MSAVI can also be used to estimate vegetation height. MSAVI can be calculated as follows:
+
+.. math::
+    :label: eq:msavi
+
+    MSAVI=0.5\cdot(2R_{NIR}+1-\sqrt{(2R_{NIR}+1)^{2}-8\cdot(R_{NIR}-R_{RED})}
+
+
+**Normalized Difference Moisture Index (NDMI)** can be used for surface moisture estimation. NDMI can be calculated as follows:
 
 
 
-    .. math::
-        :label: eq:ndmi
+.. math::
+    :label: eq:ndmi
 
-        NDVI=\frac{R_{NIR}-R_{SWIR1}}{R_{NIR}+R_{SWIR1}}
-
-
-    **Soil Adjusted Vegetation Index (SAVI)** is next widely used vegetation index. It is similar to MSAVI. SAVI can be calculated as follows:
-
-    .. TODO
-
-    .. math::
-        :label: eq:savi
-
-        SAVI=
-
-    .. TODO
-
-    .. math::
-        :label: eq:LAI
-
-        LAI =
+    NDVI=\frac{R_{NIR}-R_{SWIR1}}{R_{NIR}+R_{SWIR1}}
 
 
+**Soil Adjusted Vegetation Index (SAVI)** is next widely used vegetation index. It is similar to MSAVI. SAVI can be calculated as follows:
+
+.. math::
+    :label: eq:savi
+
+    SAVI = \frac{NIR - R}{NIR + R + L} (1 + L)
+
+where :math:`L` is soil brightness correction factor defined as 0.5 to accommodate most land cover types.
+SEBCS for QGIS calculates leaf area index (:math:`LAI`) according to `Jafaar & Ahmad (2016) <https://www.sciencedirect.com/science/article/pii/S0034425718305947?via%3Dihub>`_:
+
+.. math::
+    LAI_1=
+        \begin{cases}
+            11 \cdot SAVI^3         & SAVI > 0;\  SAVI \leq 0.817\\
+            6                       & SAVI > 0.817
+        \end{cases}
+
+.. math::
+    LAI_2 =
+      \begin{cases}
+        -\frac{\ln \frac{0.61-SAVI}{0.51}}{0.91}
+            & SAVI >0;\  SAVI\leq 0.61\\
+        6                       & SAVI > 0.61
+      \end{cases}
+
+.. math::
+    LAI = \frac{LAI_1 + LAI_2}{2}
+
+The SEBCS_lib library contains some additional methods for calculation. See :doc:`documentation <SEBCSlib>`.
+
+
+.. TODO
     Meteorological features
     ------------------------
-
-
-
 
     .. math::
         :label: eq:Rn_bil
