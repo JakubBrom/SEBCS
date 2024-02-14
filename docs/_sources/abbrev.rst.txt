@@ -11,10 +11,10 @@ Abbreviation list
     :math:`d`, "m", "Effective height of the canopy"
     :math:`DMT`, "m", "Digital model of terrain"
     :math:`d{\epsilon}`, "unitless", "Effect of natural surfaces geometry distribution and their internal reflection"
-    :math:`E_a`, "kPa", "Water vapour pressure of saturated air"
-    :math:`e_a`, "kPa", "Water vapour pressure"
     :math:`E_s`, "kPa", "Water vapour pressure of saturated air at the surface"
     :math:`e_s`, "kPa", "Water vapour pressure at the surface"
+    :math:`E_z`, "kPa", "Water vapour pressure of saturated air"
+    :math:`e_z`, "kPa", "Water vapour pressure"
     :math:`F_L`, "unitless", "Factor of Monin-Obukhov length"
     :math:`g`, ":math:`m.s^{-2}`", "Gravitational forcing"
     :math:`G`, ":math:`W.m^{-2}`", "Ground heat flux"
@@ -52,9 +52,10 @@ Abbreviation list
     :math:`Rs_{\downarrow const}`, :math:`W.m^{-2}`, "Incomming shortwave radiation flux at the horizontal surface"
     :math:`S_t`,, Solar time
     :math:`T^*`, K, Scaling parameter of temperature in the boundary layer
-    :math:`T_a`, ˚C, Air temperature in height :math:`z`
-    :math:`T_{a\_K}`, K, Air temperature in height :math:`z`
-    :math:`T_B`, K, Surface brightness temperature (:math:`{\varepsilon} = 1.0`)
+    :math:`T_a`, ˚C, Air temperature above the surface (in height :math:`z_{st}`)
+    :math:`T_z`, ˚C, Air temperature in blending height :math:`z`
+    :math:`T_{a\_K}`, K, Air temperature above the surface (in height :math:`z_{st}`)
+    :math:`T_{z\_K}`, K, Air temperature in blending height :math:`z`
     :math:`T_{max}`, ˚C, Max. surface temperature in the image
     :math:`T_s`, ˚C, Surface temperature
     :math:`T_{s\_K}`, K, Surface temperature
@@ -65,13 +66,12 @@ Abbreviation list
     :math:`u^*`, :math:`m.s^{-1}`, Friction velocity of the wind
     :math:`U_{st}`, :math:`m.s^{-1}`, Wind speed measured at meteostation in height :math:`z_{st}`
     :math:`VPD`, kPa, Water vapour pressure deficit
-    :math:`W`, mm, Amount of water for rain in atmosphere
     :math:`w_b`, const., Constants for spectral bands
     :math:`x`, unitless, Constant
     :math:`z`, m, Height of the mixing layer (:math:`z=200`)
     :math:`z_{0h}`, m, Aerodynamic roughness for heat and water vapour transfer
     :math:`z_{0m}`, m, Aerodynamic roughness for momentum transfer
-    :math:`z_{st}`, m, Height of measurement at the meteostation
+    :math:`z_{st}`, m, Height of measurement at the meteostation (usually 2 m above surface)
     :math:`z_1`, m, Height of measurement at level :math:`z_1` above surface (default: :math:`z_1 = 0.1` m)
     :math:`z_2`, m, Height of measurement at level :math:`z_2` above surface (default: :math:`z_2 = 2.0` m)
     :math:`\alpha`, rel., Albedo
@@ -99,13 +99,9 @@ Abbreviation list
     :math:`\pi`, unitless, Ludolf number
     :math:`\rho`, :math:`kg.m^{-3}`, Dry air density
     :math:`\rho_{s\_b}`, rel., Surface spectral reflectance for optical bands
-    :math:`\rho_{t\_b}`, rel., TOA spectral reflectance for optical bands
     :math:`\varsigma`, unitless, Monin-Obukhov stability parameter
     :math:`\sigma`, :math:`W.m^{-2}.K^{-4}`, Stefan-Boltzmann constant (:math:`\sigma=5.6703\cdot 10^{-8}\ W.m^{-2}.K^{-4}`)
     :math:`\Psi_h {(\varsigma)}`, unitless, Stability parameter for heat transfer
     :math:`\Psi_m {(\varsigma)}`, unitless, Stability parameter for momentum transfer
     :math:`\Omega`, rel., Decoupling coefficient (Omega factor)
-    :math:`\eta`, °, Satellite inclination angle to nadir
-    :math:`\theta`, °, Solar zenith angle
-    :math:`\tau_{in\_b}`, rel., Atmospheric transmittance for spectral bands for direct radiation
-    :math:`\tau_{out\_b}`, rel., Atmospheric transmittance for spectral bands for diffuse radiation
+

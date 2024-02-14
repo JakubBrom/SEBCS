@@ -87,7 +87,7 @@ where
 Surface reflectance (albedo)
 ............................
 
-The calculation of the broadband reflectance or albedo is based on empirical approache. An empirical relation was used for the calculation, which calculates the broadband albedo based on the spectral reflectance of the surface for individual spectral bands according to the relation (Tasumi et al. 2008):
+The calculation of the broadband reflectance or albedo is based on empirical approach. An empirical relation was used for the calculation, which calculates the broadband albedo based on the spectral reflectance of the surface for individual spectral bands according to the relation (Tasumi et al. 2008):
 
 .. math::
     :label: eq:albedo
@@ -184,11 +184,6 @@ As a result, the emissivity can be calculated based on the empirical relation as
 
     \varepsilon = 0.004 P_v + 0.986
 
-.. TODO
-    Surface aerodynamic parameters and atmospheric stability
-    ---------------------------------------------------------
-    Heat balance and energy fluxes
-    --------------------------------
 
 Vegetation cover characteristics
 ---------------------------------
@@ -232,6 +227,8 @@ where :math:`L` is soil brightness correction factor defined as 0.5 to accommoda
 SEBCS for QGIS calculates leaf area index (:math:`LAI`) according to `Jafaar & Ahmad (2016) <https://www.sciencedirect.com/science/article/pii/S0034425718305947?via%3Dihub>`_:
 
 .. math::
+    :label: eq:LAI1
+
     LAI_1=
         \begin{cases}
             11 \cdot SAVI^3         & SAVI > 0;\  SAVI \leq 0.817\\
@@ -239,6 +236,8 @@ SEBCS for QGIS calculates leaf area index (:math:`LAI`) according to `Jafaar & A
         \end{cases}
 
 .. math::
+    :label: eq:LAI2
+
     LAI_2 =
       \begin{cases}
         -\frac{\ln \frac{0.61-SAVI}{0.51}}{0.91}
@@ -247,26 +246,103 @@ SEBCS for QGIS calculates leaf area index (:math:`LAI`) according to `Jafaar & A
       \end{cases}
 
 .. math::
+    :label: eq:LAI
+
     LAI = \frac{LAI_1 + LAI_2}{2}
 
-The SEBCS_lib library contains some additional methods for calculation. See :doc:`documentation <SEBCSlib>`.
+The SEBCS_lib library contains some additional methods of :math:`LAI` calculation. See :doc:`documentation <SEBCSlib>`.
 
 
-.. TODO
-    Meteorological features
-    ------------------------
+Meteorological features
+-----------------------
 
-    .. math::
-        :label: eq:Rn_bil
+SEBCS for QGIS uses several variables to calculate aerodynamic quantities and heat fluxes, either constants (see :doc:`Abbreviation list <abbrev>`) or input variables such as water vapour pressure etc.
 
-        Rn=G+H+LE
+The calculation of heat fluxes by SEBCS for QGIS uses the vertical gradient of the meteorological characteristics such as temperature gradient, humidity gradient or change in air velocity. Because the models usually work with a large spatial extent, the calculation typically uses the gradient within the atmospheric boundary layer, i.e. between the Earth's surface and the mixing layer, which is set by default to :math:`z = 200 m`.
+
+The calculation of air temperature for height :math:`z` above the surface assumes an adiabatic change in air temperature :math:`\Gamma`:
+
+.. math::
+    :label: eq:Tz
+
+    T_{z} = T_{a} + \Gamma(Z - Z_{st})
+
+The air pressure :math:`P` for height :math:`z` is calculated using the relation:
+
+.. math::
+    :label: eq:press
+
+    P = 101.3 \left( \frac{293-\Gamma \cdot (DMT + z)}{293} \right)^{5.26}
+
+The characteristics of the humidity and its gradient are based on the assumption of a constant value of relative humidity in the vertical gradient. The water vapour pressure is then expressed by the relation:
+
+.. math::
+    :label: eq:ea
+
+    e_z = \frac{E_z \cdot Rh}{100}
+
+where :math:`E_z` is the pressure of saturated water vapour at height :math:`z` calculated using the Magnus-Tetens equation (`Buck 1981 <https://journals.ametsoc.org/view/journals/apme/20/12/1520-0450_1981_020_1527_nefcvp_2_0_co_2.xml>`_):
+
+.. math::
+    :label: eq:Ea_sat
+
+    E_z = 0.61121 \cdot \exp \left( \frac{17.502 \cdot T_z}{240.97 + T_z} \right)
+
+Similarly, the saturated water vapour pressure is calculated for the surface:
+
+.. math::
+    :label: eq:Es
+
+    E_s = 0.61121 \cdot \exp{\left(\frac{17.502 \cdot T_s}{240.97 + T_s}\right)}
+
+Water vapour pressure deficit is calculated as follows:
+
+.. math::
+    :label: eq:VPD
+
+    VPD = E_z - e_z
+
+The air density for the height :math:`z` is calculated by the relation:
+
+.. math::
+    :label: eq:rho
+
+    \rho = \frac{353.4}{T_z + 273}
+
+Latent heat is calculated by the relation:
+
+.. math::
+    :label: eq:latent
+
+    \lambda = 2501 - 2.3723 \cdot T_z
+
+The psychrometric constant :math:`\gamma` is calculated by the relation:
+
+.. math::
+    :label: eq:gama
+
+    \gamma = \frac{c_p \cdot P}{\lambda \cdot 0.622}
+
+The gradient of saturated water vapour :math:`\Delta` is calculated by the relation:
+
+.. math::
+    :label: eq:delta
+
+    \Delta = 45.03 + 3.014 T + 0.05345 T^2 + 0.00224 T^3
+
+where
+
+.. math::
+    :label: eq:t_mean
+
+    T = \frac{T_z + T_s}{2}
 
 
 
-    .. math::
-        :label: eq:Ta
+.. TODO:
 
-        T_a = T_{st} + \Gamma(Z_{st}-DMT)
+    Aerodynamic characteristics of surface
+    --------------------------------------
 
     .. math::
         :label: eq:U
@@ -277,79 +353,6 @@ The SEBCS_lib library contains some additional methods for calculation. See :doc
         :label: eq:z0m_st
 
         z_{0m\_st} = 0.123 h_{st}
-
-    .. math::
-        :label: eq:press
-
-        P = 101.3 \left( \frac{293-\Gamma \cdot (DMT + z)}{293} \right)^{5.26}
-
-    .. math::
-        :label: eq:Ea_sat
-
-        E_a = 0.61121 \cdot \exp \left( \frac{17.502 \cdot T_a}{240.97 + T_a} \right)
-
-    pro účely výpočtu albeda je hodnota vypočtena pro teplotu vzduchu ve výšce zst.
-
-    .. math::
-        :label: eq:ea
-
-        e_a = \frac{E_a \cdot Rh}{100}
-
-    pro účely výpočtu albeda je hodnota vypočtena pro teplotu vzduchu ve výšce zst.
-
-    .. math::
-        :label: eq:rho
-
-        \rho = \frac{353.4}{T_a + 273}
-
-    .. math::
-        :label: eq:latent
-
-        \lambda = 2501 - 2.3723 \cdot T_a
-
-    .. math::
-        :label: eq:gama
-
-        \gamma = \frac{c_p \cdot P}{\lambda \cdot 0.622}
-
-
-
-
-    .. math::
-        :label: eq:tsk
-
-        T_s = T_{s\_K} - 273.16
-
-
-    .. math::
-        :label: eq:delta
-
-        \Delta = 45.03 + 3.014 T + 0.05345 T^2 + 0.00224 T^3
-
-    where
-
-    .. math::
-        :label: eq:t_mean
-
-        T = \frac{T_a + T_s}{2}
-
-
-    .. math::
-        :label: eq:Es
-
-        E_s = 0.61121 \cdot \exp{\left(\frac{17.502 \cdot T_s}{240.97 + T_s}\right)}
-
-
-
-    .. math::
-        :label: eq:Rn
-
-        Rn = Rs_\downarrow - Rs_\uparrow + Rl_{\downarrow} - Rl_{\uparrow}
-
-    .. math::
-        :label: eq:vegheight
-
-        h = h_{min} + \frac{MSAVI - MSAVI_{min}}{MSAVI_{min} - MSAVI_{max}} (h_{min} - h_{max})
 
     .. math::
         :label: eq:zeroplane
@@ -369,7 +372,7 @@ The SEBCS_lib library contains some additional methods for calculation. See :doc
     .. math::
         :label: eq:MO_length
 
-        L = \frac{{u^*}^3 \rho c_p T_{a\_K}}{\kappa g H} = \frac{{u^*}^2 T_{a\_K}}{\kappa g T^*}
+        L = \frac{{u^*}^3 \rho c_p T_{z\_K}}{\kappa g H} = \frac{{u^*}^2 T_{z\_K}}{\kappa g T^*}
 
     .. math::
         :label: eq:MOS
@@ -409,17 +412,27 @@ The SEBCS_lib library contains some additional methods for calculation. See :doc
     .. math::
         :label: eq:virtT
 
-        T^* = \frac{\kappa(T_a - T_s)}{\ln \left(\frac{z-d}{z_{0h}} \right) \Psi_h(\varsigma)}
+        T^* = \frac{\kappa(T_z - T_s)}{\ln \left(\frac{z-d}{z_{0h}} \right) \Psi_h(\varsigma)}
 
     .. math::
         :label: eq:ra_Thom
 
         r_a = \frac{\left[ \ln \left(\frac{z-d}{z_{0m}} \right) \Psi_m(\varsigma) \right]\left[ \ln \left(\frac{z-d}{z_{0h}} \right) \Psi_h(\varsigma) \right]}{U \kappa^2}
 
+
+
+
+
+
     .. math::
         :label: eq:ra_SEBAL
 
         r_{ah} = \frac{\ln \left( \frac{z_2}{z_1}\right) - \Psi_{h\_z_2}(\varsigma) + \Psi_{h\_z_1}(\varsigma)}{u^*\kappa}
+
+
+
+    Heat fluxes
+    ------------
 
     .. math::
         :label: eq:G
@@ -455,7 +468,7 @@ The SEBCS_lib library contains some additional methods for calculation. See :doc
     .. math::
         :label: eq:r_cp
 
-        r_{cp}=\frac{\left(E_{s}-e_{a}\right)\rho c_{p}}{\gamma\cdot LE_{p}}-r_{a}
+        r_{cp}=\frac{\left(E_{s}-e_{z}\right)\rho c_{p}}{\gamma\cdot LE_{p}}-r_{a}
 
     .. math::
         :label: eq:EF

@@ -1,21 +1,24 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Calculation &mdash; SEBCS 2.1.1 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/mystyle.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/mystyle.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/mystyle.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/mystyle.css" />
+
+  
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
         <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -60,6 +63,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#vegetation-cover-characteristics">Vegetation cover characteristics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#meteorological-features">Meteorological features</a></li>
 </ul>
 </li>
 </ul>
@@ -149,7 +153,7 @@ The value of the incident short-wave radiation flux on the surface was calculate
 </section>
 <section id="surface-reflectance-albedo">
 <h3>Surface reflectance (albedo)<a class="headerlink" href="#surface-reflectance-albedo" title="Permalink to this heading"></a></h3>
-<p>The calculation of the broadband reflectance or albedo is based on empirical approache. An empirical relation was used for the calculation, which calculates the broadband albedo based on the spectral reflectance of the surface for individual spectral bands according to the relation (Tasumi et al. 2008):</p>
+<p>The calculation of the broadband reflectance or albedo is based on empirical approach. An empirical relation was used for the calculation, which calculates the broadband albedo based on the spectral reflectance of the surface for individual spectral bands according to the relation (Tasumi et al. 2008):</p>
 <div class="math notranslate nohighlight" id="equation-eq-albedo">
 <span class="eqno">(11)<a class="headerlink" href="#equation-eq-albedo" title="Permalink to this equation"></a></span>\[\alpha = \displaystyle\sum_{b=1}^{7} (\rho_{s\_b} \cdot w_b)\]</div>
 <p>The <span class="math notranslate nohighlight">\(w_b\)</span> constants for each Landsat satellite are given in the table:</p>
@@ -245,22 +249,60 @@ As a result, the emissivity can be calculated based on the empirical relation as
 <span class="eqno">(23)<a class="headerlink" href="#equation-eq-savi" title="Permalink to this equation"></a></span>\[SAVI = \frac{NIR - R}{NIR + R + L} (1 + L)\]</div>
 <p>where <span class="math notranslate nohighlight">\(L\)</span> is soil brightness correction factor defined as 0.5 to accommodate most land cover types.
 SEBCS for QGIS calculates leaf area index (<span class="math notranslate nohighlight">\(LAI\)</span>) according to <a class="reference external" href="https://www.sciencedirect.com/science/article/pii/S0034425718305947?via%3Dihub">Jafaar &amp; Ahmad (2016)</a>:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}LAI_1=
+<div class="math notranslate nohighlight" id="equation-eq-lai1">
+<span class="eqno">(24)<a class="headerlink" href="#equation-eq-lai1" title="Permalink to this equation"></a></span>\[\begin{split}LAI_1=
     \begin{cases}
         11 \cdot SAVI^3         &amp; SAVI &gt; 0;\  SAVI \leq 0.817\\
         6                       &amp; SAVI &gt; 0.817
     \end{cases}\end{split}\]</div>
-<div class="math notranslate nohighlight">
-\[\begin{split}LAI_2 =
+<div class="math notranslate nohighlight" id="equation-eq-lai2">
+<span class="eqno">(25)<a class="headerlink" href="#equation-eq-lai2" title="Permalink to this equation"></a></span>\[\begin{split}LAI_2 =
   \begin{cases}
     -\frac{\ln \frac{0.61-SAVI}{0.51}}{0.91}
         &amp; SAVI &gt;0;\  SAVI\leq 0.61\\
     6                       &amp; SAVI &gt; 0.61
   \end{cases}\end{split}\]</div>
-<div class="math notranslate nohighlight">
-\[LAI = \frac{LAI_1 + LAI_2}{2}\]</div>
-<p>The SEBCS_lib library contains some additional methods for calculation. See <a class="reference internal" href="SEBCSlib.html"><span class="doc">documentation</span></a>.</p>
+<div class="math notranslate nohighlight" id="equation-eq-lai">
+<span class="eqno">(26)<a class="headerlink" href="#equation-eq-lai" title="Permalink to this equation"></a></span>\[LAI = \frac{LAI_1 + LAI_2}{2}\]</div>
+<p>The SEBCS_lib library contains some additional methods of <span class="math notranslate nohighlight">\(LAI\)</span> calculation. See <a class="reference internal" href="SEBCSlib.html"><span class="doc">documentation</span></a>.</p>
+</section>
+<section id="meteorological-features">
+<h2>Meteorological features<a class="headerlink" href="#meteorological-features" title="Permalink to this heading"></a></h2>
+<p>SEBCS for QGIS uses several variables to calculate aerodynamic quantities and heat fluxes, either constants (see <a class="reference internal" href="abbrev.html"><span class="doc">Abbreviation list</span></a>) or input variables such as water vapour pressure etc.</p>
+<p>The calculation of heat fluxes by SEBCS for QGIS uses the vertical gradient of the meteorological characteristics such as temperature gradient, humidity gradient or change in air velocity. Because the models usually work with a large spatial extent, the calculation typically uses the gradient within the atmospheric boundary layer, i.e. between the Earth’s surface and the mixing layer, which is set by default to <span class="math notranslate nohighlight">\(z = 200 m\)</span>.</p>
+<p>The calculation of air temperature for height <span class="math notranslate nohighlight">\(z\)</span> above the surface assumes an adiabatic change in air temperature <span class="math notranslate nohighlight">\(\Gamma\)</span>:</p>
+<div class="math notranslate nohighlight" id="equation-eq-tz">
+<span class="eqno">(27)<a class="headerlink" href="#equation-eq-tz" title="Permalink to this equation"></a></span>\[T_{z} = T_{a} + \Gamma(Z - Z_{st})\]</div>
+<p>The air pressure <span class="math notranslate nohighlight">\(P\)</span> for height <span class="math notranslate nohighlight">\(z\)</span> is calculated using the relation:</p>
+<div class="math notranslate nohighlight" id="equation-eq-press">
+<span class="eqno">(28)<a class="headerlink" href="#equation-eq-press" title="Permalink to this equation"></a></span>\[P = 101.3 \left( \frac{293-\Gamma \cdot (DMT + z)}{293} \right)^{5.26}\]</div>
+<p>The characteristics of the humidity and its gradient are based on the assumption of a constant value of relative humidity in the vertical gradient. The water vapour pressure is then expressed by the relation:</p>
+<div class="math notranslate nohighlight" id="equation-eq-ea">
+<span class="eqno">(29)<a class="headerlink" href="#equation-eq-ea" title="Permalink to this equation"></a></span>\[e_z = \frac{E_z \cdot Rh}{100}\]</div>
+<p>where <span class="math notranslate nohighlight">\(E_z\)</span> is the pressure of saturated water vapour at height <span class="math notranslate nohighlight">\(z\)</span> calculated using the Magnus-Tetens equation (<a class="reference external" href="https://journals.ametsoc.org/view/journals/apme/20/12/1520-0450_1981_020_1527_nefcvp_2_0_co_2.xml">Buck 1981</a>):</p>
+<div class="math notranslate nohighlight" id="equation-eq-ea-sat">
+<span class="eqno">(30)<a class="headerlink" href="#equation-eq-ea-sat" title="Permalink to this equation"></a></span>\[E_z = 0.61121 \cdot \exp \left( \frac{17.502 \cdot T_z}{240.97 + T_z} \right)\]</div>
+<p>Similarly, the saturated water vapour pressure is calculated for the surface:</p>
+<div class="math notranslate nohighlight" id="equation-eq-es">
+<span class="eqno">(31)<a class="headerlink" href="#equation-eq-es" title="Permalink to this equation"></a></span>\[E_s = 0.61121 \cdot \exp{\left(\frac{17.502 \cdot T_s}{240.97 + T_s}\right)}\]</div>
+<p>Water vapour pressure deficit is calculated as follows:</p>
+<div class="math notranslate nohighlight" id="equation-eq-vpd">
+<span class="eqno">(32)<a class="headerlink" href="#equation-eq-vpd" title="Permalink to this equation"></a></span>\[VPD = E_z - e_z\]</div>
+<p>The air density for the height <span class="math notranslate nohighlight">\(z\)</span> is calculated by the relation:</p>
+<div class="math notranslate nohighlight" id="equation-eq-rho">
+<span class="eqno">(33)<a class="headerlink" href="#equation-eq-rho" title="Permalink to this equation"></a></span>\[\rho = \frac{353.4}{T_z + 273}\]</div>
+<p>Latent heat is calculated by the relation:</p>
+<div class="math notranslate nohighlight" id="equation-eq-latent">
+<span class="eqno">(34)<a class="headerlink" href="#equation-eq-latent" title="Permalink to this equation"></a></span>\[\lambda = 2501 - 2.3723 \cdot T_z\]</div>
+<p>The psychrometric constant <span class="math notranslate nohighlight">\(\gamma\)</span> is calculated by the relation:</p>
+<div class="math notranslate nohighlight" id="equation-eq-gama">
+<span class="eqno">(35)<a class="headerlink" href="#equation-eq-gama" title="Permalink to this equation"></a></span>\[\gamma = \frac{c_p \cdot P}{\lambda \cdot 0.622}\]</div>
+<p>The gradient of saturated water vapour <span class="math notranslate nohighlight">\(\Delta\)</span> is calculated by the relation:</p>
+<div class="math notranslate nohighlight" id="equation-eq-delta">
+<span class="eqno">(36)<a class="headerlink" href="#equation-eq-delta" title="Permalink to this equation"></a></span>\[\Delta = 45.03 + 3.014 T + 0.05345 T^2 + 0.00224 T^3\]</div>
+<p>where</p>
+<div class="math notranslate nohighlight" id="equation-eq-t-mean">
+<span class="eqno">(37)<a class="headerlink" href="#equation-eq-t-mean" title="Permalink to this equation"></a></span>\[T = \frac{T_z + T_s}{2}\]</div>
 </section>
 </section>
 

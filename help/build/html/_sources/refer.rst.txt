@@ -11,6 +11,8 @@ References
 
 *Brutsaert W. (1982) Evapotranspiration into the atmosphere. Theory, history and applications. D. Reidel Publishing Company, Dotrecht.*
 
+*Buck, A.L., (1981). New Equations for Computing Vapor Pressure and Enhancement Factor. Journal of Applied Meteorology 20, 1527–1532. https://doi.org/10.1175/1520-0450(1981)020<1527:NEFCVP>2.0.CO;2*
+
 *Duffková, R., Brom, J., Žížala, D., Zemek, F., Procházka, J., Nováková, E., Zajíček, A., Kvítek, T. (2012): Určení infiltračních oblastí pomocí vodního stresu vegetace na základě dálkového průzkumu Země a pozemních měření. Certifikovaná metodika. Výzkumný ústav meliorací a ochrany půdy, v.v.i., Praha.*
 
 *Eastman, J.R. (2009): IDRISI Tajga Guide to GIS and Image Processing, Clarc Labs, Clarc University, Worchester.*
