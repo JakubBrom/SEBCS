@@ -1,24 +1,24 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SEBCS usage &mdash; SEBCS 2.1.1 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="_static/css/mystyle.css" />
-      <link rel="stylesheet" type="text/css" href="_static/css/mystyle.css" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b76e3c8a" />
+      <link rel="stylesheet" type="text/css" href="_static/css/mystyle.css?v=5fd4b3b8" />
+      <link rel="stylesheet" type="text/css" href="_static/css/mystyle.css?v=5fd4b3b8" />
 
   
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="_static/doctools.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=841abef3"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -108,10 +108,10 @@
            <div itemprop="articleBody">
              
   <section id="sebcs-usage">
-<h1>SEBCS usage<a class="headerlink" href="#sebcs-usage" title="Permalink to this heading"></a></h1>
+<h1>SEBCS usage<a class="headerlink" href="#sebcs-usage" title="Link to this heading"></a></h1>
 <p>The SEBCS for QGIS plug-in allows spatial calculation of energy balance components and other surface characteristics. The plug-in uses three different approaches to calculate the actual latent heat flux. These are the aerodynamic method according to Penman-Monteith, the SEBAL method according to <a class="reference external" href="https://www.sciencedirect.com/science/article/abs/pii/S0022169498002534">Bastiaanssen et al. (1998)</a> and the gradient method based on the formulation of <a class="reference external" href="https://acsess.onlinelibrary.wiley.com/doi/full/10.2134/agronj2004.3840">Suleiman &amp; Crago (2004)</a>.</p>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading"></a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading"></a></h2>
 <p>The computation of the variables requires some data inputs. These are raster remote sensing data (Spectral data), raster data describing the surface (Additional data) and numerical data, including meteorological data and metadata. The input data varies depending on the calculation method used. An overview of the input data depending on the method used is given in the following table.</p>
 <table class="docutils align-default">
 <thead>
@@ -304,7 +304,7 @@
 <p>All raster data must have the same size, i.e. the same number of columns and rows, and the same geographic coordination system!</p>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading"></a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading"></a></h2>
 <p>The SEBCS for QGIS plug-in allows calculation of the following features described in the next table. The calculation of the features is described <a class="reference internal" href="calculation.html"><span class="doc">here</span></a>.</p>
 <table class="docutils align-default">
 <thead>
@@ -401,37 +401,37 @@
 </table>
 </section>
 <section id="input-data-preparation">
-<h2>Input data preparation<a class="headerlink" href="#input-data-preparation" title="Permalink to this heading"></a></h2>
+<h2>Input data preparation<a class="headerlink" href="#input-data-preparation" title="Link to this heading"></a></h2>
 <p>SEBCS for QGIS is primarily designed to use Landsat satellite data, but also allows the use of other spatial data sources. Regardless of the data source, the same spatial resolution (number of pixels) and spatial extent (same area) must be maintained for all layers used. The choice of the geographical reference system does not affect the function of the module.
 Data preparation is specific for some data inputs. The procedure is as follows:</p>
 <section id="optical-data">
-<h3>Optical data<a class="headerlink" href="#optical-data" title="Permalink to this heading"></a></h3>
+<h3>Optical data<a class="headerlink" href="#optical-data" title="Link to this heading"></a></h3>
 <p>The optical data must be used in the form of the surface spectral reflectance as relative values, in the range 0 to 1.</p>
 </section>
 <section id="air-temperature">
-<h3>Air temperature<a class="headerlink" href="#air-temperature" title="Permalink to this heading"></a></h3>
+<h3>Air temperature<a class="headerlink" href="#air-temperature" title="Link to this heading"></a></h3>
 <p>The air temperature is the temperature measured by a weather station at the reference height <span class="math notranslate nohighlight">\(z\)</span>. It is usually the temperature measured at a height of 2 m above the surface. Air temperature can be understood as either homogeneous or heterogeneous in a given space, depending on the measurement capabilities. For this reason, the air temperature is specified as a temperature layer for a given area.
 Assuming a homogeneous temperature distribution in space, the layer has only one value, which can be created using the Create constant raster layer function in QGIS Processing module or the Raster Calculator.
 In the case of the assumption of a heterogeneous air temperature distribution in the space, the air temperature needs to be modeled. If a sufficient number of measurements in a given area is available, various interpolation and geostatistical methods can be used to create an air temperature layer. A possible way to create an air temperature map is to assume an adiabatic change in air temperature with altitude (e.g. a decrease of 0.6 °C per 100 m altitude). In this case, it is necessary to have a digital model of terrain (elevation map converted to raster form, see below) and to know the altitude of the weather station location. The surface temperature is then calculated using the Raster Calculator according to the formula:</p>
 <div class="math notranslate nohighlight" id="equation-eq-ta-dmt">
-<span id="tadmt"></span><span class="eqno">(1)<a class="headerlink" href="#equation-eq-ta-dmt" title="Permalink to this equation"></a></span>\[T_a = T_{st} + \Gamma(Z_{st}-DMT)\]</div>
+<span id="tadmt"></span><span class="eqno">(1)<a class="headerlink" href="#equation-eq-ta-dmt" title="Link to this equation"></a></span>\[T_a = T_{st} + \Gamma(Z_{st}-DMT)\]</div>
 </section>
 <section id="wind-speed">
-<h3>Wind speed<a class="headerlink" href="#wind-speed" title="Permalink to this heading"></a></h3>
+<h3>Wind speed<a class="headerlink" href="#wind-speed" title="Link to this heading"></a></h3>
 <p>The wind speed is given as a layer of wind velocity at height <span class="math notranslate nohighlight">\(Z_{st}\)</span> in <span class="math notranslate nohighlight">\(m \cdot s^{-1}\)</span>. The situation is similar to that of surface temperature. The user can use a raster layer with constant values or a heterogeneous raster airflow map. The wind speed over a given area is, together with the air temperature, one of the major factors that greatly influence the result of the computation, so careful attention should be paid to the data preparation.</p>
 </section>
 <section id="digital-model-of-terrain">
-<h3>Digital model of terrain<a class="headerlink" href="#digital-model-of-terrain" title="Permalink to this heading"></a></h3>
+<h3>Digital model of terrain<a class="headerlink" href="#digital-model-of-terrain" title="Link to this heading"></a></h3>
 <p>The digital terrain model is a raster layer that captures the elevation of the area of interest. It is usually created by interpolating the elevation given by contours or elevation points. It is possible to use elevation from LiDAR data or radar altimetry data, e.g. SRTM. In the case where an elevation map is not available and the terrain is essentially flat, a constant elevation layer can be used.</p>
 </section>
 <section id="vegetation-cover-height">
-<h3>Vegetation cover height<a class="headerlink" href="#vegetation-cover-height" title="Permalink to this heading"></a></h3>
+<h3>Vegetation cover height<a class="headerlink" href="#vegetation-cover-height" title="Link to this heading"></a></h3>
 <p>Information on the (effective) height of the vegetation cover is an important parameter for the calculation of aerodynamic parameters such as aerodynamic surface roughness or atmospheric boundary layer stability. The vegetation cover height can be obtained e.g. by scanning the surface using LiDAR as a digital surface model. In the case that the vegetation height layer is not available, it can be estimated by scaling the MSAVI index values between the minimum (<span class="math notranslate nohighlight">\(h_{min}\)</span>) and maximum (<span class="math notranslate nohighlight">\(h_{max}\)</span>) vegetation height (<a class="reference external" href="https://hess.copernicus.org/articles/15/119/2011/">Gao et al. 2011</a>):</p>
 <div class="math notranslate nohighlight" id="equation-eq-veg-height">
-<span id="vegheight"></span><span class="eqno">(2)<a class="headerlink" href="#equation-eq-veg-height" title="Permalink to this equation"></a></span>\[    h = h_{min} + \frac{MSAVI - MSAVI_{min}}{MSAVI_{min} - MSAVI_{max}} (h_{min} – h_{max})\]</div>
+<span id="vegheight"></span><span class="eqno">(2)<a class="headerlink" href="#equation-eq-veg-height" title="Link to this equation"></a></span>\[    h = h_{min} + \frac{MSAVI - MSAVI_{min}}{MSAVI_{min} - MSAVI_{max}} (h_{min} – h_{max})\]</div>
 <p>To get an idea of the minimum and maximum vegetation cover height values to be used, either values in the table listed below or an estimated values can be used.</p>
 <table class="docutils align-default" id="id2">
-<caption><span class="caption-number">Table 1 </span><span class="caption-text">Summary of maximum and minimum values of vegetation cover effective height (m). Modified from Gao et al. (<a class="reference external" href="https://hess.copernicus.org/articles/15/119/2011/">2011</a>).</span><a class="headerlink" href="#id2" title="Permalink to this table"></a></caption>
+<caption><span class="caption-number">Table 1 </span><span class="caption-text">Summary of maximum and minimum values of vegetation cover effective height (m). Modified from Gao et al. (<a class="reference external" href="https://hess.copernicus.org/articles/15/119/2011/">2011</a>).</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
 <thead>
 <tr class="row-odd"><th class="head"></th>
 <th class="head"><p>Max. (m)</p></th>

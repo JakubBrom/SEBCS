@@ -3,9 +3,9 @@ Calculation
 
 Using the SEBCS for QGIS plug-in, it is possible to calculate several characteristics related to energy exchange at the surface and energy transformation into individual heat fluxes. It also calculates meteorological features and vegetation indices that have some connection with the land microclimate. The following features can be calculated:
 
-* meteorological features
-* vegetation cover characteristics
 * radiation balance features
+* vegetation cover characteristics
+* meteorological features
 * surface aerodynamic features and boundary layer (atmospheric) stability
 * heat balance features
 
@@ -14,7 +14,7 @@ Radiation balance features
 ---------------------------
 
 The calculation of the radiation balance features includes the balance of short-wave and long-wave radiation on the active surface and the resulting total net radiation. The calculation procedure includes the calculation of the albedo, surface reflectance and atmospheric emissivity. The SEBCS for QGIS includes surface geometry issues in the radiation balance features calculation.
-The relationship of the individual radiation balance components is summarized by the equation :ref:`(1) <rnflux>`:
+The relationship of the individual radiation balance components is summarized by the equation:
 
 .. _rnflux:
 .. math::
@@ -338,21 +338,9 @@ where
     T = \frac{T_z + T_s}{2}
 
 
-
+Surface aerodynamic features and boundary layer (atmospheric) stability
+-----------------------------------------------------------------------
 .. TODO:
-
-    Aerodynamic characteristics of surface
-    --------------------------------------
-
-    .. math::
-        :label: eq:U
-
-        U = U_{st}\frac{\ln\left(\frac{z}{z_{0m\_st}}\right)}{\ln\left(\frac{z_{st}}{z_{0m\_st}}\right)}
-
-    .. math::
-        :label: eq:z0m_st
-
-        z_{0m\_st} = 0.123 h_{st}
 
     .. math::
         :label: eq:zeroplane
@@ -368,6 +356,21 @@ where
         :label: eq:zoh
 
         z_{0h} = 0.1 \cdot z_{0m}
+
+    .. math::
+        :label: eq:U
+
+        U = U_{st}\frac{\ln\left(\frac{z}{z_{0m\_st}}\right)}{\ln\left(\frac{z_{st}}{z_{0m\_st}}\right)}
+
+    # -----------------------------------------------------------
+
+
+    .. math::
+        :label: eq:ra_Thom
+
+        r_a = \frac{\left[ \ln \left(\frac{z-d}{z_{0m}} \right) \Psi_m(\varsigma) \right]\left[ \ln \left(\frac{z-d}{z_{0h}} \right) \Psi_h(\varsigma) \right]}{U \kappa^2}
+
+
 
     .. math::
         :label: eq:MO_length
@@ -414,10 +417,7 @@ where
 
         T^* = \frac{\kappa(T_z - T_s)}{\ln \left(\frac{z-d}{z_{0h}} \right) \Psi_h(\varsigma)}
 
-    .. math::
-        :label: eq:ra_Thom
 
-        r_a = \frac{\left[ \ln \left(\frac{z-d}{z_{0m}} \right) \Psi_m(\varsigma) \right]\left[ \ln \left(\frac{z-d}{z_{0h}} \right) \Psi_h(\varsigma) \right]}{U \kappa^2}
 
 
 

@@ -1,24 +1,24 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Calculation &mdash; SEBCS 2.1.1 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="_static/css/mystyle.css" />
-      <link rel="stylesheet" type="text/css" href="_static/css/mystyle.css" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b76e3c8a" />
+      <link rel="stylesheet" type="text/css" href="_static/css/mystyle.css?v=5fd4b3b8" />
+      <link rel="stylesheet" type="text/css" href="_static/css/mystyle.css?v=5fd4b3b8" />
 
   
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="_static/doctools.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=841abef3"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -64,6 +64,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#vegetation-cover-characteristics">Vegetation cover characteristics</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#meteorological-features">Meteorological features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#surface-aerodynamic-features-and-boundary-layer-atmospheric-stability">Surface aerodynamic features and boundary layer (atmospheric) stability</a></li>
 </ul>
 </li>
 </ul>
@@ -107,58 +108,58 @@
            <div itemprop="articleBody">
              
   <section id="calculation">
-<h1>Calculation<a class="headerlink" href="#calculation" title="Permalink to this heading"></a></h1>
+<h1>Calculation<a class="headerlink" href="#calculation" title="Link to this heading"></a></h1>
 <p>Using the SEBCS for QGIS plug-in, it is possible to calculate several characteristics related to energy exchange at the surface and energy transformation into individual heat fluxes. It also calculates meteorological features and vegetation indices that have some connection with the land microclimate. The following features can be calculated:</p>
 <ul class="simple">
-<li><p>meteorological features</p></li>
-<li><p>vegetation cover characteristics</p></li>
 <li><p>radiation balance features</p></li>
+<li><p>vegetation cover characteristics</p></li>
+<li><p>meteorological features</p></li>
 <li><p>surface aerodynamic features and boundary layer (atmospheric) stability</p></li>
 <li><p>heat balance features</p></li>
 </ul>
 <section id="radiation-balance-features">
-<h2>Radiation balance features<a class="headerlink" href="#radiation-balance-features" title="Permalink to this heading"></a></h2>
+<h2>Radiation balance features<a class="headerlink" href="#radiation-balance-features" title="Link to this heading"></a></h2>
 <p>The calculation of the radiation balance features includes the balance of short-wave and long-wave radiation on the active surface and the resulting total net radiation. The calculation procedure includes the calculation of the albedo, surface reflectance and atmospheric emissivity. The SEBCS for QGIS includes surface geometry issues in the radiation balance features calculation.
-The relationship of the individual radiation balance components is summarized by the equation <a class="reference internal" href="#rnflux"><span class="std std-ref">(1)</span></a>:</p>
+The relationship of the individual radiation balance components is summarized by the equation <a class="reference internal" href="#equation-eq-rn-fluxes">(3)</a>:</p>
 <div class="math notranslate nohighlight" id="equation-eq-rn-fluxes">
-<span id="rnflux"></span><span class="eqno">(3)<a class="headerlink" href="#equation-eq-rn-fluxes" title="Permalink to this equation"></a></span>\[Rn=Rs_{\downarrow}-Rs_{\uparrow}+Rl_{\downarrow}-Rl_{\uparrow}\]</div>
+<span id="rnflux"></span><span class="eqno">(3)<a class="headerlink" href="#equation-eq-rn-fluxes" title="Link to this equation"></a></span>\[Rn=Rs_{\downarrow}-Rs_{\uparrow}+Rl_{\downarrow}-Rl_{\uparrow}\]</div>
 <p>The individual radiation balance components calculation procedure is described in the following text.</p>
 <section id="incoming-short-wave-radiation-flux">
-<h3>Incoming short-wave radiation flux<a class="headerlink" href="#incoming-short-wave-radiation-flux" title="Permalink to this heading"></a></h3>
+<h3>Incoming short-wave radiation flux<a class="headerlink" href="#incoming-short-wave-radiation-flux" title="Link to this heading"></a></h3>
 <p>The incoming (incident) short-wave radiation flux (irradiance) is the main source of energy for evaporation and energy transformations on the Earth’s surface. The flux is usually measured at meteorological stations as the energy of radiation incident on a horizontal surface (global radiation), but the amount of energy reaching the surface is significantly related to its shape and the geometry of the incident radiation. The SEBCS for QGIS module calculates the flux of incident shortwave radiation as a function of surface shape and radiation geometry. The computational approach summarized by <a class="reference external" href="https://www.tandfonline.com/doi/abs/10.1080/136588197242266">Kumar (1997)</a> was used as follows.
 The value of the incident short-wave radiation flux on the surface was calculated using equation:</p>
 <div class="math notranslate nohighlight" id="equation-eq-rs-in">
-<span class="eqno">(4)<a class="headerlink" href="#equation-eq-rs-in" title="Permalink to this equation"></a></span>\[Rs_{\downarrow} = I_s \cdot \cos i\]</div>
+<span class="eqno">(4)<a class="headerlink" href="#equation-eq-rs-in" title="Link to this equation"></a></span>\[Rs_{\downarrow} = I_s \cdot \cos i\]</div>
 <p>where</p>
 <div class="math notranslate nohighlight" id="equation-eq-cosi">
-<span class="eqno">(5)<a class="headerlink" href="#equation-eq-cosi" title="Permalink to this equation"></a></span>\[\begin{split}\cos i = \sin \delta_s (\sin Lat \cos \beta_s - \cos Lat \sin \beta_s \cos a_{w}) \\
+<span class="eqno">(5)<a class="headerlink" href="#equation-eq-cosi" title="Link to this equation"></a></span>\[\begin{split}\cos i = \sin \delta_s (\sin Lat \cos \beta_s - \cos Lat \sin \beta_s \cos a_{w}) \\
     + \cos \delta_s \cos H_s (\cos Lat \cos \beta_s
     + \sin Lat \sin \beta_s \cos a_{w}) \\
     + \cos \delta_s \sin \beta_s \sin a_{w} \sin H_s\end{split}\]</div>
 <p>The value of <span class="math notranslate nohighlight">\(\delta_s\)</span> can be calculated using equation:</p>
 <div class="math notranslate nohighlight" id="equation-eq-sol-dek">
-<span class="eqno">(6)<a class="headerlink" href="#equation-eq-sol-dek" title="Permalink to this equation"></a></span>\[\delta_s = 23.45 \sin \left(\frac{360(284+N)}{365}\right)\]</div>
+<span class="eqno">(6)<a class="headerlink" href="#equation-eq-sol-dek" title="Link to this equation"></a></span>\[\delta_s = 23.45 \sin \left(\frac{360(284+N)}{365}\right)\]</div>
 <p>The hour angle corresponds to the condition where <span class="math notranslate nohighlight">\(H_s = 0\)</span> at noon (when the Sun is on the meridian). Each hour plus represents a change in angle of +15°; each hour minus represents a change in angle of -15°. By convention morning values are positive and afternoon values are negative.</p>
 <div class="math notranslate nohighlight" id="equation-eq-hour-ang">
-<span class="eqno">(7)<a class="headerlink" href="#equation-eq-hour-ang" title="Permalink to this equation"></a></span>\[H_s = (12 - S_t)\cdot 15\]</div>
+<span class="eqno">(7)<a class="headerlink" href="#equation-eq-hour-ang" title="Link to this equation"></a></span>\[H_s = (12 - S_t)\cdot 15\]</div>
 <p>Depending on the longitude, the solar time (<span class="math notranslate nohighlight">\(S_t\)</span>) was determined according to the relation:</p>
 <div class="math notranslate nohighlight" id="equation-eq-sol-time">
-<span class="eqno">(8)<a class="headerlink" href="#equation-eq-sol-time" title="Permalink to this equation"></a></span>\[S_t = GMT + \frac{24 \cdot Long}{360}\]</div>
+<span class="eqno">(8)<a class="headerlink" href="#equation-eq-sol-time" title="Link to this equation"></a></span>\[S_t = GMT + \frac{24 \cdot Long}{360}\]</div>
 <p>Since the module uses the global radiation measured per horizontal surface as input, the value of <span class="math notranslate nohighlight">\(I_s\)</span> is calculated based on the relationship:</p>
 <div class="math notranslate nohighlight" id="equation-eq-irrad">
-<span class="eqno">(9)<a class="headerlink" href="#equation-eq-irrad" title="Permalink to this equation"></a></span>\[I_s = \frac{R_{s\downarrow konst}}{\sin \alpha_s}\]</div>
+<span class="eqno">(9)<a class="headerlink" href="#equation-eq-irrad" title="Link to this equation"></a></span>\[I_s = \frac{R_{s\downarrow konst}}{\sin \alpha_s}\]</div>
 <p>where</p>
 <div class="math notranslate nohighlight" id="equation-eq-sol-ang">
-<span class="eqno">(10)<a class="headerlink" href="#equation-eq-sol-ang" title="Permalink to this equation"></a></span>\[\sin \alpha_s = \sin \delta_s \sin Lat + \cos \delta_s \cos Lat \cos H_s\]</div>
+<span class="eqno">(10)<a class="headerlink" href="#equation-eq-sol-ang" title="Link to this equation"></a></span>\[\sin \alpha_s = \sin \delta_s \sin Lat + \cos \delta_s \cos Lat \cos H_s\]</div>
 </section>
 <section id="surface-reflectance-albedo">
-<h3>Surface reflectance (albedo)<a class="headerlink" href="#surface-reflectance-albedo" title="Permalink to this heading"></a></h3>
+<h3>Surface reflectance (albedo)<a class="headerlink" href="#surface-reflectance-albedo" title="Link to this heading"></a></h3>
 <p>The calculation of the broadband reflectance or albedo is based on empirical approach. An empirical relation was used for the calculation, which calculates the broadband albedo based on the spectral reflectance of the surface for individual spectral bands according to the relation (Tasumi et al. 2008):</p>
 <div class="math notranslate nohighlight" id="equation-eq-albedo">
-<span class="eqno">(11)<a class="headerlink" href="#equation-eq-albedo" title="Permalink to this equation"></a></span>\[\alpha = \displaystyle\sum_{b=1}^{7} (\rho_{s\_b} \cdot w_b)\]</div>
+<span class="eqno">(11)<a class="headerlink" href="#equation-eq-albedo" title="Link to this equation"></a></span>\[\alpha = \displaystyle\sum_{b=1}^{7} (\rho_{s\_b} \cdot w_b)\]</div>
 <p>The <span class="math notranslate nohighlight">\(w_b\)</span> constants for each Landsat satellite are given in the table:</p>
 <table class="docutils align-default" id="id1">
-<caption><span class="caption-number">Table 2 </span><span class="caption-text">Values of <span class="math notranslate nohighlight">\(w_b\)</span> for particular spectral bands according to Liang et al. (2001 and 2003) and Tasumi et al. (2008) for Landsat 4, 5 and 7 and according to Olmeo et al (2017) for Landsat 8 and 9.</span><a class="headerlink" href="#id1" title="Permalink to this table"></a></caption>
+<caption><span class="caption-number">Table 2 </span><span class="caption-text">Values of <span class="math notranslate nohighlight">\(w_b\)</span> for particular spectral bands according to Liang et al. (2001 and 2003) and Tasumi et al. (2008) for Landsat 4, 5 and 7 and according to Olmeo et al (2017) for Landsat 8 and 9.</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
 <thead>
 <tr class="row-odd"><th class="head"><p>Spectral band</p></th>
 <th class="head"><p>Blue</p></th>
@@ -190,30 +191,30 @@ The value of the incident short-wave radiation flux on the surface was calculate
 </table>
 <p>Alternatively, for other data sources, an empirical approach based on the use of vegetation indices NDVI and MSAVI can be used (Duffková et al. 2012):</p>
 <div class="math notranslate nohighlight" id="equation-eq-albedo-brom">
-<span class="eqno">(12)<a class="headerlink" href="#equation-eq-albedo-brom" title="Permalink to this equation"></a></span>\[\begin{split}\alpha =  0.08611 + 0.89472 \cdot MSAVI + 5.55866 \cdot  MSAVI^2 -0.1183 \cdot NDVI\\
+<span class="eqno">(12)<a class="headerlink" href="#equation-eq-albedo-brom" title="Link to this equation"></a></span>\[\begin{split}\alpha =  0.08611 + 0.89472 \cdot MSAVI + 5.55866 \cdot  MSAVI^2 -0.1183 \cdot NDVI\\
     - 1.9818 \cdot MSAVI^3 - 4.5034 \cdot MSAVI \cdot NDVI - 11.463 \cdot MSAVI^2 \cdot NDVI\\
     + 7.46145 \cdot MSAVI \cdot NDVI^2 + 5.2994 \cdot MSAVI^2 \cdot NDVI^2\\
     + 4.76657 \cdot MSAVI^3 \cdot NDVI - 2.3127 \cdot MSAVI^3 \cdot NDVI^2\\
     - 3.4274 \cdot MSAVI \cdot NDVI^3\end{split}\]</div>
 <p>The reflected shortwave radiation flux is calculated as follows:</p>
 <div class="math notranslate nohighlight" id="equation-eq-rs-out">
-<span class="eqno">(13)<a class="headerlink" href="#equation-eq-rs-out" title="Permalink to this equation"></a></span>\[Rs_\uparrow = \alpha \cdot Rs_\downarrow\]</div>
+<span class="eqno">(13)<a class="headerlink" href="#equation-eq-rs-out" title="Link to this equation"></a></span>\[Rs_\uparrow = \alpha \cdot Rs_\downarrow\]</div>
 </section>
 <section id="incoming-long-wave-radiation-flux">
-<h3>Incoming long-wave radiation flux<a class="headerlink" href="#incoming-long-wave-radiation-flux" title="Permalink to this heading"></a></h3>
+<h3>Incoming long-wave radiation flux<a class="headerlink" href="#incoming-long-wave-radiation-flux" title="Link to this heading"></a></h3>
 <p>The incoming longwave radiation emitted by the atmosphere is calculated from the air temperature measured at <span class="math notranslate nohighlight">\(z\)</span>. The calculation is based on the Stefan-Boltzmann law:</p>
 <div class="math notranslate nohighlight" id="equation-eq-rl-down">
-<span class="eqno">(14)<a class="headerlink" href="#equation-eq-rl-down" title="Permalink to this equation"></a></span>\[Rl_{\downarrow} = \varepsilon_{ac} \sigma {T_{a\_K}}^4\]</div>
+<span class="eqno">(14)<a class="headerlink" href="#equation-eq-rl-down" title="Link to this equation"></a></span>\[Rl_{\downarrow} = \varepsilon_{ac} \sigma {T_{a\_K}}^4\]</div>
 <p>The emissivity of the atmosphere is calculated based on the air temperature at the <span class="math notranslate nohighlight">\(z\)</span> level and the amount of water vapour in the air. According to Brutsaert (1982) it is calculated:</p>
 <div class="math notranslate nohighlight" id="equation-eq-emis-atm">
-<span class="eqno">(15)<a class="headerlink" href="#equation-eq-emis-atm" title="Permalink to this equation"></a></span>\[\varepsilon_{ac} = 1.24 \left( \frac{e_a \cdot 10}{T_a + 273.16} \right)^{\frac{1}{7}}\]</div>
+<span class="eqno">(15)<a class="headerlink" href="#equation-eq-emis-atm" title="Link to this equation"></a></span>\[\varepsilon_{ac} = 1.24 \left( \frac{e_a \cdot 10}{T_a + 273.16} \right)^{\frac{1}{7}}\]</div>
 <p>This approach is largely approximate and can be used for clear-sky weather conditions using the calculated <span class="math notranslate nohighlight">\(\varepsilon_{ac}\)</span> value. A more appropriate approach is to measure the value of <span class="math notranslate nohighlight">\(Rl_{\uparrow}\)</span> directly.</p>
 </section>
 <section id="emitted-long-wave-radiation-flux">
-<h3>Emitted long-wave radiation flux<a class="headerlink" href="#emitted-long-wave-radiation-flux" title="Permalink to this heading"></a></h3>
+<h3>Emitted long-wave radiation flux<a class="headerlink" href="#emitted-long-wave-radiation-flux" title="Link to this heading"></a></h3>
 <p>The longwave radiation emitted by a surface is determined by the temperature of the surface. The calculation is based on the Stefan-Boltzmann law:</p>
 <div class="math notranslate nohighlight" id="equation-eq-rl-up">
-<span class="eqno">(16)<a class="headerlink" href="#equation-eq-rl-up" title="Permalink to this equation"></a></span>\[Rl_{\uparrow} = \varepsilon \sigma {T_{s\_K}}^4\]</div>
+<span class="eqno">(16)<a class="headerlink" href="#equation-eq-rl-up" title="Link to this equation"></a></span>\[Rl_{\uparrow} = \varepsilon \sigma {T_{s\_K}}^4\]</div>
 <p>The surface emissivity is calculated based on an empirical approach of emissivity determination using the NDVI Treshold Method - <span class="math notranslate nohighlight">\(NDVI^{THM}\)</span> (Sobrino et al. 2004). The method uses the NDVI index (Normalized Difference Vegetation Index, Tucker 1979). For the emissivity determination, the range of index values is divided into three categories:</p>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(NDVI &lt; 0.2\)</span> - In this case the surface is considered as bare ground and the emissivity values are derived from the reflectance values in the red region of the spectrum</p></li>
@@ -222,87 +223,90 @@ The value of the incident short-wave radiation flux on the surface was calculate
 </ul>
 <p>The relationship between emissivity and surface cover is shown by the following relationship:</p>
 <div class="math notranslate nohighlight" id="equation-eq-emis-all">
-<span class="eqno">(17)<a class="headerlink" href="#equation-eq-emis-all" title="Permalink to this equation"></a></span>\[\varepsilon = \varepsilon_v P_v + \varepsilon_s (1 - P_v) +d\varepsilon\]</div>
+<span class="eqno">(17)<a class="headerlink" href="#equation-eq-emis-all" title="Link to this equation"></a></span>\[\varepsilon = \varepsilon_v P_v + \varepsilon_s (1 - P_v) +d\varepsilon\]</div>
 <p>where fraction of vegetation cover is calculated as follows:</p>
 <div class="math notranslate nohighlight" id="equation-eq-frac">
-<span class="eqno">(18)<a class="headerlink" href="#equation-eq-frac" title="Permalink to this equation"></a></span>\[P_v = \left(\frac{NDVI - NDVI_{min}}{NDVI_{max} - NDVI_{min}}\right)^2\]</div>
+<span class="eqno">(18)<a class="headerlink" href="#equation-eq-frac" title="Link to this equation"></a></span>\[P_v = \left(\frac{NDVI - NDVI_{min}}{NDVI_{max} - NDVI_{min}}\right)^2\]</div>
 <p>where <span class="math notranslate nohighlight">\(NDVI_{min} = 0.2\)</span> and <span class="math notranslate nohighlight">\(NDVI_{max} = 0.5\)</span>.
 As a result, the emissivity can be calculated based on the empirical relation as follows (Sobrino et al. 2004):</p>
 <div class="math notranslate nohighlight" id="equation-eq-emis-surf">
-<span class="eqno">(19)<a class="headerlink" href="#equation-eq-emis-surf" title="Permalink to this equation"></a></span>\[\varepsilon = 0.004 P_v + 0.986\]</div>
+<span class="eqno">(19)<a class="headerlink" href="#equation-eq-emis-surf" title="Link to this equation"></a></span>\[\varepsilon = 0.004 P_v + 0.986\]</div>
 </section>
 </section>
 <section id="vegetation-cover-characteristics">
-<h2>Vegetation cover characteristics<a class="headerlink" href="#vegetation-cover-characteristics" title="Permalink to this heading"></a></h2>
+<h2>Vegetation cover characteristics<a class="headerlink" href="#vegetation-cover-characteristics" title="Link to this heading"></a></h2>
 <p>The calculation of vegetation cover characteristics includes the estimation of vegetation spectral indices and leaf area index.</p>
 <p><strong>Normalized Difference Vegetation Index (NDVI)</strong> is one of the most widely used spectral vegetation indices. NDVI provides information on vegetation cover, its quality and possibly also its quantity (biomass). NDVI can be calculated as follows:</p>
 <div class="math notranslate nohighlight" id="equation-eq-ndvi">
-<span class="eqno">(20)<a class="headerlink" href="#equation-eq-ndvi" title="Permalink to this equation"></a></span>\[NDVI=\frac{R_{NIR}-R_{RED}}{R_{NIR}+R_{RED}}\]</div>
+<span class="eqno">(20)<a class="headerlink" href="#equation-eq-ndvi" title="Link to this equation"></a></span>\[NDVI=\frac{R_{NIR}-R_{RED}}{R_{NIR}+R_{RED}}\]</div>
 <p><strong>Modified Soil Adjusted Vegetation Index (MSAVI)</strong> has similar uses to the NDVI. Unlike the NDVI, there is no oversaturation of values with higher vegetation cover. The MSAVI can also be used to estimate vegetation height. MSAVI can be calculated as follows:</p>
 <div class="math notranslate nohighlight" id="equation-eq-msavi">
-<span class="eqno">(21)<a class="headerlink" href="#equation-eq-msavi" title="Permalink to this equation"></a></span>\[MSAVI=0.5\cdot(2R_{NIR}+1-\sqrt{(2R_{NIR}+1)^{2}-8\cdot(R_{NIR}-R_{RED})}\]</div>
+<span class="eqno">(21)<a class="headerlink" href="#equation-eq-msavi" title="Link to this equation"></a></span>\[MSAVI=0.5\cdot(2R_{NIR}+1-\sqrt{(2R_{NIR}+1)^{2}-8\cdot(R_{NIR}-R_{RED})}\]</div>
 <p><strong>Normalized Difference Moisture Index (NDMI)</strong> can be used for surface moisture estimation. NDMI can be calculated as follows:</p>
 <div class="math notranslate nohighlight" id="equation-eq-ndmi">
-<span class="eqno">(22)<a class="headerlink" href="#equation-eq-ndmi" title="Permalink to this equation"></a></span>\[NDVI=\frac{R_{NIR}-R_{SWIR1}}{R_{NIR}+R_{SWIR1}}\]</div>
+<span class="eqno">(22)<a class="headerlink" href="#equation-eq-ndmi" title="Link to this equation"></a></span>\[NDVI=\frac{R_{NIR}-R_{SWIR1}}{R_{NIR}+R_{SWIR1}}\]</div>
 <p><strong>Soil Adjusted Vegetation Index (SAVI)</strong> is next widely used vegetation index. It is similar to MSAVI. SAVI can be calculated as follows:</p>
 <div class="math notranslate nohighlight" id="equation-eq-savi">
-<span class="eqno">(23)<a class="headerlink" href="#equation-eq-savi" title="Permalink to this equation"></a></span>\[SAVI = \frac{NIR - R}{NIR + R + L} (1 + L)\]</div>
+<span class="eqno">(23)<a class="headerlink" href="#equation-eq-savi" title="Link to this equation"></a></span>\[SAVI = \frac{NIR - R}{NIR + R + L} (1 + L)\]</div>
 <p>where <span class="math notranslate nohighlight">\(L\)</span> is soil brightness correction factor defined as 0.5 to accommodate most land cover types.
 SEBCS for QGIS calculates leaf area index (<span class="math notranslate nohighlight">\(LAI\)</span>) according to <a class="reference external" href="https://www.sciencedirect.com/science/article/pii/S0034425718305947?via%3Dihub">Jafaar &amp; Ahmad (2016)</a>:</p>
 <div class="math notranslate nohighlight" id="equation-eq-lai1">
-<span class="eqno">(24)<a class="headerlink" href="#equation-eq-lai1" title="Permalink to this equation"></a></span>\[\begin{split}LAI_1=
+<span class="eqno">(24)<a class="headerlink" href="#equation-eq-lai1" title="Link to this equation"></a></span>\[\begin{split}LAI_1=
     \begin{cases}
         11 \cdot SAVI^3         &amp; SAVI &gt; 0;\  SAVI \leq 0.817\\
         6                       &amp; SAVI &gt; 0.817
     \end{cases}\end{split}\]</div>
 <div class="math notranslate nohighlight" id="equation-eq-lai2">
-<span class="eqno">(25)<a class="headerlink" href="#equation-eq-lai2" title="Permalink to this equation"></a></span>\[\begin{split}LAI_2 =
+<span class="eqno">(25)<a class="headerlink" href="#equation-eq-lai2" title="Link to this equation"></a></span>\[\begin{split}LAI_2 =
   \begin{cases}
     -\frac{\ln \frac{0.61-SAVI}{0.51}}{0.91}
         &amp; SAVI &gt;0;\  SAVI\leq 0.61\\
     6                       &amp; SAVI &gt; 0.61
   \end{cases}\end{split}\]</div>
 <div class="math notranslate nohighlight" id="equation-eq-lai">
-<span class="eqno">(26)<a class="headerlink" href="#equation-eq-lai" title="Permalink to this equation"></a></span>\[LAI = \frac{LAI_1 + LAI_2}{2}\]</div>
+<span class="eqno">(26)<a class="headerlink" href="#equation-eq-lai" title="Link to this equation"></a></span>\[LAI = \frac{LAI_1 + LAI_2}{2}\]</div>
 <p>The SEBCS_lib library contains some additional methods of <span class="math notranslate nohighlight">\(LAI\)</span> calculation. See <a class="reference internal" href="SEBCSlib.html"><span class="doc">documentation</span></a>.</p>
 </section>
 <section id="meteorological-features">
-<h2>Meteorological features<a class="headerlink" href="#meteorological-features" title="Permalink to this heading"></a></h2>
+<h2>Meteorological features<a class="headerlink" href="#meteorological-features" title="Link to this heading"></a></h2>
 <p>SEBCS for QGIS uses several variables to calculate aerodynamic quantities and heat fluxes, either constants (see <a class="reference internal" href="abbrev.html"><span class="doc">Abbreviation list</span></a>) or input variables such as water vapour pressure etc.</p>
 <p>The calculation of heat fluxes by SEBCS for QGIS uses the vertical gradient of the meteorological characteristics such as temperature gradient, humidity gradient or change in air velocity. Because the models usually work with a large spatial extent, the calculation typically uses the gradient within the atmospheric boundary layer, i.e. between the Earth’s surface and the mixing layer, which is set by default to <span class="math notranslate nohighlight">\(z = 200 m\)</span>.</p>
 <p>The calculation of air temperature for height <span class="math notranslate nohighlight">\(z\)</span> above the surface assumes an adiabatic change in air temperature <span class="math notranslate nohighlight">\(\Gamma\)</span>:</p>
 <div class="math notranslate nohighlight" id="equation-eq-tz">
-<span class="eqno">(27)<a class="headerlink" href="#equation-eq-tz" title="Permalink to this equation"></a></span>\[T_{z} = T_{a} + \Gamma(Z - Z_{st})\]</div>
+<span class="eqno">(27)<a class="headerlink" href="#equation-eq-tz" title="Link to this equation"></a></span>\[T_{z} = T_{a} + \Gamma(Z - Z_{st})\]</div>
 <p>The air pressure <span class="math notranslate nohighlight">\(P\)</span> for height <span class="math notranslate nohighlight">\(z\)</span> is calculated using the relation:</p>
 <div class="math notranslate nohighlight" id="equation-eq-press">
-<span class="eqno">(28)<a class="headerlink" href="#equation-eq-press" title="Permalink to this equation"></a></span>\[P = 101.3 \left( \frac{293-\Gamma \cdot (DMT + z)}{293} \right)^{5.26}\]</div>
+<span class="eqno">(28)<a class="headerlink" href="#equation-eq-press" title="Link to this equation"></a></span>\[P = 101.3 \left( \frac{293-\Gamma \cdot (DMT + z)}{293} \right)^{5.26}\]</div>
 <p>The characteristics of the humidity and its gradient are based on the assumption of a constant value of relative humidity in the vertical gradient. The water vapour pressure is then expressed by the relation:</p>
 <div class="math notranslate nohighlight" id="equation-eq-ea">
-<span class="eqno">(29)<a class="headerlink" href="#equation-eq-ea" title="Permalink to this equation"></a></span>\[e_z = \frac{E_z \cdot Rh}{100}\]</div>
+<span class="eqno">(29)<a class="headerlink" href="#equation-eq-ea" title="Link to this equation"></a></span>\[e_z = \frac{E_z \cdot Rh}{100}\]</div>
 <p>where <span class="math notranslate nohighlight">\(E_z\)</span> is the pressure of saturated water vapour at height <span class="math notranslate nohighlight">\(z\)</span> calculated using the Magnus-Tetens equation (<a class="reference external" href="https://journals.ametsoc.org/view/journals/apme/20/12/1520-0450_1981_020_1527_nefcvp_2_0_co_2.xml">Buck 1981</a>):</p>
 <div class="math notranslate nohighlight" id="equation-eq-ea-sat">
-<span class="eqno">(30)<a class="headerlink" href="#equation-eq-ea-sat" title="Permalink to this equation"></a></span>\[E_z = 0.61121 \cdot \exp \left( \frac{17.502 \cdot T_z}{240.97 + T_z} \right)\]</div>
+<span class="eqno">(30)<a class="headerlink" href="#equation-eq-ea-sat" title="Link to this equation"></a></span>\[E_z = 0.61121 \cdot \exp \left( \frac{17.502 \cdot T_z}{240.97 + T_z} \right)\]</div>
 <p>Similarly, the saturated water vapour pressure is calculated for the surface:</p>
 <div class="math notranslate nohighlight" id="equation-eq-es">
-<span class="eqno">(31)<a class="headerlink" href="#equation-eq-es" title="Permalink to this equation"></a></span>\[E_s = 0.61121 \cdot \exp{\left(\frac{17.502 \cdot T_s}{240.97 + T_s}\right)}\]</div>
+<span class="eqno">(31)<a class="headerlink" href="#equation-eq-es" title="Link to this equation"></a></span>\[E_s = 0.61121 \cdot \exp{\left(\frac{17.502 \cdot T_s}{240.97 + T_s}\right)}\]</div>
 <p>Water vapour pressure deficit is calculated as follows:</p>
 <div class="math notranslate nohighlight" id="equation-eq-vpd">
-<span class="eqno">(32)<a class="headerlink" href="#equation-eq-vpd" title="Permalink to this equation"></a></span>\[VPD = E_z - e_z\]</div>
+<span class="eqno">(32)<a class="headerlink" href="#equation-eq-vpd" title="Link to this equation"></a></span>\[VPD = E_z - e_z\]</div>
 <p>The air density for the height <span class="math notranslate nohighlight">\(z\)</span> is calculated by the relation:</p>
 <div class="math notranslate nohighlight" id="equation-eq-rho">
-<span class="eqno">(33)<a class="headerlink" href="#equation-eq-rho" title="Permalink to this equation"></a></span>\[\rho = \frac{353.4}{T_z + 273}\]</div>
+<span class="eqno">(33)<a class="headerlink" href="#equation-eq-rho" title="Link to this equation"></a></span>\[\rho = \frac{353.4}{T_z + 273}\]</div>
 <p>Latent heat is calculated by the relation:</p>
 <div class="math notranslate nohighlight" id="equation-eq-latent">
-<span class="eqno">(34)<a class="headerlink" href="#equation-eq-latent" title="Permalink to this equation"></a></span>\[\lambda = 2501 - 2.3723 \cdot T_z\]</div>
+<span class="eqno">(34)<a class="headerlink" href="#equation-eq-latent" title="Link to this equation"></a></span>\[\lambda = 2501 - 2.3723 \cdot T_z\]</div>
 <p>The psychrometric constant <span class="math notranslate nohighlight">\(\gamma\)</span> is calculated by the relation:</p>
 <div class="math notranslate nohighlight" id="equation-eq-gama">
-<span class="eqno">(35)<a class="headerlink" href="#equation-eq-gama" title="Permalink to this equation"></a></span>\[\gamma = \frac{c_p \cdot P}{\lambda \cdot 0.622}\]</div>
+<span class="eqno">(35)<a class="headerlink" href="#equation-eq-gama" title="Link to this equation"></a></span>\[\gamma = \frac{c_p \cdot P}{\lambda \cdot 0.622}\]</div>
 <p>The gradient of saturated water vapour <span class="math notranslate nohighlight">\(\Delta\)</span> is calculated by the relation:</p>
 <div class="math notranslate nohighlight" id="equation-eq-delta">
-<span class="eqno">(36)<a class="headerlink" href="#equation-eq-delta" title="Permalink to this equation"></a></span>\[\Delta = 45.03 + 3.014 T + 0.05345 T^2 + 0.00224 T^3\]</div>
+<span class="eqno">(36)<a class="headerlink" href="#equation-eq-delta" title="Link to this equation"></a></span>\[\Delta = 45.03 + 3.014 T + 0.05345 T^2 + 0.00224 T^3\]</div>
 <p>where</p>
 <div class="math notranslate nohighlight" id="equation-eq-t-mean">
-<span class="eqno">(37)<a class="headerlink" href="#equation-eq-t-mean" title="Permalink to this equation"></a></span>\[T = \frac{T_z + T_s}{2}\]</div>
+<span class="eqno">(37)<a class="headerlink" href="#equation-eq-t-mean" title="Link to this equation"></a></span>\[T = \frac{T_z + T_s}{2}\]</div>
+</section>
+<section id="surface-aerodynamic-features-and-boundary-layer-atmospheric-stability">
+<h2>Surface aerodynamic features and boundary layer (atmospheric) stability<a class="headerlink" href="#surface-aerodynamic-features-and-boundary-layer-atmospheric-stability" title="Link to this heading"></a></h2>
 </section>
 </section>
 
