@@ -16,6 +16,6 @@ Dr Jakub Brom
 
 GNU GPL v. 3 or later
 
-© 2016-2022 Jakub Brom, University of South Bohemia in České Budějovice, Faculty of Agriculture and Technology
+© 2016-2025 Jakub Brom, University of South Bohemia in České Budějovice, Faculty of Agriculture and Technology
 
 E-mail: jbrom@fzt.jcu.cz
