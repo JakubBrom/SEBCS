@@ -147,7 +147,7 @@ class GeoIO:
 			names_list.append(names)
 			names = names_list
 
-		if out_file_name == None:
+		if out_file_name is None:
 			out_file_name = ""
 			multiband = False
 
@@ -171,7 +171,7 @@ class GeoIO:
 				ds = driver.Create(out_file, arrays[0].shape[1], arrays[0].shape[0], len(arrays), gdal.GDT_Float32)
 				ds.SetProjection(prj)
 				ds.SetGeoTransform(gtransf)
-				if EPSG != None:
+				if EPSG is not None:
 					outRasterSRS = osr.SpatialReference()
 					outRasterSRS.ImportFromEPSG(EPSG)
 					ds.SetProjection(outRasterSRS.ExportToWkt())
@@ -225,8 +225,7 @@ class GeoIO:
 		lyr_name = os.path.split(layer)[1]
 
 		if layer != None and layer != "":
-			new_array = gdal.Dataset.ReadAsArray(gdal.Open(layer)).astype(
-				np.float32)
+			new_array = gdal.Dataset.ReadAsArray(gdal.Open(layer), band_list=[1]).astype(np.float32)
 			new_array = np.nan_to_num(new_array)
 		else:
 			warnings.warn(
@@ -377,7 +376,7 @@ class VegIndices:
 
 		ignore_zero = np.seterr(all="ignore")  # ignoring exceptions with dividing by zero
 
-		if swir1 != None:
+		if swir1 is not None:
 			try:
 				ndmi = (nir - swir1) / (nir + swir1)
 				ndmi[ndmi == np.inf] = 0  # replacement inf values by 0
@@ -1018,8 +1017,8 @@ class SolarRadBalance(VegIndices):
 		"""
 
 		try:
-			if sat_type == "other" or band_blue == None or band_green == None\
-					or band_sw1 == None or band_sw2 == None:
+			if sat_type == "other" or band_blue is None or band_green is None\
+					or band_sw1 is None or band_sw2 is None:
 				ndvi = self.viNDVI(band_red, band_nir)
 				msavi = self.viMSAVI(band_red, band_nir)
 				albedo = self.albedoBrom(ndvi, msavi)
@@ -1782,12 +1781,12 @@ class HeatFluxes(MeteoFeatures):
 
 		# Handling inputs
 		if method == "aero" or method == "SEBAL":
-			if Uz == None:
+			if Uz is None:
 				raise IOError("Heat fluxes have not been calculated - wind "
 				              "speed has not been set up.")
 			else:
-				if z0m == None or z0h == None:
-					if h_eff != None and LAI != None:
+				if z0m is None or z0h is None:
+					if h_eff is not None and LAI is not None:
 						try:
 							z0m = WindStability().z0m(h_eff, LAI)
 							z0h = WindStability().z0h(z0m)
@@ -1800,13 +1799,13 @@ class HeatFluxes(MeteoFeatures):
 						              "vegetation or leaf area index has not "
 						              "been set up correctly")
 
-				if disp == None:
-					if h_eff != None:
+				if disp is None:
+					if h_eff is not None:
 						disp = WindStability().zeroPlaneDis(h_eff)
 					else:
 						disp = 0.0
 		try:
-			if rho == None or rho == "":
+			if rho is None:
 				rho = self.airDensity(ta)
 		except ArithmeticError:
 			raise ArithmeticError("Air density has not been calculated.")
@@ -2444,7 +2443,7 @@ class WindStability(HeatFluxes, VegIndices):
 		ignore_zero = np.seterr(all="ignore")
 
 		try:
-			if flux_H == None:
+			if flux_H is None:
 				L = frict ** 2.0 * (ts + 273.16) / (kappa * gravit * t_virt)
 			else:
 				L = -(frict ** 3 * (ts + 273.15) * rho * cp / (kappa * gravit * flux_H))
