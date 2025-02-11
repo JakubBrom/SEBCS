@@ -1216,21 +1216,66 @@ class SEBCS:
 			geo.readGeo(self.nir_path)
 
 		# Imports of inputs layers
-		blue_lyr = geo.rasterToArray(self.blue_path)
-		green_lyr = geo.rasterToArray(self.green_path)
-		red_lyr = geo.rasterToArray(self.red_path)
-		self.nir_lyr = geo.rasterToArray(self.nir_path)
-		swir1_lyr = geo.rasterToArray(self.swir1_path)
-		swir2_lyr = geo.rasterToArray(self.swir2_path)
-		t_surf_uncorr_lyr = geo.rasterToArray(self.thermal_path)
-		dmt_lyr = geo.rasterToArray(self.dmt_path)
-		ta_Zst_lyr = geo.rasterToArray(self.ta_path)
-		U_st_lyr = geo.rasterToArray(self.wind_path)
-		h_min_lyr = geo.rasterToArray(self.hmin_path)
-		h_max_lyr = geo.rasterToArray(self.hmax_path)
-		canopy_lyr = geo.rasterToArray(self.canopy_path)
-		self.mask = geo.rasterToArray(self.mask_path)
-		albedo_lyr = geo.rasterToArray(self.albedo_path)
+		if self.blue_path is not None and self.blue_path != "":
+			blue_lyr = geo.rasterToArray(self.blue_path)
+		else:
+			blue_lyr = None
+		if self.green_path is not None and self.green_path != "":
+			green_lyr = geo.rasterToArray(self.green_path)
+		else:
+			green_lyr = None
+		if self.red_path is not None and self.red_path != "":
+			red_lyr = geo.rasterToArray(self.red_path)
+		else:
+			red_lyr = None
+		if self.nir_path is not None and self.nir_path != "":
+			self.nir_lyr = geo.rasterToArray(self.nir_path)
+		else:
+			self.nir_lyr = None
+		if self.swir1_path is not None and self.swir1_path != "":
+			swir1_lyr = geo.rasterToArray(self.swir1_path)
+		else:
+			swir1_lyr = None
+		if self.swir2_path is not None and self.swir2_path != "":
+			swir2_lyr = geo.rasterToArray(self.swir2_path)
+		else:
+			swir2_lyr = None
+		if self.thermal_path is not None and self.thermal_path != "":
+			t_surf_uncorr_lyr = geo.rasterToArray(self.thermal_path)
+		else:
+			t_surf_uncorr_lyr = None
+		if self.dmt_path is not None and self.dmt_path != "":
+			dmt_lyr = geo.rasterToArray(self.dmt_path)
+		else:
+			dmt_lyr = None
+		if self.ta_path is not None and self.ta_path != "":
+			ta_Zst_lyr = geo.rasterToArray(self.ta_path)
+		else:
+			ta_Zst_lyr = None
+		if self.wind_path is not None and self.wind_path != "":
+			U_st_lyr = geo.rasterToArray(self.wind_path)
+		else:
+			U_st_lyr = None
+		if self.hmin_path is not None and self.hmin_path != "":
+			h_min_lyr = geo.rasterToArray(self.hmin_path)
+		else:
+			h_min_lyr = None
+		if self.hmax_path is not None and self.hmax_path != "":
+			h_max_lyr = geo.rasterToArray(self.hmax_path)
+		else:
+			h_max_lyr = None
+		if self.canopy_path is not None and self.canopy_path != "":
+			canopy_lyr = geo.rasterToArray(self.canopy_path)
+		else:
+			canopy_lyr = None
+		if self.mask_path is not None and self.mask_path != "":
+			self.mask = geo.rasterToArray(self.mask_path)
+		else:
+			self.mask = None
+		if self.albedo_path is not None and self.albedo_path != "":
+			albedo_lyr = geo.rasterToArray(self.albedo_path)
+		else:
+			albedo_lyr = None
 
 		# Vegetation indices
 		self.ndvi = vi.viNDVI(red_lyr, self.nir_lyr)
@@ -1238,8 +1283,9 @@ class SEBCS:
 		self.ndmi = vi.viNDMI(self.nir_lyr, swir1_lyr)
 		self.savi = vi.viSAVI(red_lyr, self.nir_lyr, self.savi_L)
 		self.lai = vi.LAI(red_lyr, self.nir_lyr, self.lai_method)
+
 		if self.rb_method != "grad":
-			if canopy_lyr is None or canopy_lyr == "":
+			if self.canopy_path is None or self.canopy_path == "":
 				h_eff = vi.vegHeight(h_min_lyr, h_max_lyr, self.msavi)
 			else:
 				h_eff = canopy_lyr

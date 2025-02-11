@@ -95,7 +95,7 @@ Air temperature
 ...............
 The air temperature is the temperature measured by a weather station at the reference height :math:`z`. It is usually the temperature measured at a height of 2 m above the surface. Air temperature can be understood as either homogeneous or heterogeneous in a given space, depending on the measurement capabilities. For this reason, the air temperature is specified as a temperature layer for a given area.
 Assuming a homogeneous temperature distribution in space, the layer has only one value, which can be created using the Create constant raster layer function in QGIS Processing module or the Raster Calculator.
-In the case of the assumption of a heterogeneous air temperature distribution in the space, the air temperature needs to be modeled. If a sufficient number of measurements in a given area is available, various interpolation and geostatistical methods can be used to create an air temperature layer. A possible way to create an air temperature map is to assume an adiabatic change in air temperature with altitude (e.g. a decrease of 0.6 °C per 100 m altitude). In this case, it is necessary to have a digital model of terrain (elevation map converted to raster form, see below) and to know the altitude of the weather station location. The surface temperature is then calculated using the Raster Calculator according to the formula:
+In the case of the assumption of a heterogeneous air temperature distribution in the space, the air temperature needs to be modeled. If a sufficient number of measurements in a given area is available, various interpolation and geostatistical methods can be used to create an air temperature layer. A possible way to create an air temperature map is to assume an adiabatic change in air temperature with altitude (e.g. a decrease of 0.65 °C per 100 m altitude). In this case, it is necessary to have a digital model of terrain (elevation map converted to raster form, see below) and to know the altitude of the weather station location. The surface temperature is then calculated using the Raster Calculator according to the formula:
 
 .. _tadmt:
 .. math::
@@ -118,7 +118,6 @@ Vegetation cover height
 ........................
 Information on the (effective) height of the vegetation cover is an important parameter for the calculation of aerodynamic parameters such as aerodynamic surface roughness or atmospheric boundary layer stability. The vegetation cover height can be obtained e.g. by scanning the surface using LiDAR as a digital surface model. In the case that the vegetation height layer is not available, it can be estimated by scaling the MSAVI index values between the minimum (:math:`h_{min}`) and maximum (:math:`h_{max}`) vegetation height (`Gao et al. 2011 <https://hess.copernicus.org/articles/15/119/2011/>`_):
 
-.. _vegheight:
 .. math::
     :label: eq:veg_height
 
