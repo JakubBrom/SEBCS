@@ -940,7 +940,7 @@ class SolarRadBalance(VegIndices):
 		bands = [blue, green, red, nir, swir1, swir2]
 		if sat_type == "L8":
 			wb = (0.246, 0.146, 0.191, 0.304, 0.105, 0.008)  # Constants for
-		# L8 according to Olmeo et. al 2017: (G.F. Olmedo, S. Ortega-Farias,
+		# L8 according to Olmedo et. al 2017: (G.F. Olmedo, S. Ortega-Farias,
 		# D. Fonseca-Luengo, D. de la Fuente-Saiz, F.F. Peñailillo
 		# Water: actual evapotranspiration with energy balance models
 		# R Package Version 0.6 (2017))
