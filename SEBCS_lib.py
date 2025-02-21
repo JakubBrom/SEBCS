@@ -162,7 +162,7 @@ class GeoIO:
 		driver_index = driver_list.index(driver_name)
 		suffix = out_suffixes[driver_index]
 
-		if multiband == True and driver_name != "RST":
+		if multiband is True and driver_name != "RST":
 			out_file_name, ext = os.path.splitext(out_file_name)
 			out_file = os.path.join(out_folder, out_file_name + suffix)
 
@@ -197,7 +197,7 @@ class GeoIO:
 					ds = driver.Create(out_file, arrays[i].shape[1], arrays[i].shape[0], 1, gdal.GDT_Float32)
 					ds.SetProjection(prj)
 					ds.SetGeoTransform(gtransf)
-					if EPSG != None:
+					if EPSG is not None:
 						outRasterSRS = osr.SpatialReference()
 						outRasterSRS.ImportFromEPSG(EPSG)
 						ds.SetProjection(outRasterSRS.ExportToWkt())
@@ -224,7 +224,7 @@ class GeoIO:
 
 		lyr_name = os.path.split(layer)[1]
 
-		if layer != None and layer != "":
+		if layer is not None and layer != "":
 			new_array = gdal.Dataset.ReadAsArray(gdal.Open(layer), band_list=[1]).astype(np.float32)
 			new_array = np.nan_to_num(new_array)
 		else:
@@ -247,7 +247,7 @@ class GeoIO:
 		"""
 		# TODO: Solution of different spatial extent of rasters...
 
-		in_lyrs_list_true = [i for i in in_lyrs_list if i != None]  # List of input layers without
+		in_lyrs_list_true = [i for i in in_lyrs_list if i is not None]  # List of input layers without
 		# empty (None)
 
 		len_list = []
@@ -1469,9 +1469,9 @@ class HeatFluxes(MeteoFeatures):
 
 		return LE_PT
 
-	def fluxLE_ref(self, Rn, G, ta, ts, U, Rh, DMT, veg_type="short", cp=1012.0):
+	def fluxLE_ref_ASCE(self, Rn, G, ta, ts, U, Rh, DMT, veg_type="short", cp=1012.0):
 		"""
-		Latent heat flux for reference evapotranspiration according to FAO56
+		Latent heat flux for reference evapotranspiration according to FAO56 and ASCE
 		method (Allen et al. 1998, ASCE-ET 2000)
 
 		:param Rn: Rn: Total net radiation :math:`(W.m^{-2})`
@@ -1505,21 +1505,15 @@ class HeatFluxes(MeteoFeatures):
 		Equation. National Irrigation Symposium in Phoenix, Arizona, US.
 		"""
 
-		if veg_type == "short":
-			if Rn > 0.0:
-				cn = 37.0
-				cd = 0.24
-			else:
-				cn = 37.0
-				cd = 0.96
-		else:
-			if Rn > 0:
-				cn = 66.0
-				cd = 0.25
-			else:
-				cn = 66.0
-				cd = 1.7
+		cd = np.zeros(np.shape(Rn))
 
+		if veg_type == "short":
+			cn = np.full(np.shape(Rn), 37)
+			cd = np.where(Rn > 0, 0.24, 0.96)
+		else:
+			cn = np.full(np.shape(Rn), 66)
+			cd = np.where(Rn > 0, 0.25, 1.7)
+			
 		delta = self.delta(ts, ta)
 		air_pressure = self.airPress(ta, DMT, 2.0)
 		latent_heat = self.latent(ta)
@@ -1529,7 +1523,7 @@ class HeatFluxes(MeteoFeatures):
 		VPD = self.vpd(E_sat, e_abs)
 
 		try:
-			LE_ref = (408.0 * delta * (Rn - G) * 0.0036) + (gamma * cn/(ta + 273.15) * U * VPD)/(delta + gamma * (1 + cd * U)) * latent_heat/3600.0
+			LE_ref = ((0.408 * delta * (Rn - G) * 0.0036) + (gamma * cn/(ta + 273.15) * U * VPD))/(delta + gamma * (1 + cd * U)) * latent_heat / 3.6
 		except ArithmeticError:
 			raise ArithmeticError("Reference evapotranspiration has not been calculated.")
 
@@ -2069,7 +2063,7 @@ class HeatFluxes(MeteoFeatures):
 
 		except ArithmeticError:
 			warnings.warn("CWSI has not been calculated", stacklevel=3)
-			if LEp != None:
+			if LEp is not None:
 				cwsi = np.zeros(LEp.shape)
 			else:
 				cwsi = None
@@ -2746,7 +2740,7 @@ class WindStability(HeatFluxes, VegIndices):
 		:rtype: float
 		"""
 
-		if mask != None:
+		if mask is not None:
 			try:
 				ts = ts * mask
 			except ArithmeticError:
