@@ -2,7 +2,7 @@
 name=SEBCS for QGIS
 qgisMinimumVersion=3.0
 description=Module for calculation of energy balance features and vegetation water stress indices
-version=2.1.4
+version=2.1.5
 author=Jakub Brom, University of South Bohemia in Ceske Budejovice, Faculty of Agriculture and Technology
 email=jbrom@fzt.jcu.cz
 
@@ -17,6 +17,9 @@ tracker=https://github.com/JakubBrom/SEBCS/issues
 repository=https://github.com/JakubBrom/SEBCS
 
 changelog=
+    2.1.5 : (250221)
+        - New features added - calculation of Reference ET (ASCE for short and tall reference cover), calculation of evapotranspiration intensity (mm/h)
+        - Bug fixes
     2.1.4 : (250211)
         - Bug fixes
     2.1.3 : (240216)
