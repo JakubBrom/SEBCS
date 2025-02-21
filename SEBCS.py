@@ -10,7 +10,7 @@
 							  -------------------
 		begin                : 2019-03-06
 		git sha              : $Format:%H$
-		copyright            : (C) 2014-2022 by Jakub Brom, University
+		copyright            : (C) 2014-2025 by Jakub Brom, University
 							   of South Bohemia in Ceske Budejovice,
 							   Faculty of Agriculture
 		email                : jbrom@zf.jcu.cz
@@ -246,6 +246,17 @@ class SEBCS:
 			self.dlg.dsb_hwind.setDisabled(True)
 
 			self.dlg.ch_frict.setDisabled(True)
+			self.dlg.ch_le_pen.setDisabled(True) 
+			self.dlg.ch_le_ref_short.setDisabled(True)
+			self.dlg.ch_le_ref_tall.setDisabled(True)
+			self.dlg.ch_pet.setDisabled(True)
+			self.dlg.ch_refets.setDisabled(True)
+			self.dlg.ch_refett.setDisabled(True)
+			self.dlg.ch_omega.setDisabled(True)
+			self.dlg.ch_cwsi.setDisabled(True)
+			self.dlg.ch_ra.setDisabled(True)
+			self.dlg.ch_rc.setDisabled(True)
+   
 			self.dlg.ch_canopy.setDisabled(True)
 
 			self.dlg.cb_wind.setDisabled(True)
@@ -268,6 +279,16 @@ class SEBCS:
 			self.dlg.dsb_hwind.setValue(0.0)
 
 			self.dlg.ch_frict.setChecked(False)
+			self.dlg.ch_le_pen.setChecked(False) 
+			self.dlg.ch_le_ref_short.setChecked(False)
+			self.dlg.ch_le_ref_tall.setChecked(False)
+			self.dlg.ch_pet.setChecked(False)
+			self.dlg.ch_refets.setChecked(False)
+			self.dlg.ch_refett.setChecked(False)
+			self.dlg.ch_omega.setChecked(False)
+			self.dlg.ch_cwsi.setChecked(False)
+			self.dlg.ch_ra.setChecked(False)
+			self.dlg.ch_rc.setChecked(False)
 
 			self.setCboxEmpty(self.dlg.cb_wind)
 			self.setCboxEmpty(self.dlg.cb_hmin)
@@ -278,6 +299,17 @@ class SEBCS:
 			self.dlg.dsb_hwind.setEnabled(True)
 
 			self.dlg.ch_frict.setEnabled(True)
+			self.dlg.ch_le_pen.setEnabled(True)
+			self.dlg.ch_le_ref_short.setEnabled(True)
+			self.dlg.ch_le_ref_tall.setEnabled(True)
+			self.dlg.ch_pet.setEnabled(True)
+			self.dlg.ch_refets.setEnabled(True)
+			self.dlg.ch_refett.setEnabled(True)
+			self.dlg.ch_omega.setEnabled(True)
+			self.dlg.ch_cwsi.setEnabled(True)
+			self.dlg.ch_ra.setEnabled(True)
+			self.dlg.ch_rc.setEnabled(True)
+   
 			self.dlg.ch_canopy.setEnabled(True)
 
 			self.dlg.cb_wind.setEnabled(True)
@@ -297,6 +329,17 @@ class SEBCS:
 			self.dlg.label_14.setEnabled(True)
 
 			self.dlg.ch_frict.setChecked(True)
+			self.dlg.ch_le_pen.setChecked(True) 
+			self.dlg.ch_le_ref_short.setChecked(True)
+			self.dlg.ch_le_ref_tall.setChecked(True)
+			self.dlg.ch_pet.setChecked(True)
+			self.dlg.ch_refets.setChecked(True)
+			self.dlg.ch_refett.setChecked(True)
+			self.dlg.ch_omega.setChecked(True)
+			self.dlg.ch_cwsi.setChecked(True)
+			self.dlg.ch_ra.setChecked(True)
+			self.dlg.ch_rc.setChecked(True)
+   
 			self.dlg.ch_canopy.setChecked(True)
 
 			self.dlg.dsb_hwind.setValue(10.0)
@@ -446,41 +489,50 @@ class SEBCS:
 											  ""))
 
 		# Set unchecked friction velocity if the gradient method is used
-		# self.dlg.rb_grad.toggled.connect(self.frictUncheck)
-		self.dlg.ch_all.toggled.connect(self.frictUncheck)
+		# self.dlg.rb_grad.toggled.connect(self.uncheckChBox)
+		self.dlg.ch_all.toggled.connect(self.uncheckChBox)
 
 		# Set latitude and longitude from NIR band
 		self.dlg.b_auto_latlong.clicked.connect(lambda: self.latLong())
 
 		# Checkbox list for output layers - for testing if they are cheked or no.
 		self.out_chbox_list = [self.dlg.ch_rs_in,
-							   self.dlg.ch_rs_out,
-							   self.dlg.ch_albedo,
-							   self.dlg.ch_rl_in,
-							   self.dlg.ch_rl_out,
-							   self.dlg.ch_rn,
-							   self.dlg.ch_ts,
-							   self.dlg.ch_emiss,
-							   self.dlg.ch_le,
-							   self.dlg.ch_le_pen,
-							   self.dlg.ch_le_pt,
-							   self.dlg.ch_sensible,
-							   self.dlg.ch_ground,
-							   self.dlg.ch_e_int,
-							   self.dlg.ch_ef,
-							   self.dlg.ch_bowen,
-							   self.dlg.ch_omega,
-							   self.dlg.ch_cwsi,
-							   self.dlg.ch_frict,
-							   self.dlg.ch_ra,
-							   self.dlg.ch_rc,
-							   self.dlg.ch_ndvi,
-							   self.dlg.ch_msavi,
-							   self.dlg.ch_ndmi,
-							   self.dlg.ch_savi,
-							   self.dlg.ch_lai,
-							   self.dlg.ch_slope,
-							   self.dlg.ch_aspect]
+							self.dlg.ch_rs_out,
+							self.dlg.ch_albedo,
+							self.dlg.ch_rl_in,
+							self.dlg.ch_rl_out,
+							self.dlg.ch_rn,
+							self.dlg.ch_ts,
+							self.dlg.ch_emiss,
+							self.dlg.ch_le,
+							self.dlg.ch_le_pen,
+							self.dlg.ch_le_pt,
+							self.dlg.ch_le_ref_short,
+							self.dlg.ch_le_ref_tall,
+							self.dlg.ch_sensible,
+							self.dlg.ch_ground,
+							self.dlg.ch_e_int,
+							self.dlg.ch_aet,
+							self.dlg.ch_pet,
+							self.dlg.ch_ptet,
+							self.dlg.ch_refets,
+							self.dlg.ch_refett,
+							self.dlg.ch_ef,
+							self.dlg.ch_bowen,
+							self.dlg.ch_omega,
+							self.dlg.ch_cwsi,
+							self.dlg.ch_frict,
+							self.dlg.ch_ra,
+							self.dlg.ch_rc,
+							self.dlg.ch_ndvi,
+							self.dlg.ch_msavi,
+							self.dlg.ch_ndmi,
+							self.dlg.ch_savi,
+							self.dlg.ch_lai,
+							self.dlg.ch_slope,
+							self.dlg.ch_aspect,
+							self.dlg.ch_kc
+							]
 
 		# Reset content of the form
 		self.dlg.buttonBox.rejected.connect(lambda: self.keepSettings())
@@ -543,7 +595,7 @@ class SEBCS:
 												"in data sets...",
 												level=Qgis.Critical)
 
-		if lyr_ext == True and ch_form == True:
+		if lyr_ext is True and ch_form is True:
 			# Start progress bar
 			self.progbar()
 
@@ -661,33 +713,42 @@ class SEBCS:
 
 		# Set checkbox list for outputs
 		self.out_chbox_list = [self.dlg.ch_rs_in,
-							   self.dlg.ch_rs_out,
-							   self.dlg.ch_albedo,
-							   self.dlg.ch_rl_in,
-							   self.dlg.ch_rl_out,
-							   self.dlg.ch_rn,
-							   self.dlg.ch_ts,
-							   self.dlg.ch_emiss,
-							   self.dlg.ch_le,
-							   self.dlg.ch_le_pen,
-							   self.dlg.ch_le_pt,
-							   self.dlg.ch_sensible,
-							   self.dlg.ch_ground,
-							   self.dlg.ch_e_int,
-							   self.dlg.ch_ef,
-							   self.dlg.ch_bowen,
-							   self.dlg.ch_omega,
-							   self.dlg.ch_cwsi,
-							   self.dlg.ch_frict,
-							   self.dlg.ch_ra,
-							   self.dlg.ch_rc,
-							   self.dlg.ch_ndvi,
-							   self.dlg.ch_msavi,
-							   self.dlg.ch_ndmi,
-							   self.dlg.ch_savi,
-							   self.dlg.ch_lai,
-							   self.dlg.ch_slope,
-							   self.dlg.ch_aspect]
+							self.dlg.ch_rs_out,
+							self.dlg.ch_albedo,
+							self.dlg.ch_rl_in,
+							self.dlg.ch_rl_out,
+							self.dlg.ch_rn,
+							self.dlg.ch_ts,
+							self.dlg.ch_emiss,
+							self.dlg.ch_le,
+							self.dlg.ch_le_pen,
+							self.dlg.ch_le_pt,
+							self.dlg.ch_le_ref_short,
+							self.dlg.ch_le_ref_tall,
+							self.dlg.ch_sensible,
+							self.dlg.ch_ground,
+							self.dlg.ch_e_int,
+          					self.dlg.ch_aet,
+							self.dlg.ch_pet,
+							self.dlg.ch_ptet,
+							self.dlg.ch_refets,
+							self.dlg.ch_refett,
+							self.dlg.ch_ef,
+							self.dlg.ch_bowen,
+							self.dlg.ch_omega,
+							self.dlg.ch_cwsi,
+							self.dlg.ch_frict,
+							self.dlg.ch_ra,
+							self.dlg.ch_rc,
+							self.dlg.ch_ndvi,
+							self.dlg.ch_msavi,
+							self.dlg.ch_ndmi,
+							self.dlg.ch_savi,
+							self.dlg.ch_lai,
+							self.dlg.ch_slope,
+							self.dlg.ch_aspect,
+							self.dlg.ch_kc
+							]
 
 		self.dlg.ch_all.setChecked(
 			True)  # clear selection for output files - set all button
@@ -701,14 +762,28 @@ class SEBCS:
 		ind = comboBox.count() - 1
 		comboBox.setCurrentIndex(ind)
 
-	def frictUncheck(self):
-		"""Set unchecked friction velocity if the gradient method is used.
+	def uncheckChBox(self):
+		"""Set unchecked chboxes for results if the gradient method is used.
 		"""
 
-		if self.dlg.cb_methods.currentIndex() == 1:
-			self.dlg.ch_frict.setChecked(False)
-			if self.dlg.ch_all.isChecked():
-				self.dlg.ch_frict.setChecked(False)
+		uncheck_list = [self.dlg.ch_le_pen, 
+                  		self.dlg.ch_le_ref_short,
+                    	self.dlg.ch_le_ref_tall,
+						self.dlg.ch_pet,
+						self.dlg.ch_refets,
+      					self.dlg.ch_refett,
+						self.dlg.ch_omega,
+      					self.dlg.ch_cwsi,
+						self.dlg.ch_frict,
+						self.dlg.ch_ra,
+						self.dlg.ch_rc,
+						]
+
+		if self.dlg.cb_methods.currentIndex() == 2:
+			for i in uncheck_list:
+				i.setChecked(False)
+				if self.dlg.ch_all.isChecked():
+					i.setChecked(False)
 
 	def setCanopyEmpty(self, comboBox):
 		if self.dlg.ch_canopy.isChecked():
@@ -795,7 +870,7 @@ class SEBCS:
 		# TODO: use overlap_clip...
 
 		self.in_lyrs_list_true = [i for i in self.in_lyrs_list if
-								  i != None and i != ""]  # List of input rasters without empty paths
+								  i is not None and i != ""]  # List of input rasters without empty paths
 
 		lcols = []  # No. of columns in the layers
 		lrows = []  # No. of rows in the layers
@@ -896,7 +971,7 @@ class SEBCS:
 					check_state = False
 
 			if self.hmin_path is None or self.hmin_path == "" or \
-					self.hmax_path == None or self.hmax_path == "":
+					self.hmax_path is None or self.hmax_path == "":
 				if self.canopy_path is None or self.canopy_path == "":
 					self.iface.messageBar().pushMessage(
 						self.tr("Warning"),
@@ -941,9 +1016,16 @@ class SEBCS:
 			self.tr("Latent heat flux (W.m-2)"),
 			self.tr("Latent heat flux - Penman pot. (W.m-2)"),
 			self.tr("Latent heat flux - Priestley-Taylor (W.m-2)"),
+			self.tr("Latent heat flux - ASCE Short reference (W.m-2)"),
+			self.tr("Latent heat flux - ASCE Tall reference (W.m-2)"),
 			self.tr("Sensible heat flux (W.m-2)"),
 			self.tr("Ground heat flux (W.m-2)"),
 			self.tr("Evapotranspiration intensity (mmol.m-2.s-1)"),
+			self.tr("Actual evapotranspiration (mm/h)"),
+			self.tr("Potential evapotranspiration (Penman; mm/h)"),
+			self.tr("Potential evapotranspiration (Priestley-Taylor; mm/h)"),
+			self.tr("Reference evapotranspiration (Short reference; mm/h)"),
+			self.tr("Reference evapotranspiration (Tall reference; mm/h)"),
 			self.tr("Evaporative fraction (rel.)"),
 			self.tr("Bowen ratio (-)"),
 			self.tr("Decoupling coefficient (rel.)"),
@@ -957,16 +1039,18 @@ class SEBCS:
 			self.tr("SAVI (-)"),
 			self.tr("LAI (m2/m-2)"),
 			self.tr("Slope (Degree)"),
-			self.tr("Aspect (Degree)")]
+			self.tr("Aspect (Degree)"),
+			self.tr("Crop coefficient Kc")]
 
-		self.out_fnames_all = ["Rs_in", "Rs_out", "albedo", "RL_in",
-							   "RL_emit", "Rn", "Ts", "emis", "LE",
-							   "LEp",
-							   "LE_PT", "H", "G", "E_int", "EF",
-							   "Bowen",
-							   "omega", "CWSI", "frict_U", "ra", "rc",
-							   "NDVI", "MSAVI", "NDMI", "SAVI", "LAI",
-							   "slope", "aspect"]
+		self.out_fnames_all = ["Rs_in", "Rs_out", "albedo", "RL_in", "RL_emit", "Rn",
+                         		"Ts", "emis", 
+                           		"LE", "LEp", "LE_PT", "LEref_short", "LEref_tall", "H", "G",
+                             	"E_int", "AET", "PET", "PTET", "refETs", "refETt",
+          						"EF", "Bowen", "omega", "CWSI",
+                				"frict_U", "ra", "rc",
+							   	"NDVI", "MSAVI", "NDMI", "SAVI", "LAI",
+							   	"slope", "aspect",
+           						"Kc"]
 
 		# Loop for creation boolean list of output lyrs
 		for i in self.out_chbox_list:
@@ -978,14 +1062,14 @@ class SEBCS:
 		# Loop for creation list of selected variables description
 		i = 0
 		for j in self.out_names_all:
-			if self.out_lyrs_list[i] == True:
+			if self.out_lyrs_list[i] is True:
 				self.out_lyrs_descr.append(self.out_names_all[i])
 			i = i + 1
 
 		# Loop for creation list of selected output file names
 		i = 0
 		for j in self.out_fnames_all:
-			if self.out_lyrs_list[i] == True:
+			if self.out_lyrs_list[i] is True:
 				self.out_lyrs_fnames.append(self.out_fnames_all[i])
 			i = i + 1
 
@@ -1089,7 +1173,7 @@ class SEBCS:
 		for i in inputs:
 			in_export.write(i + os.linesep)
 
-		if self.multiband == True:
+		if self.multiband is True:
 			in_export.write(
 				self.tr("Output file is multiband") + os.linesep)
 			in_export.write(self.tr(
@@ -1187,7 +1271,7 @@ class SEBCS:
 		self.longitude = self.dlg.dsb_long.value()
 
 		# Output folder and/or output file path
-		if self.dlg.ch_multi.isChecked() == True:
+		if self.dlg.ch_multi.isChecked() is True:
 			self.multiband = True
 			self.out_file_name = self.dlg.out_multifile.filePath()
 			self.out_folder_path = os.path.dirname(self.out_file_name)
@@ -1318,7 +1402,7 @@ class SEBCS:
 
 		# Wind profile
 		if self.rb_method is "grad":
-			U = None
+			U = np.full(np.shape(red_lyr), 0)
 			z0m = None
 			z0h = None
 			zero_disp = None
@@ -1329,54 +1413,66 @@ class SEBCS:
 			zero_disp = ws.zeroPlaneDis(h_eff)
 
 		# Calculation of output variables
-		self.slope, self.aspect = sb.slopeAspect(dmt_lyr, self.x_size,
-												 self.y_size)
-		self.Rs_in = sb.solarInTopo(self.glob_rad, self.slope,
-									self.aspect,
-									self.latitude, self.longitude,
-									self.acq_date, self.acq_time)
+		self.slope, self.aspect = sb.slopeAspect(dmt_lyr, self.x_size, self.y_size)
+		self.Rs_in = sb.solarInTopo(self.glob_rad, self.slope, self.aspect, self.latitude, self.longitude, self.acq_date, self.acq_time)
+		
 		if albedo_lyr is not None:
 			self.albedo = albedo_lyr
 		else:
-			self.albedo = sb.albedo(red_lyr, self.nir_lyr, self.rb_sat,
-									blue_lyr, green_lyr, swir1_lyr,
-									swir2_lyr)
+			self.albedo = sb.albedo(red_lyr, self.nir_lyr, self.rb_sat,	blue_lyr, green_lyr, swir1_lyr,	swir2_lyr)
 
 		self.Rs_out = sb.reflectRs(self.Rs_in, self.albedo)
 
 		self.Rl_in = sb.downRL(ta_Zst_lyr, emis_a)
 		self.Rl_out = sb.outRL(self.ts_C, self.emiss)
-		self.Rn = sb.netRad(self.Rs_in, self.Rs_out, self.Rl_in,
-							self.Rl_out)
+		self.Rn = sb.netRad(self.Rs_in, self.Rs_out, self.Rl_in, self.Rl_out)
 
-		print("radiace OK")
+		print("Radiation OK")
 
-		self.G = hf.groundFlux(self.ndvi, self.Rn, self.ts_C,
-							   self.albedo)
+		self.G = hf.groundFlux(self.ndvi, self.Rn, self.ts_C, self.albedo)
 
-		self.H, self.LE, self.EF, LE_eq, self.LE_PT, self.ra, self.frict = \
-			hf.heatFluxes(self.Rn, self.G, self.ts_C, ta,
-						  self.rb_method,
-						  U, h_eff=h_eff, LAI=self.lai, z0m=z0m,
-						  z0h=z0h,
-						  rho=rho, disp=zero_disp, mask=self.mask,
-						  air_pressure=air_press, Z=self.Z, cp=self.cp,
-						  n_iter=self.n_iter, kappa=self.kappa)
+		self.H, self.LE, self.EF, LE_eq, self.LE_PT, self.ra, self.frict = hf.heatFluxes(self.Rn, self.G, self.ts_C, ta, 
+                                                                                   self.rb_method, U, h_eff=h_eff, LAI=self.lai,
+                                                                                   z0m=z0m, z0h=z0h, rho=rho, disp=zero_disp,
+                                                                                   mask=self.mask, air_pressure=air_press, Z=self.Z,
+                                                                                   cp=self.cp, n_iter=self.n_iter, kappa=self.kappa)
 
-		print("toky OK")
-
-		self.LEp = hf.fluxLE_p(self.Rn, self.G, delta_grad, vpd,
-							   self.ra,
-							   gamma, rho, self.cp)
-
+		self.PTET = LE_eq / lat_heat * 3.6	# Potential evapotranspiration (Priestley-Taylor)
+  		
+		self.AET = self.LE / lat_heat * 3.6	# Actual evapotranspiration
+     
+     	# Fluxes and ET for aerodynamic methods only
+		if self.rb_method != "grad":
+			self.LEp = hf.fluxLE_p(self.Rn, self.G, delta_grad, vpd, self.ra, gamma, rho, self.cp)
+			self.LEref_short = hf.fluxLE_ref_ASCE(self.Rn, self.G, ta, self.ts_C, U, self.humid, dmt_lyr, veg_type="short", cp=self.cp)
+			self.LEref_tall = hf.fluxLE_ref_ASCE(self.Rn, self.G, ta, self.ts_C, U, self.humid, dmt_lyr, veg_type="tall", cp=self.cp)			
+			self.PET = self.LEp / lat_heat * 3.6	# Potential evapotranspiration (Penman)
+			self.refETs = self.LEref_short / lat_heat * 3.6	# Reference evapotranspiration (Short reference)
+			self.refETt = self.LEref_tall / lat_heat * 3.6	# Reference evapotranspiration (Tall reference)
+			self.omega = hf.omega(self.LE, self.LEp)
+			self.rc = hf.rs(delta_grad, gamma, self.omega, self.ra)
+			self.cwsi = hf.cwsi(self.LEp, self.ra, self.rc, Es_Z, e_Z, rho,	delta_grad, gamma, self.cp)
+		else:
+			self.LEp = None
+			self.LEref_short = None
+			self.LEref_tall = None
+			self.PET = None
+			self.refETs = None
+			self.refETt = None
+			self.omega = None
+			self.rc = None
+			self.cwsi = None
+		
+		print("Fluxes OK")
+  
+		# Crop coefficient
+		self.kc = 1.25 * self.ndvi + 0.1	# Crop coefficient Kc
+  
+		# Other variables
 		self.E_int = hf.intensityE(self.LE, lat_heat)
-		self.bowen = hf.bowen(self.H, self.LE)
-		self.omega = hf.omega(self.LE, self.LEp)
-		self.rc = hf.rs(delta_grad, gamma, self.omega, self.ra)
-		self.cwsi = hf.cwsi(self.LEp, self.ra, self.rc, Es_Z, e_Z, rho,
-							delta_grad, gamma, self.cp)
+		self.bowen = hf.bowen(self.H, self.LE)		
 
-		print("ostatni taky OK")
+		print("Other variables OK")
 
 		# Data export
 		self.dataExport()
@@ -1398,9 +1494,16 @@ class SEBCS:
 						"LE": self.LE,
 						"LEp": self.LEp,
 						"LE_PT": self.LE_PT,
+						"LEref_short": self.LEref_short,
+						"LEref_tall": self.LEref_tall,
 						"H": self.H,
 						"G": self.G,
 						"E_int": self.E_int,
+						"AET": self.AET,
+						"PET": self.PET,
+						"PTET": self.PTET,
+						"refETs": self.refETs,
+						"refETt": self.refETt,
 						"EF": self.EF,
 						"Bowen": self.bowen,
 						"omega": self.omega,
@@ -1414,13 +1517,15 @@ class SEBCS:
 						"SAVI": self.savi,
 						"LAI": self.lai,
 						"slope": self.slope,
-						"aspect": self.aspect
+						"aspect": self.aspect,
+						"Kc": self.kc
 						}
 
 		# Create list of arrays corresponding to list of output layer names (
 		# in self.out_lyrs_fnames)
 		out_arrays = []
 		for i in self.out_lyrs_fnames:
+			print(i)
 			out_arrays.append(out_lyrs_all[i])
 
 		# Change layers equal to None to array with zeros
@@ -1457,7 +1562,7 @@ class SEBCS:
 		# Variables definition
 		out_name = ""
 
-		if self.multiband == False:
+		if self.multiband is False:
 			# All calculated layers
 			for i in range(0, len(self.out_lyrs_fnames)):
 				try:
